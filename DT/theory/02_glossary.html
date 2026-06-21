@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Глава 2 · Глоссарий</title>
+<link rel="stylesheet" href="assets/style.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="home" href="index.html">Деревья и ансамбли · теория</a>
+    <span class="nav-prev-next">
+      <a href="01_math.html">← назад</a>
+      <a href="03_supervised.html">далее →</a>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="chapter-tag">Глава 2</div>
+  <h1>Глоссарий терминов</h1>
+
+  <p>Терминология в машинном обучении почти всегда англоязычная: в статьях, в документации
+  <code>scikit-learn</code>, в названиях гиперпараметров. Поэтому здесь мы собираем
+  английские термины с переводом и коротким пояснением — а дальше по тексту используем
+  именно их, не переключаясь каждый раз. Таблицы сгруппированы по темам; внутри —
+  по логике изложения, а не по алфавиту.</p>
+
+  <div class="box idea">
+    <div class="box-title">Как читать таблицы</div>
+    Первый столбец — <span class="term-en">английский термин</span> (как вы встретите его
+    в коде и статьях), второй — <span class="term-ru">русский эквивалент</span>, третий —
+    пояснение в одну-две фразы. Подробный разбор каждого понятия — в соответствующей главе.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>Базовые понятия обучения</h2>
+  <table>
+    <thead><tr><th>Термин (EN)</th><th>Перевод</th><th>Пояснение</th></tr></thead>
+    <tbody>
+      <tr><td><span class="term-en">feature</span></td><td><span class="term-ru">признак</span></td>
+        <td>Измеримая характеристика объекта (площадь квартиры, длина лепестка). Колонка в таблице данных.</td></tr>
+      <tr><td><span class="term-en">target / label</span></td><td><span class="term-ru">целевая переменная / метка</span></td>
+        <td>То, что модель предсказывает: число (регрессия) или класс (классификация).</td></tr>
+      <tr><td><span class="term-en">sample / object</span></td><td><span class="term-ru">объект / наблюдение</span></td>
+        <td>Одна строка данных — один пример с признаками и (на обучении) ответом.</td></tr>
+      <tr><td><span class="term-en">supervised learning</span></td><td><span class="term-ru">обучение с учителем</span></td>
+        <td>Учимся по парам «объект → правильный ответ».</td></tr>
+      <tr><td><span class="term-en">regression</span></td><td><span class="term-ru">регрессия</span></td>
+        <td>Задача предсказания <b>числа</b> ($y \in \mathbb{R}$).</td></tr>
+      <tr><td><span class="term-en">classification</span></td><td><span class="term-ru">классификация</span></td>
+        <td>Задача предсказания <b>класса</b> из конечного набора.</td></tr>
+      <tr><td><span class="term-en">loss function</span></td><td><span class="term-ru">функция потерь</span></td>
+        <td>Штраф за расхождение прогноза с истиной; её минимизируют при обучении.</td></tr>
+      <tr><td><span class="term-en">empirical risk</span></td><td><span class="term-ru">эмпирический риск</span></td>
+        <td>Средняя потеря на обучающей выборке.</td></tr>
+      <tr><td><span class="term-en">train / test split</span></td><td><span class="term-ru">обучающая / тестовая выборки</span></td>
+        <td>Деление данных: на одной учимся, на другой честно проверяем.</td></tr>
+      <tr><td><span class="term-en">cross-validation (CV)</span></td><td><span class="term-ru">кросс-валидация</span></td>
+        <td>Многократная проверка на разных разбиениях для устойчивой оценки качества.</td></tr>
+      <tr><td><span class="term-en">overfitting</span></td><td><span class="term-ru">переобучение</span></td>
+        <td>Модель «зазубрила» обучающие данные вместе с шумом и плохо обобщает.</td></tr>
+      <tr><td><span class="term-en">underfitting</span></td><td><span class="term-ru">недообучение</span></td>
+        <td>Модель слишком простая, не улавливает закономерность.</td></tr>
+      <tr><td><span class="term-en">generalization</span></td><td><span class="term-ru">обобщающая способность</span></td>
+        <td>Качество модели на <b>новых</b>, не виденных данных.</td></tr>
+      <tr><td><span class="term-en">hyperparameter</span></td><td><span class="term-ru">гиперпараметр</span></td>
+        <td>Настройка, которую задают до обучения (глубина дерева, число деревьев).</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>Решающие деревья</h2>
+  <table>
+    <thead><tr><th>Термин (EN)</th><th>Перевод</th><th>Пояснение</th></tr></thead>
+    <tbody>
+      <tr><td><span class="term-en">decision tree</span></td><td><span class="term-ru">решающее дерево</span></td>
+        <td>Модель из вложенных условий «если признак $<$ порог …», нарезающая пространство на области.</td></tr>
+      <tr><td><span class="term-en">node</span></td><td><span class="term-ru">узел</span></td>
+        <td>Точка дерева, где происходит проверка условия.</td></tr>
+      <tr><td><span class="term-en">leaf</span></td><td><span class="term-ru">лист</span></td>
+        <td>Конечный узел; в нём лежит готовый ответ (класс или число).</td></tr>
+      <tr><td><span class="term-en">split</span></td><td><span class="term-ru">разбиение</span></td>
+        <td>Деление выборки узла на левую и правую части по признаку и порогу.</td></tr>
+      <tr><td><span class="term-en">threshold</span></td><td><span class="term-ru">порог</span></td>
+        <td>Значение $s$, по которому делят: $x_j < s$ — налево, иначе — направо.</td></tr>
+      <tr><td><span class="term-en">impurity</span></td><td><span class="term-ru">неоднородность / нечистота</span></td>
+        <td>Мера «перемешанности» узла $H(R)$. Чистый узел (один класс) — нулевая.</td></tr>
+      <tr><td><span class="term-en">entropy</span></td><td><span class="term-ru">энтропия</span></td>
+        <td>Критерий неоднородности $-\sum_k p_k\log p_k$.</td></tr>
+      <tr><td><span class="term-en">Gini impurity</span></td><td><span class="term-ru">критерий Джини</span></td>
+        <td>Критерий неоднородности $\sum_k p_k(1-p_k)$.</td></tr>
+      <tr><td><span class="term-en">information gain</span></td><td><span class="term-ru">информационный выигрыш</span></td>
+        <td>Насколько разбиение снижает неоднородность; его максимизируют при выборе сплита.</td></tr>
+      <tr><td><span class="term-en">feature importance</span></td><td><span class="term-ru">важность признаков</span></td>
+        <td>Оценка вклада признака в качество модели.</td></tr>
+      <tr><td><span class="term-en">stump</span></td><td><span class="term-ru">пень</span></td>
+        <td>Дерево глубины 1 (один сплит). Главный «слабый» базовый алгоритм бустинга.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>Разложение ошибки</h2>
+  <table>
+    <thead><tr><th>Термин (EN)</th><th>Перевод</th><th>Пояснение</th></tr></thead>
+    <tbody>
+      <tr><td><span class="term-en">bias</span></td><td><span class="term-ru">смещение</span></td>
+        <td>Систематическая ошибка модели — насколько «в среднем» она мимо. Высокое у слишком простых моделей.</td></tr>
+      <tr><td><span class="term-en">variance</span></td><td><span class="term-ru">разброс</span></td>
+        <td>Чувствительность модели к конкретной обучающей выборке. Высокий у слишком гибких моделей.</td></tr>
+      <tr><td><span class="term-en">irreducible noise</span></td><td><span class="term-ru">неустранимый шум</span></td>
+        <td>Случайность в данных $\sigma^2$, которую не предскажет ни одна модель.</td></tr>
+      <tr><td><span class="term-en">bias–variance tradeoff</span></td><td><span class="term-ru">компромисс смещения и разброса</span></td>
+        <td>Уменьшая одно, обычно увеличиваешь другое; ищем баланс по сложности модели.</td></tr>
+      <tr><td><span class="term-en">model complexity</span></td><td><span class="term-ru">сложность (гибкость) модели</span></td>
+        <td>Способность подстраиваться под данные (глубина дерева, степень полинома).</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>Ансамбли: усреднение</h2>
+  <table>
+    <thead><tr><th>Термин (EN)</th><th>Перевод</th><th>Пояснение</th></tr></thead>
+    <tbody>
+      <tr><td><span class="term-en">ensemble</span></td><td><span class="term-ru">ансамбль</span></td>
+        <td>Композиция многих моделей, работающая лучше любой одиночной.</td></tr>
+      <tr><td><span class="term-en">bootstrap</span></td><td><span class="term-ru">бутстрэп</span></td>
+        <td>Выборка того же размера, взятая <b>с возвращением</b> из исходной.</td></tr>
+      <tr><td><span class="term-en">bagging</span></td><td><span class="term-ru">бэггинг</span></td>
+        <td>Bootstrap AGGregating: обучить модели на бутстрэп-выборках и усреднить.</td></tr>
+      <tr><td><span class="term-en">random forest</span></td><td><span class="term-ru">случайный лес</span></td>
+        <td>Бэггинг над деревьями + случайный отбор признаков в каждом узле.</td></tr>
+      <tr><td><span class="term-en">out-of-bag (OOB)</span></td><td><span class="term-ru">вне-сумочная оценка</span></td>
+        <td>Бесплатная валидация: каждый объект проверяют на деревьях, в чьей бутстрэп-выборке его не было.</td></tr>
+      <tr><td><span class="term-en">decorrelation</span></td><td><span class="term-ru">декорреляция</span></td>
+        <td>Снижение похожести моделей ансамбля; делает усреднение эффективнее.</td></tr>
+      <tr><td><span class="term-en">max_features</span></td><td><span class="term-ru">число признаков на узел</span></td>
+        <td>Сколько случайных признаков рассматривать в сплите; рычаг декорреляции в лесе.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>Ансамбли: бустинг</h2>
+  <table>
+    <thead><tr><th>Термин (EN)</th><th>Перевод</th><th>Пояснение</th></tr></thead>
+    <tbody>
+      <tr><td><span class="term-en">boosting</span></td><td><span class="term-ru">бустинг</span></td>
+        <td>Последовательное построение моделей, каждая исправляет ошибки предыдущих.</td></tr>
+      <tr><td><span class="term-en">gradient boosting</span></td><td><span class="term-ru">градиентный бустинг</span></td>
+        <td>Бустинг, где каждая новая модель приближает антиградиент функции потерь.</td></tr>
+      <tr><td><span class="term-en">weak learner</span></td><td><span class="term-ru">слабая модель</span></td>
+        <td>Простой базовый алгоритм (обычно неглубокое дерево), чуть лучше случайного.</td></tr>
+      <tr><td><span class="term-en">residual</span></td><td><span class="term-ru">остаток</span></td>
+        <td>Разница между истиной и текущим прогнозом, $y - F(x)$.</td></tr>
+      <tr><td><span class="term-en">pseudo-residual</span></td><td><span class="term-ru">псевдо-остаток</span></td>
+        <td>Антиградиент потерь $-\partial \ell/\partial F$; для MSE совпадает с обычным остатком.</td></tr>
+      <tr><td><span class="term-en">learning rate</span></td><td><span class="term-ru">темп обучения</span></td>
+        <td>Множитель $\eta$ при каждой новой модели; длина шага спуска.</td></tr>
+      <tr><td><span class="term-en">shrinkage</span></td><td><span class="term-ru">сжатие</span></td>
+        <td>То же, что маленький $\eta$: «придерживаем» вклад каждого дерева ради устойчивости.</td></tr>
+      <tr><td><span class="term-en">n_estimators</span></td><td><span class="term-ru">число базовых моделей</span></td>
+        <td>Сколько деревьев в ансамбле (итераций бустинга / деревьев леса).</td></tr>
+      <tr><td><span class="term-en">subsample</span></td><td><span class="term-ru">доля подвыборки</span></td>
+        <td>Доля объектов на каждой итерации; стохастический бустинг, прямая аналогия SGD.</td></tr>
+      <tr><td><span class="term-en">early stopping</span></td><td><span class="term-ru">ранняя остановка</span></td>
+        <td>Прекратить добавлять деревья, когда качество на валидации перестало расти.</td></tr>
+      <tr><td><span class="term-en">SGD</span></td><td><span class="term-ru">стохастический градиентный спуск</span></td>
+        <td>Градиентный спуск по случайным мини-порциям данных; идейный родственник бустинга.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box takeaway">
+    <div class="box-title">Главное</div>
+    Не пугайтесь английских названий гиперпараметров — почти все они дословно повторяют
+    термины из этой таблицы: <code>n_estimators</code>, <code>max_features</code>,
+    <code>learning_rate</code>, <code>subsample</code>. Зная смысл термина, вы уже знаете,
+    что крутит соответствующая ручка.
+  </div>
+
+  <div class="chapter-nav">
+    <a href="01_math.html">← Глава 1. Математический разогрев</a>
+    <a href="03_supervised.html">Глава 3. Постановка задачи →</a>
+  </div>
+
+</div>
+</body>
+</html>

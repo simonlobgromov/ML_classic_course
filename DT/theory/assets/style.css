@@ -1,0 +1,298 @@
+/* Shared styling for the ML theory handbook.
+   Prose is Russian; this file only defines visual style. */
+
+:root {
+  --bg: #fbfbfa;
+  --surface: #ffffff;
+  --ink: #1f2328;
+  --ink-soft: #4a5159;
+  --line: #e3e6ea;
+  --accent: #2f6f4f;       /* deep green, matches course plots */
+  --accent-soft: #e7f1ec;
+  --blue: #2d5d8a;
+  --blue-soft: #e8f0f7;
+  --amber: #9a6b00;
+  --amber-soft: #fbf1da;
+  --rose: #9b3b46;
+  --rose-soft: #f7e6e8;
+  --code-bg: #f4f5f6;
+  --radius: 12px;
+  --maxw: 820px;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 32px 22px 120px;
+}
+
+/* ---- top navigation bar ---- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(251, 251, 250, 0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--sans);
+  font-size: 14px;
+}
+.topbar .topbar-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 10px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: space-between;
+}
+.topbar a { color: var(--ink-soft); text-decoration: none; }
+.topbar a:hover { color: var(--accent); }
+.topbar .home { font-weight: 700; color: var(--ink); }
+.topbar .nav-prev-next { display: flex; gap: 14px; }
+
+/* ---- headings ---- */
+h1, h2, h3, h4 { font-family: var(--sans); line-height: 1.25; color: var(--ink); }
+h1 { font-size: 2.1rem; margin: 0.2em 0 0.5em; letter-spacing: -0.01em; }
+h2 {
+  font-size: 1.5rem;
+  margin: 2.2em 0 0.6em;
+  padding-top: 0.4em;
+  border-top: 2px solid var(--line);
+}
+h3 { font-size: 1.2rem; margin: 1.6em 0 0.4em; color: var(--accent); }
+h4 { font-size: 1.02rem; margin: 1.2em 0 0.3em; color: var(--ink-soft); }
+
+.chapter-tag {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+p { margin: 0.7em 0; }
+a { color: var(--accent); }
+
+strong { color: var(--ink); }
+em { color: var(--ink-soft); }
+
+ul, ol { padding-left: 1.4em; }
+li { margin: 0.3em 0; }
+
+/* ---- callout blocks ---- */
+.box {
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 1.4em 0;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.box .box-title {
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.box.def        { background: var(--accent-soft); border-color: #cfe3d8; }
+.box.def .box-title { color: var(--accent); }
+.box.idea       { background: var(--blue-soft); border-color: #d2e2f0; }
+.box.idea .box-title { color: var(--blue); }
+.box.warn       { background: var(--amber-soft); border-color: #ecdcb4; }
+.box.warn .box-title { color: var(--amber); }
+.box.takeaway   { background: var(--rose-soft); border-color: #ecd2d6; }
+.box.takeaway .box-title { color: var(--rose); }
+
+/* ---- "for the curious" collapsible derivations ---- */
+details.derivation {
+  border: 1px dashed #c9cfd6;
+  border-radius: var(--radius);
+  padding: 4px 18px;
+  margin: 1.3em 0;
+  background: #fcfcfb;
+}
+details.derivation > summary {
+  cursor: pointer;
+  font-family: var(--sans);
+  font-weight: 700;
+  color: var(--blue);
+  padding: 10px 0;
+  list-style: none;
+}
+details.derivation > summary::-webkit-details-marker { display: none; }
+details.derivation > summary::before { content: "▸ "; color: var(--blue); }
+details.derivation[open] > summary::before { content: "▾ "; }
+details.derivation[open] > summary { border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+
+/* ---- code ---- */
+code {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.86em;
+  background: var(--code-bg);
+  padding: 1px 6px;
+  border-radius: 5px;
+  color: #b03a4a;
+}
+pre {
+  background: #1f2328;
+  color: #e6e9ec;
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+pre code { background: none; color: inherit; padding: 0; }
+
+/* ---- tables ---- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.3em 0;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+}
+th, td { border: 1px solid var(--line); padding: 9px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+tr:nth-child(even) td { background: #fafbfb; }
+
+/* ---- glossary ---- */
+.term-en { font-family: var(--sans); font-weight: 700; color: var(--blue); }
+.term-ru { font-family: var(--sans); color: var(--ink-soft); font-style: italic; }
+
+/* ---- interactive widgets ---- */
+.widget {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 18px;
+  margin: 1.6em 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.widget .widget-title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+.widget .widget-sub {
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+/* Only the plot SVG (direct child) stretches to full width.
+   MathJax renders inline formulas as <svg> too, so we must NOT catch those. */
+.widget > svg { display: block; width: 100%; height: auto; }
+
+/* Keep MathJax output sized to the surrounding text everywhere. */
+mjx-container { font-size: inherit !important; }
+mjx-container svg { width: auto; height: auto; max-width: 100%; }
+mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 22px;
+  align-items: center;
+  margin-top: 12px;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+}
+.control { display: flex; align-items: center; gap: 8px; }
+.control label { color: var(--ink-soft); white-space: nowrap; }
+.control input[type=range] { accent-color: var(--accent); width: 150px; }
+.control .val {
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  min-width: 44px;
+  display: inline-block;
+}
+.readout {
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 0.84rem;
+  background: var(--code-bg);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+  color: var(--ink-soft);
+}
+button.btn {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button.btn.ghost { background: #fff; color: var(--accent); }
+button.btn:hover { opacity: 0.9; }
+
+/* svg helper strokes */
+.axis { stroke: #c2c8cf; stroke-width: 1; }
+.gridline { stroke: #eef0f2; stroke-width: 1; }
+.tick-label { font-family: var(--sans); font-size: 11px; fill: #98a0a8; }
+
+/* ---- footer nav ---- */
+.chapter-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 2px solid var(--line);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+}
+.chapter-nav a { text-decoration: none; font-weight: 600; }
+.chapter-nav .disabled { color: #c2c8cf; pointer-events: none; }
+
+/* ---- index / TOC cards ---- */
+.toc-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 1.6em 0; }
+.toc-card {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  background: var(--surface);
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color 0.15s, transform 0.15s;
+}
+.toc-card:hover { border-color: var(--accent); transform: translateX(3px); }
+.toc-card .num {
+  font-family: var(--sans);
+  font-weight: 800;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+.toc-card .t { font-family: var(--sans); font-weight: 700; font-size: 1.05rem; margin: 2px 0; }
+.toc-card .d { font-size: 0.9rem; color: var(--ink-soft); }
+
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .control input[type=range] { width: 110px; }
+}

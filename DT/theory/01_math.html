@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Глава 1 · Математический разогрев</title>
+<link rel="stylesheet" href="assets/style.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script src="assets/common.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="home" href="index.html">Деревья и ансамбли · теория</a>
+    <span class="nav-prev-next">
+      <a href="index.html">↑ оглавление</a>
+      <a href="02_glossary.html">далее →</a>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="chapter-tag">Глава 1</div>
+  <h1>Математический разогрев</h1>
+
+  <p>Прежде чем говорить про деревья, договоримся об инструментах. Здесь — ровно тот
+  минимум математики, на котором держится всё дальнейшее: <strong>доля и вероятность</strong>,
+  <strong>среднее и дисперсия</strong>, <strong>математическое ожидание</strong>,
+  <strong>логарифм</strong>, <strong>производная и градиент</strong> и, наконец,
+  <strong>выпуклость</strong> с неравенством Йенсена. Ничего лишнего: каждый кусок
+  понадобится в конкретном месте дальше, и мы будем на него ссылаться.</p>
+
+  <div class="box idea">
+    <div class="box-title">Зачем это всё пригодится</div>
+    <ul>
+      <li><b>Доля и вероятность</b> → критерии неоднородности дерева (глава 4).</li>
+      <li><b>Логарифм</b> → энтропия (глава 4).</li>
+      <li><b>Среднее, дисперсия, мат. ожидание</b> → разложение ошибки (глава 5) и
+          формула дисперсии бэггинга (глава 6).</li>
+      <li><b>Производная и градиент</b> → градиентный бустинг и связь с SGD (глава 7).</li>
+      <li><b>Выпуклость и Йенсен</b> → доказательство «разбиение не ухудшает
+          неоднородность» (глава 4).</li>
+    </ul>
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.1. Доля, частота и вероятность</h2>
+
+  <p>Самый частый объект во всём курсе — <strong>доля</strong>. Если в корзине
+  $\ell$ объектов и среди них $\ell_k$ объектов класса $k$, то доля класса $k$ — это</p>
+
+  $$ p_k = \frac{\ell_k}{\ell}. $$
+
+  <p>Доля всегда лежит в отрезке $[0, 1]$, а доли всех классов в сумме дают единицу:
+  $\sum_k p_k = 1$. Когда выборка большая и «честная», эту наблюдаемую долю (частоту)
+  мы трактуем как <strong>вероятность</strong> вытащить объект класса $k$ — это и есть
+  смысл записи $p_k$ дальше по тексту. Если в листе дерева 9 объектов класса «кошка»
+  и 1 объект класса «собака», то $p_{\text{кошка}} = 0.9$, $p_{\text{собака}} = 0.1$,
+  и интуитивно лист «почти чистый».</p>
+
+  <div class="box def">
+    <div class="box-title">Определение</div>
+    Набор $(p_1, \dots, p_K)$ с $p_k \ge 0$ и $\sum_k p_k = 1$ называют
+    <b>распределением</b> по классам. Вся «неопределённость» узла дерева — это функция
+    только от этого набора долей.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.2. Среднее и дисперсия</h2>
+
+  <p><strong>Среднее</strong> (арифметическое) набора чисел $z_1, \dots, z_n$ — это</p>
+
+  $$ \bar z = \frac{1}{n}\sum_{i=1}^{n} z_i. $$
+
+  <p>Это «центр тяжести» данных. <strong>Дисперсия</strong> измеряет, насколько сильно
+  числа разбросаны вокруг своего среднего:</p>
+
+  $$ \mathrm{Var}(z) = \frac{1}{n}\sum_{i=1}^{n} (z_i - \bar z)^2 . $$
+
+  <p>Внутри стоит <strong>квадрат</strong> отклонения — поэтому, во-первых, плюсы и
+  минусы не сокращаются, а во-вторых, большие отклонения штрафуются сильнее маленьких.
+  Корень из дисперсии, $\sqrt{\mathrm{Var}(z)}$, называют <strong>стандартным
+  отклонением</strong> — это «типичный разброс» в тех же единицах, что и сами числа.</p>
+
+  <div class="box idea">
+    <div class="box-title">Два смысла дисперсии в курсе</div>
+    Та же формула обслуживает две разные истории. В <b>регрессионном дереве</b>
+    дисперсия значений $y$ внутри листа — это мера его неоднородности (глава 4). В
+    <b>разложении ошибки</b> дисперсия предсказаний модели по разным обучающим выборкам —
+    это слагаемое «variance», с которым борется бэггинг (главы 5–6).
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.3. Математическое ожидание</h2>
+
+  <p>Среднее — это про конкретный набор чисел, который у нас уже на руках.
+  <strong>Математическое ожидание</strong> $\mathbb{E}[\,\cdot\,]$ — это про
+  «среднее в пределе», по всей случайности процесса, как если бы мы повторили
+  эксперимент бесконечно много раз. Для дискретной величины, принимающей значения
+  $z_k$ с вероятностями $p_k$,</p>
+
+  $$ \mathbb{E}[z] = \sum_{k} p_k\, z_k . $$
+
+  <p>Мат. ожидание <strong>линейно</strong> — это свойство мы будем использовать в
+  выводах постоянно:</p>
+
+  $$ \mathbb{E}[a\,z + b\,w] = a\,\mathbb{E}[z] + b\,\mathbb{E}[w]. $$
+
+  <p>Через мат. ожидание дисперсия записывается компактно, и в таком виде она появится
+  в главе 5:</p>
+
+  $$ \mathrm{Var}(z) = \mathbb{E}\big[(z - \mathbb{E}[z])^2\big]
+     = \mathbb{E}[z^2] - \big(\mathbb{E}[z]\big)^2 . $$
+
+  <details class="derivation">
+    <summary>Для любознательных: почему $\mathrm{Var}(z)=\mathbb{E}[z^2]-(\mathbb{E}[z])^2$</summary>
+    <p>Обозначим $\mu = \mathbb{E}[z]$ (это число, не случайная величина). Раскроем
+    квадрат и воспользуемся линейностью:</p>
+    $$\begin{aligned}
+      \mathrm{Var}(z) &= \mathbb{E}\big[(z-\mu)^2\big]
+        = \mathbb{E}\big[z^2 - 2\mu z + \mu^2\big] \\
+        &= \mathbb{E}[z^2] - 2\mu\,\mathbb{E}[z] + \mu^2
+        = \mathbb{E}[z^2] - 2\mu^2 + \mu^2
+        = \mathbb{E}[z^2] - \mu^2.
+    \end{aligned}$$
+    <p>Здесь мы вынесли константы $2\mu$ и $\mu^2$ за знак ожидания и подставили
+    $\mathbb{E}[z]=\mu$. Эта же техника «раскрыть квадрат и собрать по линейности»
+    лежит в основе всего разложения ошибки в главе 5.</p>
+  </details>
+
+  <!-- =========================================================== -->
+  <h2>1.4. Логарифм</h2>
+
+  <p>Логарифм $\log_b(x)$ отвечает на вопрос «в какую степень нужно возвести основание
+  $b$, чтобы получить $x$»: если $b^y = x$, то $y = \log_b(x)$. Нам важны три факта:</p>
+
+  <ul>
+    <li>$\log_b(1) = 0$ при любом основании (потому что $b^0 = 1$);</li>
+    <li>логарифм растёт <strong>очень медленно</strong> и для $x \in (0,1)$
+        <strong>отрицателен</strong>;</li>
+    <li>смена основания — это просто умножение на константу:
+        $\log_b(x) = \dfrac{\ln x}{\ln b}$. Поэтому выбор основания (2, $e$ или 10)
+        меняет лишь масштаб по вертикали, а не форму кривой.</li>
+  </ul>
+
+  <p>В энтропии (глава 4) появится конструкция $-\log p$. Её удобно читать как
+  «<strong>удивление</strong>»: чем менее вероятно событие (меньше $p$), тем больше мы
+  удивляемся, когда оно происходит, — и тем больше $-\log p$. У достоверного события
+  ($p = 1$) удивление нулевое. Покрутите ползунок и убедитесь сами.</p>
+
+  <!-- WIDGET 1: logarithm -->
+  <div class="widget" id="w-log">
+    <div class="widget-title">Логарифм и «удивление» $-\log_b x$</div>
+    <div class="widget-sub">Ползунок двигает точку по кривой. Переключатель меняет
+      основание — форма та же, меняется только масштаб.</div>
+    <svg viewBox="0 0 600 300" id="svg-log"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>$x$ =</label>
+        <input type="range" id="log-x" min="0.05" max="6" step="0.01" value="1">
+        <span class="val" id="log-x-val">1.00</span>
+      </div>
+      <div class="control">
+        <label>основание $b$:</label>
+        <select id="log-base">
+          <option value="2">2</option>
+          <option value="2.71828" selected>e ≈ 2.72</option>
+          <option value="10">10</option>
+        </select>
+      </div>
+    </div>
+    <div class="readout" id="log-readout"></div>
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.5. Производная: скорость изменения и наклон касательной</h2>
+
+  <p>Производная $f'(x_0)$ — это <strong>наклон касательной</strong> к графику функции
+  в точке $x_0$, то есть скорость, с которой функция меняется в этой точке. Формально
+  это предел отношения приращений:</p>
+
+  $$ f'(x_0) = \lim_{\Delta x \to 0} \frac{f(x_0 + \Delta x) - f(x_0)}{\Delta x}. $$
+
+  <p>Знак производной говорит, куда идёт функция: $f'(x_0) > 0$ — растёт,
+  $f'(x_0) < 0$ — убывает, $f'(x_0) = 0$ — «полка» (часто это минимум или максимум).
+  Именно нулём производной мы будем искать оптимум, а её знаком — направление, в котором
+  надо двигаться, чтобы функцию уменьшить. Подвигайте точку касания.</p>
+
+  <!-- WIDGET 2: tangent / derivative -->
+  <div class="widget" id="w-tan">
+    <div class="widget-title">Касательная и производная</div>
+    <div class="widget-sub">Чёрная кривая — функция $f$. Зелёная прямая — касательная
+      в выбранной точке; её наклон и есть $f'(x_0)$.</div>
+    <svg viewBox="0 0 600 300" id="svg-tan"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>$x_0$ =</label>
+        <input type="range" id="tan-x" min="0" max="10" step="0.02" value="2">
+        <span class="val" id="tan-x-val">2.00</span>
+      </div>
+    </div>
+    <div class="readout" id="tan-readout"></div>
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.6. Градиент и градиентный спуск</h2>
+
+  <p>Когда у функции несколько аргументов, $f(x_1, \dots, x_d)$, вместо одной производной
+  появляется <strong>градиент</strong> — вектор из частных производных:</p>
+
+  $$ \nabla f = \left( \frac{\partial f}{\partial x_1}, \dots,
+      \frac{\partial f}{\partial x_d} \right). $$
+
+  <p>Ключевое свойство: градиент указывает направление <strong>наискорейшего
+  роста</strong> функции. Значит, $-\nabla f$ указывает в сторону наискорейшего
+  <strong>убывания</strong>. Это и есть рецепт <strong>градиентного спуска</strong> —
+  алгоритма, которым минимизируют почти всё в машинном обучении (и логистическую
+  регрессию, и нейросети, и — внезапно — бустинг в главе 7):</p>
+
+  $$ x_{t+1} = x_t - \eta\, \nabla f(x_t). $$
+
+  <p>Здесь $\eta$ — <strong>темп обучения</strong> (learning rate), длина шага. И вот
+  тонкость, которую важно прочувствовать руками: если шаг слишком мал — спуск ползёт
+  целую вечность; если слишком велик — алгоритм перепрыгивает минимум и
+  <strong>расходится</strong>. Эта же $\eta$ дословно появится в бустинге. Покрутите:</p>
+
+  <!-- WIDGET 3: gradient descent -->
+  <div class="widget" id="w-gd">
+    <div class="widget-title">Градиентный спуск по параболе $f(x)=\tfrac12 x^2$</div>
+    <div class="widget-sub">$f'(x)=x$, поэтому шаг — это $x \leftarrow x - \eta\,x$.
+      Нажимайте «Шаг» и смотрите, как точка катится в минимум. При $\eta>2$ — разлёт.</div>
+    <svg viewBox="0 0 600 300" id="svg-gd"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>темп $\eta$ =</label>
+        <input type="range" id="gd-eta" min="0.05" max="2.3" step="0.05" value="0.6">
+        <span class="val" id="gd-eta-val">0.60</span>
+      </div>
+      <button class="btn" id="gd-step">Шаг</button>
+      <button class="btn ghost" id="gd-reset">Сброс</button>
+    </div>
+    <div class="readout" id="gd-readout"></div>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">Запомните это ощущение</div>
+    Маленький $\eta$ — медленно, но надёжно. Большой $\eta$ — быстро, но рискованно,
+    вплоть до расходимости. Ровно тот же компромисс «темп против устойчивости» мы
+    увидим в бустинге, где маленький $\eta$ + много деревьев почти всегда лучше, чем
+    большой $\eta$ + мало деревьев (глава 7).
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.7. Выпуклость, вогнутость и неравенство Йенсена</h2>
+
+  <p>Функция <strong>выпукла</strong> (convex), если её график «улыбается» — лежит
+  <em>ниже</em> любой своей хорды (отрезка, соединяющего две точки графика). Функция
+  <strong>вогнута</strong> (concave), если «грустит» — лежит <em>выше</em> своих хорд.
+  Парабола $x^2$ выпукла; $\sqrt{x}$ и логарифм вогнуты.</p>
+
+  <p>Геометрический факт «кривая выше хорды» в формулах превращается в
+  <strong>неравенство Йенсена</strong>. Для вогнутой функции $f$:</p>
+
+  $$ f\!\left(\frac{a+b}{2}\right) \;\ge\; \frac{f(a)+f(b)}{2},
+     \qquad\text{в общем виде}\qquad
+     f\big(\mathbb{E}[x]\big) \ge \mathbb{E}\big[f(x)\big]. $$
+
+  <p>Словами: <strong>значение вогнутой функции в среднем не меньше, чем среднее её
+  значений</strong>. Для выпуклой функции знак неравенства противоположный. Этот
+  невинный с виду факт — стержень доказательства в главе 4 о том, что разбиение узла
+  дерева <strong>никогда не увеличивает</strong> неоднородность. Подвигайте точки и
+  смотрите на зазор между кривой и хордой.</p>
+
+  <!-- WIDGET 4: concavity / Jensen -->
+  <div class="widget" id="w-jen">
+    <div class="widget-title">Вогнутая функция выше своей хорды</div>
+    <div class="widget-sub">Кривая $f(x)=2\sqrt{x}$ (вогнута). Серая линия — хорда между
+      точками $a$ и $b$. В середине видно: $f$ в средней точке выше середины хорды.</div>
+    <svg viewBox="0 0 600 300" id="svg-jen"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>$a$ =</label>
+        <input type="range" id="jen-a" min="0.1" max="8.9" step="0.05" value="1">
+        <span class="val" id="jen-a-val">1.00</span>
+      </div>
+      <div class="control">
+        <label>$b$ =</label>
+        <input type="range" id="jen-b" min="0.1" max="8.9" step="0.05" value="8">
+        <span class="val" id="jen-b-val">8.00</span>
+      </div>
+    </div>
+    <div class="readout" id="jen-readout"></div>
+  </div>
+
+  <div class="box takeaway">
+    <div class="box-title">Итог главы</div>
+    <ul>
+      <li><b>Доля</b> $p_k=\ell_k/\ell$ — кирпич всех критериев дерева.</li>
+      <li><b>Среднее и дисперсия</b> $\bar z$, $\mathrm{Var}(z)$ — центр и разброс;
+          дисперсия = $\mathbb{E}[z^2]-(\mathbb{E}[z])^2$.</li>
+      <li><b>Мат. ожидание</b> линейно — этим мы будем раскрывать квадраты в выводах.</li>
+      <li><b>$-\log p$</b> — «удивление», основа энтропии.</li>
+      <li><b>Производная</b> — наклон; <b>градиент</b> $-\nabla f$ — направление спуска;
+          $\eta$ — длина шага.</li>
+      <li><b>Йенсен</b>: вогнутая функция $\ge$ среднего своих значений — отсюда вырастет
+          неотрицательность информационного выигрыша.</li>
+    </ul>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="index.html">← Оглавление</a>
+    <a href="02_glossary.html">Глава 2. Глоссарий →</a>
+  </div>
+
+</div>
+
+<!-- ============================ WIDGET SCRIPTS ============================ -->
+<script>
+// ---- Widget 1: logarithm ----
+(function () {
+  const svg = document.getElementById("svg-log");
+  const W = 600, H = 300, padL = 44, padR = 16, padT = 16, padB = 30;
+  const x0 = 0, x1 = 6, y0 = -4.5, y1 = 3;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const slider = document.getElementById("log-x");
+  const sliderVal = document.getElementById("log-x-val");
+  const baseSel = document.getElementById("log-base");
+  const readout = document.getElementById("log-readout");
+
+  function logb(x, b) { return Math.log(x) / Math.log(b); }
+
+  function render() {
+    const b = parseFloat(baseSel.value);
+    const xv = parseFloat(slider.value);
+    sliderVal.textContent = xv.toFixed(2);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g");
+    svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1,
+      xticks: [1, 2, 3, 4, 5, 6], yticks: [-4, -2, 0, 2] });
+
+    // curve
+    const xs = [], ys = [];
+    for (let px = 0.05; px <= x1; px += 0.03) { xs.push(sx(px)); ys.push(sy(logb(px, b))); }
+    g.appendChild(el("path", { d: pathFrom(xs, ys), fill: "none",
+      stroke: "#1f2328", "stroke-width": 2.5 }));
+
+    // marker on curve
+    const yv = logb(xv, b);
+    g.appendChild(el("line", { x1: sx(xv), y1: sy(y0), x2: sx(xv), y2: sy(yv),
+      stroke: "#2f6f4f", "stroke-width": 1, "stroke-dasharray": "4 3" }));
+    g.appendChild(el("circle", { cx: sx(xv), cy: sy(yv), r: 5, fill: "#2f6f4f" }));
+
+    readout.innerHTML = `log<sub>b</sub>(${xv.toFixed(2)}) = <b>${yv.toFixed(3)}</b>` +
+      `  ·  «удивление» −log(${xv.toFixed(2)}) = <b>${(-yv).toFixed(3)}</b>` +
+      (xv < 1 ? "  (x&lt;1 → логарифм отрицателен)" : "");
+  }
+  slider.addEventListener("input", render);
+  baseSel.addEventListener("change", render);
+  render();
+})();
+
+// ---- Widget 2: tangent / derivative ----
+(function () {
+  const svg = document.getElementById("svg-tan");
+  const W = 600, H = 300, padL = 40, padR = 16, padT = 16, padB = 30;
+  const x0 = 0, x1 = 10, y0 = -2, y1 = 9;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const slider = document.getElementById("tan-x");
+  const sliderVal = document.getElementById("tan-x-val");
+  const readout = document.getElementById("tan-readout");
+
+  const f = x => 0.6 * x + 1.5 * Math.sin(x) + 1.5;
+  const df = x => 0.6 + 1.5 * Math.cos(x);
+
+  function render() {
+    const x0v = parseFloat(slider.value);
+    sliderVal.textContent = x0v.toFixed(2);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1,
+      xticks: [0, 2, 4, 6, 8, 10], yticks: [0, 2, 4, 6, 8] });
+
+    // curve
+    const xs = [], ys = [];
+    for (let px = x0; px <= x1; px += 0.04) { xs.push(sx(px)); ys.push(sy(f(px))); }
+    g.appendChild(el("path", { d: pathFrom(xs, ys), fill: "none",
+      stroke: "#1f2328", "stroke-width": 2.5 }));
+
+    // tangent line
+    const slope = df(x0v), fx = f(x0v);
+    const tLine = x => fx + slope * (x - x0v);
+    const xa = Math.max(x0, x0v - 2.4), xb = Math.min(x1, x0v + 2.4);
+    g.appendChild(el("line", { x1: sx(xa), y1: sy(tLine(xa)),
+      x2: sx(xb), y2: sy(tLine(xb)), stroke: "#2f6f4f", "stroke-width": 2.5 }));
+    g.appendChild(el("circle", { cx: sx(x0v), cy: sy(fx), r: 5, fill: "#2f6f4f" }));
+
+    const dir = slope > 0.02 ? "растёт ↗" : slope < -0.02 ? "убывает ↘" : "≈ полка →";
+    readout.innerHTML = `f(x₀) = <b>${fx.toFixed(2)}</b>  ·  наклон f′(x₀) = ` +
+      `<b>${slope.toFixed(2)}</b>  ·  функция ${dir}`;
+  }
+  slider.addEventListener("input", render);
+  render();
+})();
+
+// ---- Widget 3: gradient descent ----
+(function () {
+  const svg = document.getElementById("svg-gd");
+  const W = 600, H = 300, padL = 40, padR = 16, padT = 16, padB = 30;
+  const x0 = -5, x1 = 5, y0 = 0, y1 = 13;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const etaS = document.getElementById("gd-eta");
+  const etaV = document.getElementById("gd-eta-val");
+  const readout = document.getElementById("gd-readout");
+  const f = x => 0.5 * x * x;
+
+  let traj = [4.2]; // current trajectory of x positions
+
+  function render() {
+    const eta = parseFloat(etaS.value);
+    etaV.textContent = eta.toFixed(2);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1,
+      xticks: [-4, -2, 0, 2, 4], yticks: [0, 4, 8, 12] });
+
+    // parabola
+    const xs = [], ys = [];
+    for (let px = x0; px <= x1; px += 0.05) {
+      const v = f(px); if (v <= y1) { xs.push(sx(px)); ys.push(sy(v)); }
+    }
+    g.appendChild(el("path", { d: pathFrom(xs, ys), fill: "none",
+      stroke: "#1f2328", "stroke-width": 2.5 }));
+
+    // trajectory points (faded → bright)
+    for (let i = 0; i < traj.length; i++) {
+      const xv = traj[i];
+      const yv = Math.min(f(xv), y1 + 5);
+      const last = i === traj.length - 1;
+      const inRange = xv >= x0 && xv <= x1 && f(xv) <= y1;
+      if (i > 0) { // connecting segment along the curve direction
+        const px = traj[i - 1];
+        g.appendChild(el("line", { x1: sx(Math.max(x0, Math.min(x1, px))), y1: sy(Math.min(f(px), y1)),
+          x2: sx(Math.max(x0, Math.min(x1, xv))), y2: sy(Math.min(f(xv), y1)),
+          stroke: "#9b3b46", "stroke-width": 1, "stroke-dasharray": "3 3", opacity: 0.5 }));
+      }
+      if (inRange) {
+        g.appendChild(el("circle", { cx: sx(xv), cy: sy(f(xv)),
+          r: last ? 6 : 4, fill: last ? "#9b3b46" : "#d49aa0",
+          stroke: last ? "#fff" : "none", "stroke-width": 1.5 }));
+      }
+    }
+    const cur = traj[traj.length - 1];
+    const grad = cur; // f'(x) = x
+    const diverged = Math.abs(cur) > 5;
+    readout.innerHTML = `шаг №<b>${traj.length - 1}</b>  ·  x = <b>${cur.toFixed(3)}</b>  ·  ` +
+      `f(x) = <b>${f(cur).toFixed(3)}</b>  ·  градиент f′(x)=x = <b>${grad.toFixed(3)}</b>` +
+      (diverged ? `  ·  <span style="color:#9b3b46">разлёт! (|1−η|&gt;1)</span>` :
+        (Math.abs(cur) < 1e-3 ? `  ·  <span style="color:#2f6f4f">в минимуме</span>` : ""));
+  }
+  function step() {
+    const eta = parseFloat(etaS.value);
+    const cur = traj[traj.length - 1];
+    const next = cur - eta * cur; // x - η f'(x)
+    traj.push(next);
+    if (traj.length > 14) traj = traj.slice(traj.length - 14);
+    render();
+  }
+  function reset() { traj = [4.2]; render(); }
+  document.getElementById("gd-step").addEventListener("click", step);
+  document.getElementById("gd-reset").addEventListener("click", reset);
+  etaS.addEventListener("input", render);
+  render();
+})();
+
+// ---- Widget 4: concavity / Jensen ----
+(function () {
+  const svg = document.getElementById("svg-jen");
+  const W = 600, H = 300, padL = 40, padR = 16, padT = 16, padB = 30;
+  const x0 = 0, x1 = 9, y0 = 0, y1 = 6.5;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const aS = document.getElementById("jen-a"), aV = document.getElementById("jen-a-val");
+  const bS = document.getElementById("jen-b"), bV = document.getElementById("jen-b-val");
+  const readout = document.getElementById("jen-readout");
+  const f = x => 2 * Math.sqrt(x);
+
+  function render() {
+    let a = parseFloat(aS.value), b = parseFloat(bS.value);
+    aV.textContent = a.toFixed(2); bV.textContent = b.toFixed(2);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1,
+      xticks: [0, 2, 4, 6, 8], yticks: [0, 2, 4, 6] });
+
+    // curve
+    const xs = [], ys = [];
+    for (let px = x0; px <= x1; px += 0.04) { xs.push(sx(px)); ys.push(sy(f(px))); }
+    g.appendChild(el("path", { d: pathFrom(xs, ys), fill: "none",
+      stroke: "#1f2328", "stroke-width": 2.5 }));
+
+    // chord
+    g.appendChild(el("line", { x1: sx(a), y1: sy(f(a)), x2: sx(b), y2: sy(f(b)),
+      stroke: "#888", "stroke-width": 2 }));
+    g.appendChild(el("circle", { cx: sx(a), cy: sy(f(a)), r: 4.5, fill: "#2d5d8a" }));
+    g.appendChild(el("circle", { cx: sx(b), cy: sy(f(b)), r: 4.5, fill: "#2d5d8a" }));
+
+    // midpoint comparison
+    const m = (a + b) / 2;
+    const fMid = f(m);                 // curve at the mean
+    const chordMid = (f(a) + f(b)) / 2; // chord at the mean
+    g.appendChild(el("line", { x1: sx(m), y1: sy(chordMid), x2: sx(m), y2: sy(fMid),
+      stroke: "#2f6f4f", "stroke-width": 3 }));
+    g.appendChild(el("circle", { cx: sx(m), cy: sy(fMid), r: 5, fill: "#2f6f4f" }));
+    g.appendChild(el("circle", { cx: sx(m), cy: sy(chordMid), r: 4, fill: "#fff",
+      stroke: "#888", "stroke-width": 2 }));
+
+    readout.innerHTML =
+      `f(среднего) = <b>${fMid.toFixed(3)}</b>  ≥  среднее f = <b>${chordMid.toFixed(3)}</b>` +
+      `  ·  зазор = <b>${(fMid - chordMid).toFixed(3)}</b> (всегда ≥ 0 для вогнутой)`;
+  }
+  aS.addEventListener("input", render);
+  bS.addEventListener("input", render);
+  render();
+})();
+</script>
+
+</body>
+</html>

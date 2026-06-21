@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>От школьной математики до деревьев и ансамблей</title>
+<link rel="stylesheet" href="assets/style.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="home" href="index.html">Деревья и ансамбли · теория</a>
+    <span></span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="chapter-tag">Учебное пособие</div>
+  <h1>От школьной математики до деревьев и ансамблей</h1>
+
+  <p>Это сопровождающий теоретический справочник к занятиям по решающим деревьям
+  и ансамблям. Здесь собрана <strong>вся математика</strong>, которую мы проходили в
+  ноутбуках, но в развёрнутом виде: с выводами формул для регрессии и классификации,
+  с пояснениями «почему именно так», и так, чтобы можно было дойти
+  <strong>от школьного уровня</strong> до полного понимания деревьев, разложения
+  ошибки и градиентного бустинга.</p>
+
+  <div class="box idea">
+    <div class="box-title">Как пользоваться</div>
+    Главы идут по нарастанию. Если что-то непонятно — почти наверняка нужное
+    объяснение есть в предыдущей главе или в <a href="02_glossary.html">глоссарии</a>.
+    Формулы можно просто читать; а <strong>интерактивные графики</strong> (с ползунками)
+    стоит покрутить руками — именно в этот момент математика становится наглядной.
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">Технические детали</div>
+    Документ — набор самодостаточных HTML-страниц. Открывайте
+    <code>index.html</code> двойным кликом в браузере. Формулы рендерит MathJax,
+    интерактив — обычный JavaScript; для формул нужен интернет (MathJax грузится с CDN),
+    графики работают и офлайн.
+  </div>
+
+  <h2>Содержание</h2>
+
+  <div class="toc-grid">
+    <a class="toc-card" href="01_math.html">
+      <span class="num">Глава 1</span>
+      <div class="t">Математический разогрев</div>
+      <div class="d">Доля и вероятность, среднее и дисперсия, мат. ожидание, логарифм,
+      производная и градиент, выпуклость и неравенство Йенсена — ровно тот минимум,
+      на котором держится всё остальное.</div>
+    </a>
+    <a class="toc-card" href="02_glossary.html">
+      <span class="num">Глава 2</span>
+      <div class="t">Глоссарий терминов</div>
+      <div class="d">Англоязычные термины с переводом и пояснением. Дальше по тексту
+      мы используем именно их.</div>
+    </a>
+    <a class="toc-card" href="03_supervised.html">
+      <span class="num">Глава 3</span>
+      <div class="t">Постановка задачи обучения</div>
+      <div class="d">Объекты и признаки, регрессия против классификации, функция потерь
+      и эмпирический риск.</div>
+    </a>
+    <a class="toc-card" href="04_trees.html">
+      <span class="num">Глава 4</span>
+      <div class="t">Решающие деревья</div>
+      <div class="d">Нарезка пространства, критерии неоднородности (энтропия, Джини,
+      дисперсия) с выводом, информационный выигрыш, почему разбиение не ухудшает
+      неоднородность, регрессионное дерево.</div>
+    </a>
+    <a class="toc-card" href="05_bias_variance.html">
+      <span class="num">Глава 5</span>
+      <div class="t">Разложение ошибки (Bias–Variance)</div>
+      <div class="d">Полный вывод $\sigma^2 + \text{bias}^2 + \text{var}$, смысл каждого
+      слагаемого, дерево против линейной модели.</div>
+    </a>
+    <a class="toc-card" href="06_bagging.html">
+      <span class="num">Глава 6</span>
+      <div class="t">Ансамбли усреднением: бэггинг и случайный лес</div>
+      <div class="d">Bootstrap и правило 63/37, вывод формулы дисперсии среднего,
+      декорреляция в случайном лесе, OOB, важность признаков.</div>
+    </a>
+    <a class="toc-card" href="07_boosting.html">
+      <span class="num">Глава 7</span>
+      <div class="t">Градиентный бустинг</div>
+      <div class="d">Обучение на остатках как функциональный градиентный спуск,
+      псевдо-остатки, вывод для регрессии и классификации, связь с SGD, путь к CatBoost.</div>
+    </a>
+    <a class="toc-card" href="08_cheatsheet.html">
+      <span class="num">Глава 8</span>
+      <div class="t">Шпаргалка формул</div>
+      <div class="d">Все ключевые формулы на одной странице.</div>
+    </a>
+  </div>
+
+</div>
+</body>
+</html>

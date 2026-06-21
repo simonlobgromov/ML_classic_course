@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Глава 3 · Постановка задачи обучения</title>
+<link rel="stylesheet" href="assets/style.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script src="assets/common.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="home" href="index.html">Деревья и ансамбли · теория</a>
+    <span class="nav-prev-next">
+      <a href="02_glossary.html">← назад</a>
+      <a href="04_trees.html">далее →</a>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="chapter-tag">Глава 3</div>
+  <h1>Постановка задачи обучения с учителем</h1>
+
+  <p>Прежде чем строить деревья, договоримся, <em>что вообще</em> мы строим и
+  <em>что значит</em> «модель хорошая». Это короткая, но важная глава: дальше каждый
+  алгоритм мы будем читать как «способ минимизировать вот эту величину».</p>
+
+  <!-- =========================================================== -->
+  <h2>3.1. Объекты, признаки, ответы</h2>
+
+  <p>Данные — это таблица. Каждая строка — <strong>объект</strong> (observation), каждый
+  столбец — <strong>признак</strong> (feature). Объект под номером $i$ описывается вектором
+  из $n$ признаков</p>
+
+  $$ x_i = (x_{i1}, x_{i2}, \dots, x_{in}), \qquad i = 1, \dots, \ell, $$
+
+  <p>где $\ell$ — число объектов, $n$ — число признаков. Всю таблицу называют
+  <strong>матрицей объекты–признаки</strong> $X$ размера $\ell \times n$. Рядом стоит
+  столбец <strong>ответов</strong> (целевая переменная) $y = (y_1, \dots, y_\ell)$.
+  В обучении с учителем мы видим пары $(x_i, y_i)$ и хотим научиться по новому $x$
+  предсказывать его $y$.</p>
+
+  <div class="box def">
+    <div class="box-title">Модель</div>
+    <strong>Модель</strong> — это функция $a(x)$, которая принимает вектор признаков и
+    выдаёт прогноз $\hat y = a(x)$. Обучение — это поиск хорошей $a$ внутри выбранного
+    семейства (прямые, деревья, ансамбли деревьев…).
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>3.2. Два типа задач</h2>
+
+  <table>
+    <thead><tr><th></th><th>Регрессия</th><th>Классификация</th></tr></thead>
+    <tbody>
+      <tr><td><b>Что предсказываем</b></td><td>число $y \in \mathbb{R}$</td><td>класс из конечного набора</td></tr>
+      <tr><td><b>Пример</b></td><td>цена квартиры</td><td>кошка / собака; отток / не отток</td></tr>
+      <tr><td><b>Что в листе дерева</b></td><td>среднее значений $y$</td><td>доля классов $p_k$</td></tr>
+      <tr><td><b>Типичная потеря</b></td><td>квадрат ошибки $(y-\hat y)^2$</td><td>лог-потеря, доля ошибок</td></tr>
+    </tbody>
+  </table>
+
+  <p>Удобно, что и дерево, и лес, и бустинг умеют работать <strong>в обоих режимах</strong> —
+  меняется только мера качества внутри. Поэтому почти каждую формулу в курсе мы выписываем
+  дважды: версию для регрессии и версию для классификации.</p>
+
+  <!-- =========================================================== -->
+  <h2>3.3. Функция потерь и эмпирический риск</h2>
+
+  <p>Чтобы сравнивать модели, нужна <strong>функция потерь</strong> (loss) $\ell(y, \hat y)$ —
+  штраф за то, что на объекте с истинным ответом $y$ модель сказала $\hat y$. Самый частый
+  выбор для регрессии — <strong>квадратичная потеря</strong>:</p>
+
+  $$ \ell(y, \hat y) = (y - \hat y)^2 . $$
+
+  <p>Квадрат удобен: он гладкий (есть производная везде) и сильнее штрафует крупные промахи.
+  Качество модели на всей выборке — это средняя потеря, её называют
+  <strong>эмпирическим риском</strong>:</p>
+
+  $$ Q(a) = \frac{1}{\ell} \sum_{i=1}^{\ell} \ell\big(y_i,\, a(x_i)\big)
+     \;\xrightarrow[\text{регрессия}]{}\;
+     \frac{1}{\ell}\sum_{i=1}^{\ell} \big(y_i - a(x_i)\big)^2 . $$
+
+  <p>Эта последняя величина — <strong>MSE</strong> (mean squared error, среднеквадратичная
+  ошибка). <strong>Обучить модель</strong> = подобрать её параметры так, чтобы эмпирический
+  риск был как можно меньше. Покрутите прямую руками и почувствуйте, что «обучение» — это
+  поиск дна вот этой долины $Q$.</p>
+
+  <!-- WIDGET: empirical risk minimization -->
+  <div class="widget" id="w-erm">
+    <div class="widget-title">Подбор прямой и эмпирический риск (MSE)</div>
+    <div class="widget-sub">Двигайте сдвиг и наклон. Красные отрезки — ошибки на объектах;
+      MSE — средний квадрат их длин. Цель обучения — сделать MSE минимальным.</div>
+    <svg viewBox="0 0 600 300" id="svg-erm"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>сдвиг $b$ =</label>
+        <input type="range" id="erm-b" min="-3" max="6" step="0.1" value="0">
+        <span class="val" id="erm-b-val">0.0</span>
+      </div>
+      <div class="control">
+        <label>наклон $w$ =</label>
+        <input type="range" id="erm-w" min="-0.4" max="1.8" step="0.02" value="0.2">
+        <span class="val" id="erm-w-val">0.20</span>
+      </div>
+      <button class="btn ghost" id="erm-best">Показать оптимум</button>
+    </div>
+    <div class="readout" id="erm-readout"></div>
+  </div>
+
+  <div class="box idea">
+    <div class="box-title">Два способа минимизировать риск</div>
+    Дальше мы увидим два разных подхода к одной и той же цели $Q \to \min$.
+    <b>Дерево</b> минимизирует риск <em>жадно и косвенно</em> — режет пространство, снижая
+    неоднородность узлов (глава 4). <b>Градиентный бустинг</b> минимизирует риск
+    <em>напрямую</em> — делает шаги градиентного спуска по $Q$ в пространстве функций (глава 7).
+    Обе истории — про спуск в эту самую долину.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>3.4. Обучение, переобучение и обобщение</h2>
+
+  <p>Минимизировать риск <em>на обучающих данных</em> до нуля — обманчиво лёгкая цель: можно
+  просто «запомнить» каждый объект. Но нам важно качество на <strong>новых</strong> данных —
+  это называют <strong>обобщающей способностью</strong> (generalization). Поэтому данные
+  делят: на <strong>обучающей</strong> выборке (train) подбирают модель, на отложенной
+  <strong>тестовой</strong> (test) — честно её оценивают; а для устойчивости используют
+  <strong>кросс-валидацию</strong> (несколько разных разбиений).</p>
+
+  <ul>
+    <li><strong>Недообучение</strong> (underfitting): модель слишком простая, риск высок и на
+        train, и на test.</li>
+    <li><strong>Переобучение</strong> (overfitting): риск на train почти нулевой, а на test
+        большой — модель выучила шум.</li>
+  </ul>
+
+  <p>Почему так получается и как это разложить на понятные составляющие — тема главы 5
+  («смещение и разброс»). А пока запомним рамку: <em>обучение — это минимизация функции
+  потерь, но судим мы по обобщению</em>.</p>
+
+  <div class="box takeaway">
+    <div class="box-title">Итог главы</div>
+    <ul>
+      <li>Данные — матрица $X$ ($\ell \times n$) и ответы $y$; модель — функция $\hat y = a(x)$.</li>
+      <li>Регрессия предсказывает число, классификация — класс; алгоритмы курса работают в обоих режимах.</li>
+      <li><b>Функция потерь</b> $\ell(y,\hat y)$ штрафует ошибку; <b>эмпирический риск</b>
+          $Q=\tfrac1\ell\sum \ell(y_i,a(x_i))$ — её среднее.</li>
+      <li>Обучение = $Q \to \min$; но цель — <b>обобщение</b>, поэтому есть train/test и кросс-валидация.</li>
+    </ul>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="02_glossary.html">← Глава 2. Глоссарий</a>
+    <a href="04_trees.html">Глава 4. Решающие деревья →</a>
+  </div>
+
+</div>
+
+<script>
+// ---- Widget: empirical risk minimization on a line ----
+(function () {
+  const svg = document.getElementById("svg-erm");
+  const W = 600, H = 300, padL = 40, padR = 16, padT = 16, padB = 30;
+  const x0 = 0, x1 = 10, y0 = 0, y1 = 11;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const bS = document.getElementById("erm-b"), bV = document.getElementById("erm-b-val");
+  const wS = document.getElementById("erm-w"), wV = document.getElementById("erm-w-val");
+  const readout = document.getElementById("erm-readout");
+
+  // deterministic data: y = 1 + 0.8 x + noise
+  const rng = mulberry32(7);
+  const data = [];
+  for (let i = 0; i < 12; i++) {
+    const x = 0.4 + i * 0.8 + 0.2 * (rng() - 0.5);
+    const y = 1 + 0.8 * x + 1.1 * gauss(rng);
+    data.push([x, Math.max(0.2, Math.min(10.6, y))]);
+  }
+  // closed-form OLS for reference
+  const n = data.length;
+  let mx = 0, my = 0; data.forEach(([x, y]) => { mx += x; my += y; }); mx /= n; my /= n;
+  let sxy = 0, sxx = 0; data.forEach(([x, y]) => { sxy += (x - mx) * (y - my); sxx += (x - mx) ** 2; });
+  const wBest = sxy / sxx, bBest = my - wBest * mx;
+  const mseOf = (b, w) => data.reduce((s, [x, y]) => s + (y - (b + w * x)) ** 2, 0) / n;
+  const mseBest = mseOf(bBest, wBest);
+
+  function render() {
+    const b = parseFloat(bS.value), w = parseFloat(wS.value);
+    bV.textContent = b.toFixed(1); wV.textContent = w.toFixed(2);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1,
+      xticks: [0, 2, 4, 6, 8, 10], yticks: [0, 2, 4, 6, 8, 10] });
+
+    // residual segments
+    data.forEach(([x, y]) => {
+      const yh = b + w * x;
+      g.appendChild(el("line", { x1: sx(x), y1: sy(y), x2: sx(x), y2: sy(yh),
+        stroke: "#d49aa0", "stroke-width": 2 }));
+    });
+    // fitted line
+    g.appendChild(el("line", { x1: sx(x0), y1: sy(b + w * x0), x2: sx(x1), y2: sy(b + w * x1),
+      stroke: "#2f6f4f", "stroke-width": 2.5 }));
+    // points
+    data.forEach(([x, y]) => g.appendChild(el("circle",
+      { cx: sx(x), cy: sy(y), r: 4, fill: "#2d5d8a" })));
+
+    const mse = mseOf(b, w);
+    readout.innerHTML = `MSE = <b>${mse.toFixed(3)}</b>  ·  минимально возможная (OLS) = ` +
+      `<b>${mseBest.toFixed(3)}</b>` +
+      (Math.abs(mse - mseBest) < 0.02 ? `  ·  <span style="color:#2f6f4f">вы в оптимуме!</span>`
+        : `  ·  до дна осталось ${(mse - mseBest).toFixed(3)}`);
+  }
+  function showBest() {
+    bS.value = bBest.toFixed(2); wS.value = wBest.toFixed(2); render();
+  }
+  bS.addEventListener("input", render);
+  wS.addEventListener("input", render);
+  document.getElementById("erm-best").addEventListener("click", showBest);
+  render();
+})();
+</script>
+
+</body>
+</html>

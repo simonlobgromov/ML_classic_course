@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Глава 4 · Решающие деревья</title>
+<link rel="stylesheet" href="assets/style.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script src="assets/common.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="home" href="index.html">Деревья и ансамбли · теория</a>
+    <span class="nav-prev-next">
+      <a href="03_supervised.html">← назад</a>
+      <a href="05_bias_variance.html">далее →</a>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="chapter-tag">Глава 4</div>
+  <h1>Решающие деревья</h1>
+
+  <p>Решающее дерево — это последовательность простых вопросов вида «признак $x_j$ меньше
+  порога $s$?». Каждый ответ уводит объект влево или вправо, и так, спускаясь по дереву,
+  объект попадает в <strong>лист</strong>, где лежит готовый прогноз. Геометрически дерево
+  <strong>нарезает признаковое пространство на прямоугольные области</strong>, в каждой из
+  которых ответ постоянен.</p>
+
+  <div class="box idea">
+    <div class="box-title">Главный вопрос главы</div>
+    Раз дерево строится из разбиений «признак $<$ порог», весь алгоритм сводится к одному:
+    <b>как выбрать хорошее разбиение?</b> Чтобы ответить, нужно научиться измерять, насколько
+    узел «перемешан», — и выбирать разбиение, которое уменьшает перемешанность сильнее всего.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>4.1. Неоднородность узла</h2>
+
+  <p>Пусть $R$ — множество объектов, попавших в текущий узел. Введём
+  <strong>меру неоднородности</strong> (impurity) $H(R)$ — число, которое велико, когда в
+  узле «всё перемешано», и равно нулю, когда узел <strong>чистый</strong> (все объекты
+  одного класса для классификации; все $y$ одинаковы для регрессии). Хорошее разбиение —
+  то, после которого дети чище родителя.</p>
+
+  <p>Для классификации $H$ зависит только от долей классов $p_k = \ell_k / |R|$ (см. главу 1).
+  Три классических критерия:</p>
+
+  $$
+  \underbrace{\;1 - \max_k p_k\;}_{\text{ошибка классиф.}}
+  \qquad
+  \underbrace{\;\textstyle\sum_k p_k (1 - p_k) = 1 - \sum_k p_k^2\;}_{\text{критерий Джини}}
+  \qquad
+  \underbrace{\;-\textstyle\sum_k p_k \log p_k\;}_{\text{энтропия}}
+  $$
+
+  <p>Все три равны нулю на чистом узле (одна доля равна 1, остальные 0) и максимальны, когда
+  классы делятся поровну. Но ведут себя по-разному — покрутите ползунок для бинарного случая
+  ($p$ — доля одного класса):</p>
+
+  <!-- WIDGET A: impurity curves -->
+  <div class="widget" id="w-imp">
+    <div class="widget-title">Три критерия неоднородности (бинарный случай)</div>
+    <div class="widget-sub">Энтропия и Джини — гладкие и строго вогнутые; ошибка
+      классификации — с изломом. Все максимальны при $p=0.5$ (полная неопределённость).</div>
+    <svg viewBox="0 0 600 300" id="svg-imp"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>доля класса $p$ =</label>
+        <input type="range" id="imp-p" min="0" max="1" step="0.005" value="0.5">
+        <span class="val" id="imp-p-val">0.50</span>
+      </div>
+    </div>
+    <div class="readout" id="imp-readout"></div>
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>4.2. Откуда берутся эти критерии: вероятностный смысл</h2>
+
+  <p>Критерии выглядят как формулы «с потолка», но у каждого есть простой смысл — это
+  <strong>вероятность ошибиться</strong> при определённой стратегии угадывания класса
+  случайного объекта узла.</p>
+
+  <h3>Ошибка классификации $1 - \max_k p_k$</h3>
+  <p>Стратегия: всегда называть <strong>самый частый</strong> класс. Доля верных ответов —
+  $\max_k p_k$, значит доля ошибок — $1 - \max_k p_k$. Прямо «как часто промахнёмся, если
+  голосуем за большинство».</p>
+
+  <h3>Критерий Джини $\sum_k p_k(1-p_k)$</h3>
+  <p>Стратегия: называть класс <strong>случайно</strong>, с вероятностями, равными долям
+  классов в узле. Объект на самом деле класса $k$ с вероятностью $p_k$; мы угадали неверно
+  с вероятностью $(1 - p_k)$. Усредняя по всем классам:</p>
+  $$ \text{P(ошибка)} = \sum_k p_k (1 - p_k) = 1 - \sum_k p_k^2 . $$
+  <p>Это и есть индекс Джини — ожидаемая доля ошибок «случайного угадывателя».</p>
+
+  <h3>Энтропия $-\sum_k p_k \log p_k$</h3>
+  <p>Здесь работает «удивление» из главы 1: редкое событие ($p_k$ мало) несёт много
+  информации, $-\log p_k$. Энтропия — это <strong>среднее удивление</strong> по узлу,
+  $\mathbb{E}[-\log p] = -\sum_k p_k \log p_k$. Чем более перемешан узел, тем больше в нём
+  «неожиданности», тем выше энтропия.</p>
+
+  <details class="derivation">
+    <summary>Для любознательных: почему именно $-\sum p_k \log p_k$, а не что-то другое</summary>
+    <p>Потребуем от меры «информации» события с вероятностью $p$ трёх свойств: (1) она зависит
+    только от $p$, обозначим $I(p)$; (2) достоверное событие не несёт информации, $I(1)=0$;
+    (3) информация двух <em>независимых</em> событий складывается: $I(p\cdot q) = I(p) + I(q)$.
+    Последнее — функциональное уравнение, и его непрерывное решение единственно с точностью до
+    множителя: $I(p) = -C\log p$ при $C>0$. Среднее такой информации по узлу и есть энтропия
+    $-\sum_k p_k\log p_k$. Основание логарифма ($2$, $e$, $10$) — это лишь выбор $C$, то есть
+    единиц (биты, наты); на работу дерева он не влияет.</p>
+  </details>
+
+  <div class="box warn">
+    <div class="box-title">Почему на практике берут Джини или энтропию, а не ошибку</div>
+    Ошибка классификации $1-\max_k p_k$ — <b>кусочно-линейная</b> (с изломом на графике выше).
+    Из-за этого она «не замечает» разбиений, которые улучшают чистоту, но не меняют класс
+    большинства, и часто даёт $Q=0$ там, где Джини и энтропия видят прогресс. Гладкие строго
+    вогнутые Джини и энтропия чувствительнее — отсюда их популярность.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>4.3. Регрессионное дерево и «лучшая константа»</h2>
+
+  <p>Для регрессии в листе лежит число, а неоднородность естественно мерить
+  <strong>дисперсией</strong> ответов (см. главу 1):</p>
+
+  $$ H(R) = \frac{1}{|R|} \sum_{i \in R} (y_i - \bar y_R)^2,
+     \qquad \bar y_R = \frac{1}{|R|}\sum_{i\in R} y_i . $$
+
+  <p>Чистый узел (все $y$ равны) даёт $H=0$. А почему прогноз в листе — именно среднее
+  $\bar y_R$? Потому что среднее — это <strong>лучшая константа</strong> по квадратичной
+  потере. Найдём константу $c$, минимизирующую $\sum_{i\in R}(y_i - c)^2$:</p>
+
+  $$ \frac{d}{dc}\sum_{i\in R}(y_i - c)^2 = -2\sum_{i\in R}(y_i - c) = 0
+     \;\Longrightarrow\; c = \frac{1}{|R|}\sum_{i\in R} y_i = \bar y_R . $$
+
+  <div class="box idea">
+    <div class="box-title">Запомните: «лучшая константа»</div>
+    Для квадратичной потери лучшая константа — <b>среднее</b>; для классификации с долей
+    ошибок — <b>класс большинства</b>; для лог-потери — <b>частоты классов</b>. Это понятие
+    вернётся в главе 7: бустинг стартует ровно с лучшей константы $F_0$ и дальше её улучшает.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>4.4. Функционал качества разбиения (информационный выигрыш)</h2>
+
+  <p>Теперь соберём всё вместе. Разбиение задаётся признаком $j$ и порогом $s$: объекты с
+  $x_j < s$ уходят в левый узел $R_l$, остальные — в правый $R_r$. Его качество —
+  <strong>информационный выигрыш</strong>: насколько упала неоднородность, с учётом размеров
+  детей:</p>
+
+  $$ Q(R, j, s) = H(R) - \frac{|R_l|}{|R|} H(R_l) - \frac{|R_r|}{|R|} H(R_r)
+     \;\longrightarrow\; \max_{j,\,s}. $$
+
+  <p>Веса $|R_l|/|R|$ и $|R_r|/|R|$ нужны, чтобы крупный грязный узел «весил» больше мелкого.
+  Алгоритм перебирает все признаки и все разумные пороги и берёт пару $(j, s)$ с наибольшим
+  выигрышем. Подвигайте порог на одномерном примере и найдите максимум $Q$ руками:</p>
+
+  <!-- WIDGET B: threshold search -->
+  <div class="widget" id="w-thr">
+    <div class="widget-title">Поиск порога: информационный выигрыш $Q$</div>
+    <div class="widget-sub">Синие и красные точки — два класса вдоль оси $x$. Вертикаль —
+      порог $s$. Внизу — $Q$ для текущего порога; кнопка показывает оптимальный.</div>
+    <svg viewBox="0 0 600 300" id="svg-thr"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>порог $s$ =</label>
+        <input type="range" id="thr-s" min="0.3" max="9.7" step="0.05" value="5">
+        <span class="val" id="thr-s-val">5.00</span>
+      </div>
+      <button class="btn ghost" id="thr-best">Лучший порог</button>
+    </div>
+    <div class="readout" id="thr-readout"></div>
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>4.5. Почему разбиение никогда не увеличивает неоднородность</h2>
+
+  <p>В виджете выше $Q$ всегда получался $\ge 0$ — разбиение либо помогало, либо не вредило,
+  но никогда не делало хуже. Это не случайность, а <strong>математический факт</strong>, и
+  доказывается он через вогнутость и неравенство Йенсена из главы 1.</p>
+
+  <p>Ключевое наблюдение: доли классов родителя — это <strong>взвешенное среднее</strong>
+  долей детей. Обозначив $\alpha = |R_l|/|R|$ (тогда $|R_r|/|R| = 1-\alpha$), для каждого
+  класса $k$ имеем</p>
+
+  $$ p_k(R) = \alpha\, p_k(R_l) + (1-\alpha)\, p_k(R_r). $$
+
+  <details class="derivation">
+    <summary>Для любознательных: полный вывод $Q \ge 0$</summary>
+    <p>Меры Джини и энтропия — <b>вогнутые</b> функции вектора долей $p=(p_1,\dots,p_K)$
+    (это и видно на графике в 4.1: они «выпуклы вверх»). Применим неравенство Йенсена для
+    вогнутой $H$ к точке $p(R) = \alpha\,p(R_l) + (1-\alpha)\,p(R_r)$:</p>
+    $$ H\big(\underbrace{\alpha\,p(R_l) + (1-\alpha)\,p(R_r)}_{=\,p(R)}\big)
+       \;\ge\; \alpha\,H(R_l) + (1-\alpha)\,H(R_r). $$
+    <p>Левая часть — это $H(R)$. Перенесём правую часть налево:</p>
+    $$ Q = H(R) - \alpha\,H(R_l) - (1-\alpha)\,H(R_r) \;\ge\; 0. $$
+    <p>То есть <b>выигрыш всегда неотрицателен</b>. Для <em>строго</em> вогнутых Джини и
+    энтропии равенство (то есть $Q=0$) достигается, только если распределения классов в детях
+    совпадают с родительским, — а значит, любое «осмысленное» разбиение строго улучшает
+    чистоту. У кусочно-линейной ошибки классификации вогнутость нестрогая, поэтому она может
+    давать $Q=0$ и для полезных разбиений — ещё одна причина предпочитать Джини и энтропию.</p>
+  </details>
+
+  <div class="box def">
+    <div class="box-title">Что это значит на практике</div>
+    Жадный шаг дерева <b>безопасен</b>: разбивая узел, мы не можем ухудшить суммарную
+    неоднородность. Поэтому дерево можно строить рекурсивно сверху вниз, на каждом шаге беря
+    локально лучшее разбиение, — и не бояться, что станет хуже.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>4.6. Сборка дерева: рекурсия и остановка</h2>
+
+  <p>Алгоритм построения целиком:</p>
+
+  <pre><code>Функция ПостроитьДерево(R):
+    если R чистый или сработал критерий остановки:
+        вернуть лист с прогнозом (среднее y / класс большинства)
+    перебрать все признаки j и пороги s, найти (j*, s*) с максимальным Q
+    разбить R на R_l, R_r по (j*, s*)
+    вернуть узел( ПостроитьДерево(R_l), ПостроитьДерево(R_r) )</code></pre>
+
+  <p>Если не останавливаться, дерево дорастёт до идеально чистых листьев — и
+  <strong>переобучится</strong> (запомнит шум). Поэтому рост ограничивают
+  <strong>гиперпараметрами-регуляризаторами</strong>:</p>
+
+  <ul>
+    <li><code>max_depth</code> — максимальная глубина;</li>
+    <li><code>min_samples_leaf</code> — минимум объектов в листе;</li>
+    <li><code>min_samples_split</code> — минимум объектов, чтобы вообще делить узел.</li>
+  </ul>
+
+  <p>Все они регулируют <strong>сложность</strong> дерева — а сложность, как мы увидим в
+  следующей главе, и есть та ручка, что управляет балансом смещения и разброса.</p>
+
+  <div class="box takeaway">
+    <div class="box-title">Итог главы</div>
+    <ul>
+      <li>Дерево нарезает пространство разбиениями «признак $<$ порог»; в листе — лучшая константа.</li>
+      <li><b>Неоднородность</b> $H(R)$: ошибка $1-\max_k p_k$, Джини $\sum_k p_k(1-p_k)$,
+          энтропия $-\sum_k p_k\log p_k$; для регрессии — дисперсия.</li>
+      <li>У всех критериев — смысл «вероятность ошибиться» при своей стратегии угадывания.</li>
+      <li>Разбиение выбирают по максимуму выигрыша $Q = H(R)-\alpha H(R_l)-(1-\alpha)H(R_r)$.</li>
+      <li>$Q \ge 0$ всегда — следствие вогнутости $H$ и неравенства Йенсена.</li>
+      <li>Без ограничений дерево переобучается; глубину и размер листьев держат гиперпараметры.</li>
+    </ul>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="03_supervised.html">← Глава 3. Постановка задачи</a>
+    <a href="05_bias_variance.html">Глава 5. Разложение ошибки →</a>
+  </div>
+
+</div>
+
+<script>
+// ---- Widget A: impurity curves ----
+(function () {
+  const svg = document.getElementById("svg-imp");
+  const W = 600, H = 300, padL = 40, padR = 16, padT = 16, padB = 30;
+  const x0 = 0, x1 = 1, y0 = 0, y1 = 1.05;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const pS = document.getElementById("imp-p"), pV = document.getElementById("imp-p-val");
+  const readout = document.getElementById("imp-readout");
+
+  const log2 = x => Math.log(x) / Math.log(2);
+  const entropy = p => (p <= 0 || p >= 1) ? 0 : -p * log2(p) - (1 - p) * log2(1 - p);
+  const gini = p => 2 * p * (1 - p);
+  const err = p => Math.min(p, 1 - p);
+
+  function curve(fn, color, label) {
+    const xs = [], ys = [];
+    for (let p = 0; p <= 1.0001; p += 0.005) { xs.push(sx(p)); ys.push(sy(fn(p))); }
+    return el("path", { d: pathFrom(xs, ys), fill: "none", stroke: color, "stroke-width": 2.5 });
+  }
+  function legend(g, x, y, color, text) {
+    g.appendChild(el("line", { x1: x, y1: y, x2: x + 22, y2: y, stroke: color, "stroke-width": 3 }));
+    const t = el("text", { x: x + 28, y: y + 4, class: "tick-label" }); t.textContent = text;
+    g.appendChild(t);
+  }
+
+  function render() {
+    const p = parseFloat(pS.value);
+    pV.textContent = p.toFixed(2);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1,
+      xticks: [0, 0.25, 0.5, 0.75, 1], yticks: [0, 0.25, 0.5, 0.75, 1] });
+
+    g.appendChild(curve(entropy, "#2d5d8a"));
+    g.appendChild(curve(gini, "#2f6f4f"));
+    g.appendChild(curve(err, "#9b3b46"));
+    legend(g, 70, 30, "#2d5d8a", "энтропия");
+    legend(g, 70, 48, "#2f6f4f", "Джини");
+    legend(g, 70, 66, "#9b3b46", "ошибка");
+
+    // marker
+    g.appendChild(el("line", { x1: sx(p), y1: sy(y0), x2: sx(p), y2: sy(y1),
+      stroke: "#888", "stroke-width": 1, "stroke-dasharray": "4 3" }));
+    [["#2d5d8a", entropy], ["#2f6f4f", gini], ["#9b3b46", err]].forEach(([c, fn]) =>
+      g.appendChild(el("circle", { cx: sx(p), cy: sy(fn(p)), r: 4.5, fill: c })));
+
+    readout.innerHTML = `при p=${p.toFixed(2)}:  энтропия=<b>${entropy(p).toFixed(3)}</b>  ·  ` +
+      `Джини=<b>${gini(p).toFixed(3)}</b>  ·  ошибка=<b>${err(p).toFixed(3)}</b>`;
+  }
+  pS.addEventListener("input", render);
+  render();
+})();
+
+// ---- Widget B: threshold search with information gain ----
+(function () {
+  const svg = document.getElementById("svg-thr");
+  const W = 600, H = 300, padL = 40, padR = 16, padT = 24, padB = 40;
+  const x0 = 0, x1 = 10;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const yBlue = padT + 40, yRed = H - padB - 40; // two rows
+  const sS = document.getElementById("thr-s"), sV = document.getElementById("thr-s-val");
+  const readout = document.getElementById("thr-readout");
+
+  // deterministic 1D two-class data (class 0 = blue low x, class 1 = red high x, some overlap)
+  const rng = mulberry32(11);
+  const pts = [];
+  for (let i = 0; i < 16; i++) pts.push({ x: 0.6 + 4.0 * rng(), c: 0 });          // blue cluster
+  for (let i = 0; i < 16; i++) pts.push({ x: 5.2 + 4.2 * rng(), c: 1 });          // red cluster
+  pts.push({ x: 5.6, c: 0 }, { x: 3.6, c: 1 });                                   // a little overlap
+  const N = pts.length;
+
+  function gini(group) {
+    if (group.length === 0) return 0;
+    const p = group.filter(o => o.c === 0).length / group.length;
+    return 2 * p * (1 - p);
+  }
+  function gainAt(s) {
+    const L = pts.filter(o => o.x < s), R = pts.filter(o => o.x >= s);
+    const Hroot = gini(pts);
+    return Hroot - (L.length / N) * gini(L) - (R.length / N) * gini(R);
+  }
+  // precompute best
+  let bestS = 5, bestQ = -1;
+  for (let s = 0.3; s <= 9.7; s += 0.05) { const q = gainAt(s); if (q > bestQ) { bestQ = q; bestS = s; } }
+
+  function render() {
+    const s = parseFloat(sS.value);
+    sV.textContent = s.toFixed(2);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+
+    // shaded left/right
+    g.appendChild(el("rect", { x: sx(x0), y: padT, width: sx(s) - sx(x0), height: H - padB - padT,
+      fill: "#e8f0f7", opacity: 0.6 }));
+    g.appendChild(el("rect", { x: sx(s), y: padT, width: sx(x1) - sx(s), height: H - padB - padT,
+      fill: "#f7e6e8", opacity: 0.6 }));
+    // axis
+    g.appendChild(el("line", { x1: sx(x0), y1: H - padB, x2: sx(x1), y2: H - padB, class: "axis" }));
+    for (const tx of [0, 2, 4, 6, 8, 10]) {
+      const t = el("text", { x: sx(tx), y: H - padB + 16, class: "tick-label", "text-anchor": "middle" });
+      t.textContent = tx; g.appendChild(t);
+    }
+    // points
+    pts.forEach(o => g.appendChild(el("circle", { cx: sx(o.x), cy: o.c === 0 ? yBlue : yRed,
+      r: 5, fill: o.c === 0 ? "#2d5d8a" : "#9b3b46", opacity: 0.85 })));
+    // row labels
+    const lab = (y, txt, col) => { const t = el("text", { x: sx(x0) - 4, y: y + 4, class: "tick-label",
+      "text-anchor": "end", fill: col }); t.textContent = txt; g.appendChild(t); };
+    lab(yBlue, "класс 0", "#2d5d8a"); lab(yRed, "класс 1", "#9b3b46");
+    // threshold line
+    g.appendChild(el("line", { x1: sx(s), y1: padT, x2: sx(s), y2: H - padB,
+      stroke: "#2f6f4f", "stroke-width": 2.5 }));
+
+    const L = pts.filter(o => o.x < s), R = pts.filter(o => o.x >= s);
+    const cnt = grp => `[${grp.filter(o => o.c === 0).length}·0, ${grp.filter(o => o.c === 1).length}·1]`;
+    const q = gainAt(s);
+    readout.innerHTML = `слева ${cnt(L)}  |  справа ${cnt(R)}  ·  ` +
+      `Q = <b>${q.toFixed(3)}</b>  (максимум Q = <b>${bestQ.toFixed(3)}</b> при s≈${bestS.toFixed(2)})`;
+  }
+  function showBest() { sS.value = bestS.toFixed(2); render(); }
+  sS.addEventListener("input", render);
+  document.getElementById("thr-best").addEventListener("click", showBest);
+  render();
+})();
+</script>
+
+</body>
+</html>

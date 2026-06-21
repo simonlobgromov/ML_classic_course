@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Глава 7 · Градиентный бустинг</title>
+<link rel="stylesheet" href="assets/style.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script src="assets/common.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="home" href="index.html">Деревья и ансамбли · теория</a>
+    <span class="nav-prev-next">
+      <a href="06_bagging.html">← назад</a>
+      <a href="08_cheatsheet.html">далее →</a>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="chapter-tag">Глава 7</div>
+  <h1>Градиентный бустинг</h1>
+
+  <p>Бэггинг строил деревья <strong>параллельно</strong> и усреднял их, чтобы убить разброс.
+  Бустинг идёт ровно противоположным путём: строит модели <strong>последовательно</strong>,
+  и каждая новая исправляет <strong>ошибки</strong> предыдущих. Так он бьёт по другому
+  слагаемому ошибки — по <strong>смещению</strong>. А слово «градиентный» окажется не
+  метафорой: мы увидим, что бустинг — это буквально градиентный спуск, только в пространстве
+  функций.</p>
+
+  <table>
+    <thead><tr><th></th><th>Бэггинг / лес</th><th>Бустинг</th></tr></thead>
+    <tbody>
+      <tr><td><b>как строятся</b></td><td>параллельно, независимо</td><td>последовательно, друг за другом</td></tr>
+      <tr><td><b>базовые модели</b></td><td>глубокие деревья</td><td>мелкие деревья (пни)</td></tr>
+      <tr><td><b>с чем борется</b></td><td>разброс (variance)</td><td>смещение (bias)</td></tr>
+      <tr><td><b>что делает новая модель</b></td><td>ещё один независимый голос</td><td>чинит остаток предыдущих</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>7.1. Идея: учимся на остатках</h2>
+
+  <p>Возьмём регрессию и квадратичную потерю. Начнём с самого глупого прогноза —
+  <strong>лучшей константы</strong> $F_0 = \bar y$ (помним из главы 4: для MSE это среднее).
+  Она, конечно, всех мимо. Посмотрим на <strong>остатки</strong> $r_i = y_i - F_0$ — это то,
+  чего модели «не хватает». Обучим маленькое деревце $h_1$ предсказывать эти остатки и
+  добавим его к прогнозу:</p>
+
+  $$ F_1(x) = F_0 + \eta\, h_1(x). $$
+
+  <p>Теперь остатки стали меньше. Повторим: посчитаем новые остатки $r_i = y_i - F_1(x_i)$,
+  обучим $h_2$ на них, добавим. И так $M$ раз:</p>
+
+  $$ F_m(x) = F_{m-1}(x) + \eta\, h_m(x),
+     \qquad h_m \approx \big(y - F_{m-1}\big). $$
+
+  <p>Каждое дерево — слабое (часто <strong>пень</strong>, глубина 1), но вместе они шаг за
+  шагом «дорисовывают» сложную зависимость. Нажимайте «+1 дерево» и смотрите, как ступенчатый
+  прогноз приближается к данным, а остатки тают:</p>
+
+  <!-- WIDGET A: residual boosting stepper -->
+  <div class="widget" id="w-boost">
+    <div class="widget-title">Бустинг на остатках: добавляем пни по одному</div>
+    <div class="widget-sub">Точки — данные. Зелёная ступенчатая линия — текущий ансамбль
+      $F_m$. Красные отрезки — остатки. Меняя $\eta$, начинаем заново.</div>
+    <svg viewBox="0 0 600 300" id="svg-boost"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>темп $\eta$ =</label>
+        <input type="range" id="boost-eta" min="0.1" max="1" step="0.05" value="0.5">
+        <span class="val" id="boost-eta-val">0.50</span>
+      </div>
+      <button class="btn" id="boost-1">+1 дерево</button>
+      <button class="btn" id="boost-10">+10</button>
+      <button class="btn ghost" id="boost-reset">Сброс</button>
+    </div>
+    <div class="readout" id="boost-readout"></div>
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>7.2. Почему «градиентный»: связь с градиентным спуском</h2>
+
+  <p>«Учиться на остатках» — частный случай куда более общей идеи. Запишем, что мы вообще
+  минимизируем: суммарную потерю по всем объектам как функцию от <em>самих прогнозов</em>
+  $F(x_i)$:</p>
+
+  $$ L(F) = \sum_{i=1}^{\ell} \ell\big(y_i,\, F(x_i)\big). $$
+
+  <p>Это функция, аргументы которой — числа $F(x_1), \dots, F(x_\ell)$. Чтобы её уменьшить
+  градиентным спуском, нужен градиент — частная производная потери по прогнозу в каждой точке:</p>
+
+  $$ g_i = \frac{\partial\, \ell(y_i, F(x_i))}{\partial\, F(x_i)},
+     \qquad \text{шаг спуска: } F(x_i) \leftarrow F(x_i) - \eta\, g_i. $$
+
+  <p>Антиградиент $-g_i$ называют <strong>псевдо-остатком</strong>. Для квадратичной потери
+  $\ell = \tfrac12 (y - F)^2$ считаем производную:</p>
+
+  $$ \frac{\partial}{\partial F}\,\tfrac12 (y - F)^2 = -(y - F)
+     \;\Longrightarrow\; -g_i = y_i - F(x_i). $$
+
+  <div class="box idea">
+    <div class="box-title">Вот и разгадка</div>
+    Антиградиент квадратичной потери — это <b>в точности остаток</b> $y_i - F(x_i)$. Значит
+    «обучать дерево на остатках» = «обучать дерево приближать антиградиент». Бустинг делает
+    <b>шаг градиентного спуска</b> $F_m = F_{m-1} - \eta\,g = F_{m-1} + \eta\,(\text{псевдо-остаток})$,
+    только вместо отдельных чисел шаг задаёт <b>целое дерево</b> $h_m$, обобщающее антиградиент
+    на всё пространство. Это и есть «градиентный спуск в пространстве функций».
+  </div>
+
+  <p>Та же $\eta$, что и в главе 1: длина шага. И тот же компромисс — маленький шаг надёжнее.
+  А вот прямая перемычка к <strong>SGD</strong>: если на каждой итерации обучать $h_m$ не на
+  всех объектах, а на случайной их <strong>доле</strong> (<code>subsample</code> $< 1$), то
+  антиградиент оценивается по случайной подвыборке — это <strong>стохастическая</strong> оценка
+  градиента, ровно как «S» в Stochastic Gradient Descent. Заодно это добавляет регуляризации.</p>
+
+  <details class="derivation">
+    <summary>Для любознательных: бустинг линейных моделей — это обычный градиентный спуск</summary>
+    <p>Возьмём базовой моделью не дерево, а линейную функцию, и будем бустить на остатках MSE.
+    Сумма линейных функций — снова линейная функция, поэтому ансамбль всё время остаётся прямой
+    $F(x) = w x + b$. Можно показать, что обновление коэффициентов на каждой итерации — это
+    в точности шаг градиентного спуска по $w, b$ для той же MSE. В пределе ансамбль сходится к
+    решению МНК (OLS) — тому самому «дну долины» из главы 3. Два следствия: (1) связь
+    «бустинг ↔ градиентный спуск» здесь видна совсем буквально; (2) <b>бустинг линейных
+    моделей не делает границу богаче</b> — она остаётся прямой. Чтобы ансамбль научился кривым
+    границам, базовые модели должны быть <b>нелинейными</b> — поэтому в бустинге берут деревья.</p>
+  </details>
+
+  <!-- =========================================================== -->
+  <h2>7.3. Классификация: псевдо-остаток $y - p$</h2>
+
+  <p>Для классификации схема та же, меняется лишь потеря. Ансамбль $F(x)$ предсказывает не
+  вероятность напрямую, а <strong>логит</strong> (лог-шанс), который превращают в вероятность
+  сигмоидой:</p>
+
+  $$ p = \sigma(F) = \frac{1}{1 + e^{-F}}. $$
+
+  <p>Потеря — логистическая (log-loss). Её антиградиент по $F$ получается на удивление
+  чистым:</p>
+
+  $$ -g_i = y_i - p_i = y_i - \sigma(F(x_i)). $$
+
+  <details class="derivation">
+    <summary>Для любознательных: вывод $-g_i = y_i - p_i$</summary>
+    <p>Логистическая потеря для метки $y\in\{0,1\}$ и логита $F$:</p>
+    $$ \ell(y, F) = -\big[\,y\log p + (1-y)\log(1-p)\,\big], \qquad p = \sigma(F). $$
+    <p>Понадобится ключевое свойство сигмоиды: $\dfrac{dp}{dF} = \sigma(F)\big(1-\sigma(F)\big)
+    = p(1-p)$. Дифференцируем по $F$ (через $p$):</p>
+    $$\begin{aligned}
+      \frac{\partial \ell}{\partial F}
+      &= -\left[\frac{y}{p} - \frac{1-y}{1-p}\right]\cdot \frac{dp}{dF}
+       = -\left[\frac{y}{p} - \frac{1-y}{1-p}\right] p(1-p) \\
+      &= -\big[\,y(1-p) - (1-y)p\,\big]
+       = -\big[\,y - yp - p + yp\,\big] = -(y - p) = p - y.
+    \end{aligned}$$
+    <p>Значит антиградиент $-g = y - p$: <b>метка минус предсказанная вероятность</b>. Идеально
+    симметрично регрессии, где было «метка минус прогноз». Этот же $y - p$ появляется и в
+    обучении логистической регрессии — не совпадение, а одно и то же градиентное семейство.</p>
+  </details>
+
+  <div class="box def">
+    <div class="box-title">Псевдо-остаток крупно (шпаргалка)</div>
+    <table style="margin:8px 0 0">
+      <tr><th>потеря</th><th>задача</th><th>антиградиент $-g_i$</th></tr>
+      <tr><td>квадратичная $\tfrac12(y-F)^2$</td><td>регрессия</td><td>$y_i - F(x_i)$ — обычный остаток</td></tr>
+      <tr><td>логистическая</td><td>классификация</td><td>$y_i - \sigma(F(x_i))$ — метка минус вероятность</td></tr>
+    </table>
+  </div>
+
+  <p>Подвигайте логит $F$ и посмотрите, как ведёт себя псевдо-остаток для объекта класса 1 и
+  класса 0:</p>
+
+  <!-- WIDGET B: logistic pseudo-residual -->
+  <div class="widget" id="w-sig">
+    <div class="widget-title">Сигмоида и псевдо-остаток $y - \sigma(F)$</div>
+    <div class="widget-sub">Кривая — вероятность $p=\sigma(F)$. Для метки $y=1$ псевдо-остаток
+      $1-p$ (зелёный), для $y=0$ — $-p$ (красный). Где модель уверена и права — остаток ≈ 0.</div>
+    <svg viewBox="0 0 600 300" id="svg-sig"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>логит $F$ =</label>
+        <input type="range" id="sig-f" min="-6" max="6" step="0.05" value="0">
+        <span class="val" id="sig-f-val">0.00</span>
+      </div>
+    </div>
+    <div class="readout" id="sig-readout"></div>
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>7.4. Темп обучения, переобучение и ранняя остановка</h2>
+
+  <p>Полный шаг ($\eta = 1$) жаден: ансамбль быстро подгоняется под обучающие данные, включая
+  шум. Маленький $\eta$ (<strong>shrinkage</strong>, сжатие) «придерживает» вклад каждого
+  дерева — учимся медленнее, но <strong>обобщаем лучше</strong>. Платим числом деревьев: чем
+  меньше $\eta$, тем больше $M$ нужно. Это главный компромисс настройки:</p>
+
+  <ul>
+    <li><strong>train-ошибка</strong> с ростом $M$ <em>всегда</em> падает (можно довести до нуля);</li>
+    <li><strong>валидационная</strong> ошибка сначала падает, потом проходит минимум и
+        начинает расти — это и есть переобучение;</li>
+    <li><strong>early stopping</strong>: остановиться на этом минимуме — стандартный приём.</li>
+  </ul>
+
+  <div class="box warn">
+    <div class="box-title">Бустинг vs бэггинг: важная разница</div>
+    Лесу лишние деревья не вредят — качество выходит на плато (усреднение). Бустинг же
+    <b>может переобучиться</b> от лишних деревьев: каждое новое целенаправленно уменьшает
+    обучающую ошибку и в какой-то момент начинает ловить шум. Поэтому в бустинге $M$ —
+    это параметр, который <b>нужно подбирать</b>, а не «бери побольше».
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>7.5. От базового GBM к XGBoost / LightGBM / CatBoost</h2>
+
+  <p>Описанный алгоритм — это «ванильный» градиентный бустинг (<code>GradientBoosting</code> в
+  sklearn). Современные библиотеки — это тот же скелет плюс инженерия:</p>
+
+  <table>
+    <thead><tr><th>Что добавили</th><th>Зачем</th></tr></thead>
+    <tbody>
+      <tr><td>2-й порядок (метод Ньютона)</td><td>используют не только градиент, но и кривизну (гессиан) — точнее шаги (XGBoost)</td></tr>
+      <tr><td>регуляризация деревьев</td><td>штраф за число листьев и величину их значений — против переобучения</td></tr>
+      <tr><td>гистограммные сплиты</td><td>пороги ищут по корзинам гистограммы, а не по всем значениям — кратно быстрее (LightGBM, HistGB)</td></tr>
+      <tr><td>категориальные признаки</td><td>обрабатываются нативно через целевые статистики (CatBoost) — без one-hot</td></tr>
+      <tr><td>ordered boosting</td><td>борьба со «утечкой» цели при подсчёте статистик (CatBoost)</td></tr>
+    </tbody>
+  </table>
+
+  <p>На табличных данных с взаимодействиями признаков бустинг обычно <strong>обходит
+  случайный лес</strong> по качеству — потому что прицельно гасит смещение, а не только
+  разброс. Цена — более тонкая настройка и чувствительность к числу деревьев.</p>
+
+  <!-- =========================================================== -->
+  <h2>7.6. Практическая настройка: с чего начинать</h2>
+
+  <ol>
+    <li><strong>Зафиксируйте небольшой $\eta$</strong> (0.05–0.1) и подберите число деревьев
+        $M$ по валидации с <strong>ранней остановкой</strong>. Это связка №1.</li>
+    <li><strong>Глубина деревьев</strong> маленькая: 3–6. Глубже — рискуете переобучением и
+        ловите слишком сложные взаимодействия.</li>
+    <li><strong>subsample</strong> и <strong>доля признаков</strong> $\approx 0.7$–$0.9$ —
+        добавляют стохастичности и регуляризации (та самая связь с SGD).</li>
+    <li>Затем — <strong>регуляризация</strong> (L1/L2 на листья, минимальный вес в листе).</li>
+    <li>Смотрите на <strong>кривые обучения</strong> train vs validation: расходятся рано →
+        уменьшайте сложность ($\eta$, глубину) или усиливайте регуляризацию.</li>
+  </ol>
+
+  <div class="box idea">
+    <div class="box-title">Мнемоника настройки</div>
+    Сначала — <b>$\eta$ + число деревьев</b> (темп и длина пути). Потом — <b>глубина</b>
+    (богатство взаимодействий). Потом — <b>стохастичность и регуляризация</b> (против шума).
+    Не крутите всё сразу: меняйте по одной группе и смотрите на валидационную кривую.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>7.7. Когда выбирать бустинг и как его интерпретировать</h2>
+
+  <p><strong>Брать бустинг</strong>, когда: данные табличные, важно качество, есть время на
+  настройку, признаки разнородные и со взаимодействиями. <strong>Думать дважды</strong>,
+  когда: нужна предельная простота и интерпретируемость «из коробки», данных очень мало, или
+  важна скорость обучения без тюнинга (тогда лес — крепкий дефолт).</p>
+
+  <p>Интерпретируемость у бустинга не нулевая, просто другая:</p>
+  <ul>
+    <li><strong>важность признаков</strong> (gain / permutation) — какие признаки вообще
+        работают;</li>
+    <li><strong>SHAP</strong> — вклад каждого признака в <em>каждый отдельный</em> прогноз
+        (для деревьев считается быстро и точно);</li>
+    <li><strong>PDP / ICE</strong> — как меняется прогноз при изменении одного признака;</li>
+    <li><strong>монотонные ограничения</strong> — можно заставить прогноз монотонно зависеть от
+        признака (например, «больше площадь → не дешевле»), что важно для доверия к модели.</li>
+  </ul>
+
+  <div class="box takeaway">
+    <div class="box-title">Итог главы</div>
+    <ul>
+      <li>Бустинг строит модели <b>последовательно</b>; каждая чинит остаток предыдущих; бьёт по <b>смещению</b>.</li>
+      <li>$F_m = F_{m-1} + \eta\,h_m$, старт с лучшей константы $F_0$.</li>
+      <li>«Градиентный» = шаг градиентного спуска по $L(F)$; <b>псевдо-остаток</b> $-g_i$:
+          для MSE это $y_i-F_i$, для логистической — $y_i-p_i$.</li>
+      <li>$\eta$ — длина шага; <b>subsample</b> делает спуск стохастическим (связь с SGD).</li>
+      <li>Бустинг линейных моделей остаётся линейным → базовые модели берут нелинейные (деревья).</li>
+      <li>Лишние деревья могут <b>переобучить</b> → ранняя остановка; $M$ подбирают.</li>
+      <li>XGBoost/LightGBM/CatBoost = тот же бустинг + 2-й порядок, регуляризация, гистограммы, категории.</li>
+    </ul>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="06_bagging.html">← Глава 6. Бэггинг и случайный лес</a>
+    <a href="08_cheatsheet.html">Глава 8. Шпаргалка формул →</a>
+  </div>
+
+</div>
+
+<script>
+// ---- Widget A: residual boosting with stumps ----
+(function () {
+  const svg = document.getElementById("svg-boost");
+  const W = 600, H = 300, padL = 36, padR = 16, padT = 16, padB = 30;
+  const x0 = 0, x1 = 10, y0 = -2, y1 = 11;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const etaS = document.getElementById("boost-eta"), etaV = document.getElementById("boost-eta-val");
+  const readout = document.getElementById("boost-readout");
+
+  // deterministic 1D data: nonlinear target + noise
+  const rng = mulberry32(5);
+  const xs = [], ys = [];
+  for (let i = 0; i < 30; i++) {
+    const x = 0.2 + 9.6 * i / 29;
+    xs.push(x);
+    ys.push(4 + 3 * Math.sin(0.8 * x) - 0.12 * (x - 5) * (x - 5) / 2 + 0.7 * gauss(rng) + 1.5);
+  }
+  const n = xs.length;
+  const mean = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+
+  let F0 = 0, stumps = [];   // ensemble state
+  let F = [];                // current prediction per point
+
+  function fitStump(target) {
+    const order = xs.map((x, i) => i).sort((a, b) => xs[a] - xs[b]);
+    const sxx = order.map(i => xs[i]), srr = order.map(i => target[i]);
+    const total = srr.reduce((a, b) => a + b, 0);
+    let leftSum = 0, best = { s: sxx[0], left: 0, right: mean(target), score: Infinity };
+    for (let k = 0; k < n - 1; k++) {
+      leftSum += srr[k];
+      if (sxx[k] === sxx[k + 1]) continue;
+      const lc = k + 1, rc = n - lc, rightSum = total - leftSum;
+      // negative of explained SS (minimize)  =>  -(Lsum^2/Lc + Rsum^2/Rc)
+      const score = -(leftSum * leftSum / lc + rightSum * rightSum / rc);
+      if (score < best.score) best = { s: (sxx[k] + sxx[k + 1]) / 2, left: leftSum / lc, right: rightSum / rc, score };
+    }
+    return best;
+  }
+  function predOne(x) {
+    let v = F0;
+    const eta = parseFloat(etaS.value);
+    for (const st of stumps) v += eta * (x < st.s ? st.left : st.right);
+    return v;
+  }
+  function reset() {
+    F0 = mean(ys); stumps = []; F = xs.map(() => F0); render();
+  }
+  function addTree() {
+    const eta = parseFloat(etaS.value);
+    const resid = ys.map((y, i) => y - F[i]);
+    const st = fitStump(resid);
+    stumps.push(st);
+    for (let i = 0; i < n; i++) F[i] += eta * (xs[i] < st.s ? st.left : st.right);
+    render();
+  }
+
+  function render() {
+    etaV.textContent = parseFloat(etaS.value).toFixed(2);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1, xticks: [0, 2, 4, 6, 8, 10], yticks: [0, 4, 8] });
+    const clamp = v => Math.max(y0, Math.min(y1, v));
+    // ensemble curve over fine grid (staircase)
+    const px = [], py = [];
+    for (let x = x0; x <= x1; x += 0.04) { px.push(sx(x)); py.push(sy(clamp(predOne(x)))); }
+    g.appendChild(el("path", { d: pathFrom(px, py), fill: "none", stroke: "#2f6f4f", "stroke-width": 2.5 }));
+    // residual segments + points
+    for (let i = 0; i < n; i++) {
+      g.appendChild(el("line", { x1: sx(xs[i]), y1: sy(clamp(ys[i])), x2: sx(xs[i]), y2: sy(clamp(F[i])),
+        stroke: "#d49aa0", "stroke-width": 1.5 }));
+      g.appendChild(el("circle", { cx: sx(xs[i]), cy: sy(clamp(ys[i])), r: 3.2, fill: "#2d5d8a" }));
+    }
+    const mse = ys.reduce((s, y, i) => s + (y - F[i]) ** 2, 0) / n;
+    readout.innerHTML = `деревьев: <b>${stumps.length}</b>  ·  MSE на обучении = <b>${mse.toFixed(3)}</b>` +
+      (stumps.length === 0 ? "  (это просто константа F₀ = среднее)" : "");
+  }
+  etaS.addEventListener("input", reset);     // changing the step restarts cleanly
+  document.getElementById("boost-1").addEventListener("click", addTree);
+  document.getElementById("boost-10").addEventListener("click", () => { for (let k = 0; k < 10; k++) addTree(); });
+  document.getElementById("boost-reset").addEventListener("click", reset);
+  reset();
+})();
+
+// ---- Widget B: logistic pseudo-residual ----
+(function () {
+  const svg = document.getElementById("svg-sig");
+  const W = 600, H = 300, padL = 36, padR = 16, padT = 16, padB = 30;
+  const x0 = -6, x1 = 6, y0 = -1.05, y1 = 1.05;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const fS = document.getElementById("sig-f"), fV = document.getElementById("sig-f-val");
+  const readout = document.getElementById("sig-readout");
+  const sigma = F => 1 / (1 + Math.exp(-F));
+
+  function render() {
+    const F = parseFloat(fS.value); fV.textContent = F.toFixed(2);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1, xticks: [-6, -3, 0, 3, 6], yticks: [-1, -0.5, 0, 0.5, 1] });
+    // sigmoid curve
+    const px = [], py = [];
+    for (let f = x0; f <= x1; f += 0.05) { px.push(sx(f)); py.push(sy(sigma(f))); }
+    g.appendChild(el("path", { d: pathFrom(px, py), fill: "none", stroke: "#1f2328", "stroke-width": 2.5 }));
+    const p = sigma(F);
+    // marker p
+    g.appendChild(el("line", { x1: sx(F), y1: sy(y0), x2: sx(F), y2: sy(y1),
+      stroke: "#888", "stroke-width": 1, "stroke-dasharray": "4 3" }));
+    g.appendChild(el("circle", { cx: sx(F), cy: sy(p), r: 5, fill: "#1f2328" }));
+    // pseudo-residual bars at x=F: green up (y=1 -> 1-p), red down (y=0 -> -p)
+    g.appendChild(el("line", { x1: sx(F) - 14, y1: sy(0), x2: sx(F) - 14, y2: sy(1 - p),
+      stroke: "#2f6f4f", "stroke-width": 5 }));
+    g.appendChild(el("line", { x1: sx(F) + 14, y1: sy(0), x2: sx(F) + 14, y2: sy(-p),
+      stroke: "#9b3b46", "stroke-width": 5 }));
+
+    readout.innerHTML = `p = σ(F) = <b>${p.toFixed(3)}</b>  ·  ` +
+      `если y=1: остаток 1−p = <b style="color:#2f6f4f">${(1 - p).toFixed(3)}</b>  ·  ` +
+      `если y=0: остаток −p = <b style="color:#9b3b46">${(-p).toFixed(3)}</b>`;
+  }
+  fS.addEventListener("input", render);
+  render();
+})();
+</script>
+
+</body>
+</html>

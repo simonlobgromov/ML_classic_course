@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Глава 8 · Шпаргалка формул</title>
+<link rel="stylesheet" href="assets/style.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="home" href="index.html">Деревья и ансамбли · теория</a>
+    <span class="nav-prev-next">
+      <a href="07_boosting.html">← назад</a>
+      <a href="index.html">↑ оглавление</a>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="chapter-tag">Глава 8</div>
+  <h1>Шпаргалка формул</h1>
+
+  <p>Всё ключевое на одной странице — чтобы быстро освежить и не листать главы. Рядом с каждой
+  формулой — где про неё подробно.</p>
+
+  <!-- =========================================================== -->
+  <h2>Базовые величины <span style="font-weight:400;font-size:0.7em;color:#98a0a8">(гл. 1)</span></h2>
+  <table>
+    <tbody>
+      <tr><td>доля класса</td><td>$p_k = \dfrac{\ell_k}{\ell}, \quad \sum_k p_k = 1$</td></tr>
+      <tr><td>среднее</td><td>$\bar z = \dfrac1n \sum_i z_i$</td></tr>
+      <tr><td>дисперсия</td><td>$\mathrm{Var}(z) = \dfrac1n \sum_i (z_i - \bar z)^2 = \mathbb{E}[z^2] - (\mathbb{E}[z])^2$</td></tr>
+      <tr><td>мат. ожидание</td><td>$\mathbb{E}[z] = \sum_k p_k z_k$, линейно: $\mathbb{E}[az+bw]=a\mathbb{E}[z]+b\mathbb{E}[w]$</td></tr>
+      <tr><td>градиентный спуск</td><td>$x_{t+1} = x_t - \eta\,\nabla f(x_t)$</td></tr>
+      <tr><td>Йенсен (вогнутая $f$)</td><td>$f(\mathbb{E}[x]) \ge \mathbb{E}[f(x)]$</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>Обучение с учителем <span style="font-weight:400;font-size:0.7em;color:#98a0a8">(гл. 3)</span></h2>
+  <table>
+    <tbody>
+      <tr><td>модель</td><td>$\hat y = a(x)$</td></tr>
+      <tr><td>квадратичная потеря</td><td>$\ell(y,\hat y) = (y-\hat y)^2$</td></tr>
+      <tr><td>эмпирический риск</td><td>$Q(a) = \dfrac1\ell \sum_i \ell(y_i, a(x_i))$</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>Решающие деревья <span style="font-weight:400;font-size:0.7em;color:#98a0a8">(гл. 4)</span></h2>
+  <table>
+    <tbody>
+      <tr><td>ошибка классификации</td><td>$1 - \max_k p_k$</td></tr>
+      <tr><td>критерий Джини</td><td>$\sum_k p_k(1-p_k) = 1 - \sum_k p_k^2$</td></tr>
+      <tr><td>энтропия</td><td>$-\sum_k p_k \log p_k$</td></tr>
+      <tr><td>неоднородность (регрессия)</td><td>$H(R) = \dfrac{1}{|R|}\sum_{i\in R}(y_i-\bar y_R)^2$</td></tr>
+      <tr><td>лучшая константа (MSE)</td><td>$\arg\min_c \sum_i (y_i-c)^2 = \bar y$</td></tr>
+      <tr><td>информационный выигрыш</td><td>$Q = H(R) - \dfrac{|R_l|}{|R|}H(R_l) - \dfrac{|R_r|}{|R|}H(R_r) \to \max$</td></tr>
+      <tr><td>неотрицательность</td><td>$Q \ge 0$ (вогнутость $H$ + Йенсен)</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>Разложение ошибки <span style="font-weight:400;font-size:0.7em;color:#98a0a8">(гл. 5)</span></h2>
+  <table>
+    <tbody>
+      <tr><td>bias–variance</td><td>$\mathbb{E}[(y-\hat a)^2] = \underbrace{\sigma^2}_{\text{шум}} + \underbrace{(f-\mathbb{E}[\hat a])^2}_{\text{смещение}^2} + \underbrace{\mathbb{E}[(\hat a-\mathbb{E}[\hat a])^2]}_{\text{разброс}}$</td></tr>
+      <tr><td>деревья vs линейные</td><td>глубокое дерево: низкое смещение, высокий разброс; линейная: наоборот</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>Бэггинг и случайный лес <span style="font-weight:400;font-size:0.7em;color:#98a0a8">(гл. 6)</span></h2>
+  <table>
+    <tbody>
+      <tr><td>доля «за бортом»</td><td>$\left(1-\dfrac1\ell\right)^\ell \xrightarrow{\ell\to\infty} e^{-1} \approx 0.368$</td></tr>
+      <tr><td>предсказание бэггинга</td><td>$a_{\text{bag}}(x) = \dfrac1M \sum_m a_m(x)$</td></tr>
+      <tr><td>дисперсия среднего</td><td>$\mathrm{Var}(a_{\text{bag}}) = \rho v + \dfrac{1-\rho}{M}\,v$</td></tr>
+      <tr><td>«пол» дисперсии</td><td>$\rho v$ (при $M\to\infty$) — снижают, уменьшая $\rho$</td></tr>
+      <tr><td>лес: число признаков</td><td>$\texttt{max\_features} \approx \sqrt{n}$ (классиф.), $\approx n/3$ (регр.)</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>Градиентный бустинг <span style="font-weight:400;font-size:0.7em;color:#98a0a8">(гл. 7)</span></h2>
+  <table>
+    <tbody>
+      <tr><td>обновление</td><td>$F_m(x) = F_{m-1}(x) + \eta\,h_m(x), \quad F_0 = $ лучшая константа</td></tr>
+      <tr><td>минимизируемая величина</td><td>$L(F) = \sum_i \ell(y_i, F(x_i))$</td></tr>
+      <tr><td>псевдо-остаток</td><td>$-g_i = -\dfrac{\partial \ell(y_i, F(x_i))}{\partial F(x_i)}$, шаг: $F \leftarrow F - \eta g$</td></tr>
+      <tr><td>псевдо-остаток (MSE)</td><td>$-g_i = y_i - F(x_i)$ — обычный остаток</td></tr>
+      <tr><td>псевдо-остаток (логистика)</td><td>$-g_i = y_i - \sigma(F(x_i)) = y_i - p_i$</td></tr>
+      <tr><td>сигмоида</td><td>$p = \sigma(F) = \dfrac{1}{1+e^{-F}}, \quad \dfrac{dp}{dF} = p(1-p)$</td></tr>
+      <tr><td>стохастичность (SGD)</td><td>$\texttt{subsample} < 1$ → антиградиент по случайной подвыборке</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>Карта идей: одна строка на главу</h2>
+  <table>
+    <thead><tr><th>Глава</th><th>Главная мысль</th></tr></thead>
+    <tbody>
+      <tr><td>4 · Дерево</td><td>режем пространство, максимизируя падение неоднородности $Q$; $Q\ge0$ всегда</td></tr>
+      <tr><td>5 · Ошибка</td><td>ошибка = шум + смещение² + разброс; сложность балансирует два последних</td></tr>
+      <tr><td>6 · Бэггинг</td><td>усредняем глубокие деревья → гасим разброс; лес декоррелирует → опускает пол</td></tr>
+      <tr><td>7 · Бустинг</td><td>складываем мелкие деревья на антиградиенте → гасим смещение; это спуск по $L(F)$</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box takeaway">
+    <div class="box-title">Одно предложение про всё</div>
+    Дерево — это жадная нарезка пространства по неоднородности; <b>лес</b> усредняет много
+    глубоких деревьев против <b>разброса</b>; <b>бустинг</b> последовательно складывает мелкие
+    деревья вдоль антиградиента потерь против <b>смещения</b> — и обе истории читаются через
+    одно разложение ошибки и один градиентный спуск.
+  </div>
+
+  <div class="chapter-nav">
+    <a href="07_boosting.html">← Глава 7. Градиентный бустинг</a>
+    <a href="index.html">Оглавление ↑</a>
+  </div>
+
+</div>
+</body>
+</html>

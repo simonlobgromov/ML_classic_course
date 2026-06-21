@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Глава 5 · Разложение ошибки (Bias–Variance)</title>
+<link rel="stylesheet" href="assets/style.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script src="assets/common.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="home" href="index.html">Деревья и ансамбли · теория</a>
+    <span class="nav-prev-next">
+      <a href="04_trees.html">← назад</a>
+      <a href="06_bagging.html">далее →</a>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="chapter-tag">Глава 5</div>
+  <h1>Разложение ошибки: смещение и разброс</h1>
+
+  <p>В главе 3 мы условились, что цель — маленькая ошибка на <strong>новых</strong> данных.
+  Эта глава отвечает на вопрос «<em>из чего вообще состоит</em> эта ошибка». Ответ —
+  знаменитое разложение на три части: <strong>неустранимый шум</strong>,
+  <strong>смещение$^2$</strong> и <strong>разброс</strong>. Понимание этого разложения —
+  ключ ко всем ансамблям: бэггинг и бустинг борются с разными его слагаемыми.</p>
+
+  <!-- =========================================================== -->
+  <h2>5.1. Сложность модели: от недообучения к переобучению</h2>
+
+  <p><strong>Сложность</strong> (гибкость) модели — это её способность подстраиваться под
+  данные: степень полинома, глубина дерева. Слишком простая модель не улавливает
+  закономерность (<strong>недообучение</strong>); слишком сложная — повторяет каждую
+  случайную точку, включая шум (<strong>переобучение</strong>). Подвигайте ползунок степени:</p>
+
+  <!-- WIDGET A: complexity slider -->
+  <div class="widget" id="w-cx">
+    <div class="widget-title">Сложность модели: один и тот же набор данных</div>
+    <div class="widget-sub">Пунктир — истинная зависимость $f(x)$. Точки — зашумлённая
+      выборка. Зелёная кривая — полином выбранной степени.</div>
+    <svg viewBox="0 0 600 300" id="svg-cx"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>степень полинома =</label>
+        <input type="range" id="cx-d" min="1" max="12" step="1" value="3">
+        <span class="val" id="cx-d-val">3</span>
+      </div>
+      <button class="btn ghost" id="cx-resample">Другая выборка</button>
+    </div>
+    <div class="readout" id="cx-readout"></div>
+  </div>
+
+  <p>Обратите внимание: при степени 1 кривая <em>систематически</em> мимо — это
+  <strong>смещение</strong>. При высокой степени она проходит сквозь точки, но дико виляет —
+  нажмите «Другая выборка» несколько раз и увидите, как сильно она при этом <em>меняется</em>.
+  Эта изменчивость и есть <strong>разброс</strong>.</p>
+
+  <!-- =========================================================== -->
+  <h2>5.2. Откуда берётся «пляска»: повторная выборка</h2>
+
+  <p>Главная мысль: обучающая выборка — <strong>случайна</strong>. Соберись она чуть иначе,
+  модель обучилась бы иначе. Простая модель от выборки к выборке почти не меняется (но стабильно
+  мимо цели); сложная — скачет как угорелая (зато в среднем попадает). Ниже на одной картинке
+  показаны <strong>много моделей</strong>, обученных на разных выборках одного размера, и
+  тут же измерены смещение и разброс:</p>
+
+  <!-- WIDGET B: resample cloud + measured bias/variance -->
+  <div class="widget" id="w-bv">
+    <div class="widget-title">Облако моделей: $\text{bias}^2$ и $\text{variance}$ вживую</div>
+    <div class="widget-sub">Тонкие зелёные кривые — модели на 30 разных выборках. Жирная —
+      их среднее. Пунктир — истина $f$. Числа считаются прямо по этому облаку.</div>
+    <svg viewBox="0 0 600 300" id="svg-bv"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>степень полинома =</label>
+        <input type="range" id="bv-d" min="1" max="12" step="1" value="1">
+        <span class="val" id="bv-d-val">1</span>
+      </div>
+    </div>
+    <div class="readout" id="bv-readout"></div>
+  </div>
+
+  <div class="box idea">
+    <div class="box-title">Что вы только что увидели</div>
+    Растите степень — и смотрите на числа: <b>смещение падает</b> (среднее облака
+    приближается к истине), но <b>разброс растёт</b> (кривые расходятся всё шире). Их сумма
+    сначала падает, потом снова растёт — это и есть компромисс.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>5.3. Формула компромисса</h2>
+
+  <p>Зафиксируем тестовую точку $x_0$. Истинный ответ зашумлён: $y = f(x_0) + \varepsilon$,
+  где $\mathbb{E}[\varepsilon]=0$, $\mathrm{Var}(\varepsilon)=\sigma^2$. Модель обучена на
+  случайной выборке, обозначим её предсказание $\hat a = \hat a(x_0)$ (оно случайно — зависит
+  от того, какая выборка попалась). Ожидаемая квадратичная ошибка раскладывается на три
+  слагаемых:</p>
+
+  $$ \mathbb{E}\big[(y - \hat a)^2\big]
+     = \underbrace{\sigma^2}_{\text{шум}}
+     + \underbrace{\big(f(x_0) - \mathbb{E}[\hat a]\big)^2}_{\text{смещение}^2}
+     + \underbrace{\mathbb{E}\big[(\hat a - \mathbb{E}[\hat a])^2\big]}_{\text{разброс}} . $$
+
+  <details class="derivation">
+    <summary>Для любознательных: полный вывод разложения</summary>
+    <p>Обозначим $\bar a = \mathbb{E}[\hat a]$ (среднее предсказание по всем выборкам) и учтём,
+    что шум $\varepsilon$ на тесте <b>не зависит</b> от обучающей выборки, а значит и от
+    $\hat a$. Подставим $y = f + \varepsilon$ (пишем $f$ вместо $f(x_0)$):</p>
+    $$\begin{aligned}
+      \mathbb{E}[(y-\hat a)^2]
+      &= \mathbb{E}[(f + \varepsilon - \hat a)^2] \\
+      &= \mathbb{E}[(f - \hat a)^2] + \underbrace{\mathbb{E}[\varepsilon^2]}_{\sigma^2}
+         + 2\,\underbrace{\mathbb{E}[\varepsilon]}_{0}\,\mathbb{E}[f - \hat a].
+    \end{aligned}$$
+    <p>Кросс-член обнулился, потому что $\varepsilon$ независим от $\hat a$ и имеет нулевое
+    среднее. Остался первый кусок — раскроем его, добавив и вычтя $\bar a$:</p>
+    $$\begin{aligned}
+      \mathbb{E}[(f-\hat a)^2]
+      &= \mathbb{E}\big[(\,(f-\bar a) + (\bar a-\hat a)\,)^2\big] \\
+      &= (f-\bar a)^2 + \mathbb{E}[(\bar a-\hat a)^2]
+         + 2(f-\bar a)\,\underbrace{\mathbb{E}[\bar a-\hat a]}_{0}.
+    \end{aligned}$$
+    <p>Здесь $(f-\bar a)$ — константа (выносится), а $\mathbb{E}[\bar a - \hat a] =
+    \bar a - \mathbb{E}[\hat a] = 0$. Получаем</p>
+    $$ \mathbb{E}[(y-\hat a)^2] = \sigma^2 + \underbrace{(f-\bar a)^2}_{\text{смещение}^2}
+       + \underbrace{\mathbb{E}[(\hat a - \bar a)^2]}_{\text{разброс}}. $$
+    <p>Та же техника «добавить и вычесть среднее, раскрыть квадрат, обнулить кросс-член по
+    линейности ожидания», что и в выводе $\mathrm{Var}=\mathbb{E}[z^2]-(\mathbb{E}[z])^2$ из
+    главы 1.</p>
+  </details>
+
+  <table>
+    <thead><tr><th>Слагаемое</th><th>Смысл</th><th>Когда велико</th><th>Как уменьшить</th></tr></thead>
+    <tbody>
+      <tr><td><b>шум $\sigma^2$</b></td><td>случайность в данных</td><td>всегда есть</td><td>никак (неустраним)</td></tr>
+      <tr><td><b>смещение$^2$</b></td><td>систематический промах</td><td>модель слишком проста</td><td>усложнить модель / бустинг</td></tr>
+      <tr><td><b>разброс</b></td><td>чувствительность к выборке</td><td>модель слишком гибка</td><td>упростить / усреднить / бэггинг</td></tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================== -->
+  <h2>5.4. Два характера: дерево против линейной модели</h2>
+
+  <p>Разные семейства моделей живут в разных углах компромисса:</p>
+
+  <ul>
+    <li><strong>Линейная модель</strong> — жёсткая: на любых данных рисует примерно ту же
+        прямую. <strong>Низкий разброс, высокое смещение</strong> (если зависимость нелинейна).</li>
+    <li><strong>Глубокое дерево</strong> — гибкое: подстраивается под каждую точку и сильно
+        меняется от выборки к выборке. <strong>Низкое смещение, высокий разброс.</strong></li>
+  </ul>
+
+  <p>Это наблюдение прямо подсказывает стратегию ансамблей, и оно — мост к следующим двум
+  главам:</p>
+
+  <div class="box takeaway">
+    <div class="box-title">Мост к ансамблям</div>
+    <ul>
+      <li>У <b>глубоких деревьев</b> главная беда — <b>разброс</b>. Лекарство — <b>усреднить</b>
+          много таких деревьев: <b>бэггинг и случайный лес</b> (глава 6). Усреднение почти не
+          трогает смещение, но режет разброс.</li>
+      <li>У <b>простых моделей</b> (неглубоких деревьев-пней) главная беда — <b>смещение</b>.
+          Лекарство — <b>последовательно складывать</b> их, каждая исправляет ошибку предыдущих:
+          <b>бустинг</b> (глава 7). Он бьёт по смещению.</li>
+    </ul>
+    Одна и та же рамка «смещение vs разброс» объясняет, <em>почему</em> два главных ансамбля
+    устроены прямо противоположно: лес — это много <em>глубоких</em> деревьев параллельно,
+    бустинг — много <em>мелких</em> деревьев последовательно.
+  </div>
+
+  <div class="chapter-nav">
+    <a href="04_trees.html">← Глава 4. Решающие деревья</a>
+    <a href="06_bagging.html">Глава 6. Бэггинг и случайный лес →</a>
+  </div>
+
+</div>
+
+<script>
+// ---- tiny linear algebra: solve normal equations for polynomial fit ----
+function solveLinear(A, b) {
+  const n = b.length;
+  const M = A.map((row, i) => row.concat(b[i]));
+  for (let col = 0; col < n; col++) {
+    let piv = col;
+    for (let r = col + 1; r < n; r++) if (Math.abs(M[r][col]) > Math.abs(M[piv][col])) piv = r;
+    [M[col], M[piv]] = [M[piv], M[col]];
+    const d = M[col][col];
+    if (Math.abs(d) < 1e-12) continue;
+    for (let j = col; j <= n; j++) M[col][j] /= d;
+    for (let r = 0; r < n; r++) {
+      if (r === col) continue;
+      const f = M[r][col];
+      for (let j = col; j <= n; j++) M[r][j] -= f * M[col][j];
+    }
+  }
+  return M.map(row => row[n]);
+}
+// fit polynomial of degree deg to (xs,ys); x already scaled to ~[-1,1]
+function polyfit(xs, ys, deg) {
+  const m = deg + 1;
+  const A = Array.from({ length: m }, () => new Array(m).fill(0));
+  const b = new Array(m).fill(0);
+  for (let i = 0; i < xs.length; i++) {
+    const pw = [1]; for (let p = 1; p < 2 * m; p++) pw.push(pw[p - 1] * xs[i]);
+    for (let r = 0; r < m; r++) {
+      b[r] += pw[r] * ys[i];
+      for (let c = 0; c < m; c++) A[r][c] += pw[r + c];
+    }
+  }
+  return solveLinear(A, b);
+}
+function polyval(coef, x) { let s = 0, p = 1; for (const c of coef) { s += c * p; p *= x; } return s; }
+
+// shared truth + sampler (x in [0,10], scaled u=(x-5)/5)
+const TRUE_F = x => 4 + 2.4 * Math.sin(0.9 * x) - 0.15 * (x - 5);
+const U = x => (x - 5) / 5;
+function sampleData(seed, nPts = 18, sigma = 1.1) {
+  const rng = mulberry32(seed), xs = [], ys = [];
+  for (let i = 0; i < nPts; i++) {
+    const x = 0.3 + 9.4 * (i + 0.5) / nPts + 0.3 * (rng() - 0.5);
+    xs.push(x); ys.push(TRUE_F(x) + sigma * gauss(rng));
+  }
+  return { xs, ys };
+}
+
+// ---- Widget A: complexity on one sample ----
+(function () {
+  const svg = document.getElementById("svg-cx");
+  const W = 600, H = 300, padL = 36, padR = 16, padT = 16, padB = 30;
+  const x0 = 0, x1 = 10, y0 = -2, y1 = 11;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const dS = document.getElementById("cx-d"), dV = document.getElementById("cx-d-val");
+  const readout = document.getElementById("cx-readout");
+  let seed = 3;
+
+  function render() {
+    const deg = parseInt(dS.value); dV.textContent = deg;
+    const { xs, ys } = sampleData(seed);
+    const coef = polyfit(xs.map(U), ys, deg);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1, xticks: [0, 2, 4, 6, 8, 10], yticks: [0, 4, 8] });
+
+    // true f (dashed)
+    let px = [], py = [];
+    for (let x = x0; x <= x1; x += 0.05) { px.push(sx(x)); py.push(sy(TRUE_F(x))); }
+    g.appendChild(el("path", { d: pathFrom(px, py), fill: "none", stroke: "#888",
+      "stroke-width": 2, "stroke-dasharray": "5 4" }));
+    // fitted poly
+    px = []; py = [];
+    for (let x = x0; x <= x1; x += 0.04) {
+      const v = polyval(coef, U(x)); px.push(sx(x)); py.push(sy(Math.max(y0 - 2, Math.min(y1 + 2, v))));
+    }
+    g.appendChild(el("path", { d: pathFrom(px, py), fill: "none", stroke: "#2f6f4f", "stroke-width": 2.5 }));
+    // points
+    for (let i = 0; i < xs.length; i++)
+      g.appendChild(el("circle", { cx: sx(xs[i]), cy: sy(Math.max(y0, Math.min(y1, ys[i]))), r: 3.5, fill: "#2d5d8a" }));
+
+    const mse = xs.reduce((s, x, i) => s + (ys[i] - polyval(coef, U(x))) ** 2, 0) / xs.length;
+    const tag = deg <= 1 ? "слишком просто → смещение" : deg >= 9 ? "слишком гибко → разброс" : "разумная сложность";
+    readout.innerHTML = `степень ${deg}  ·  MSE на обучении = <b>${mse.toFixed(3)}</b>  ·  ${tag}`;
+  }
+  dS.addEventListener("input", render);
+  document.getElementById("cx-resample").addEventListener("click", () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; render(); });
+  render();
+})();
+
+// ---- Widget B: resample cloud + measured bias^2 / variance ----
+(function () {
+  const svg = document.getElementById("svg-bv");
+  const W = 600, H = 300, padL = 36, padR = 16, padT = 16, padB = 30;
+  const x0 = 0, x1 = 10, y0 = -2, y1 = 11;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const dS = document.getElementById("bv-d"), dV = document.getElementById("bv-d-val");
+  const readout = document.getElementById("bv-readout");
+  const T = 30;                       // number of resampled models
+  const sigma = 1.1;
+  const grid = []; for (let x = 0.4; x <= 9.6; x += 0.2) grid.push(x);
+
+  function render() {
+    const deg = parseInt(dS.value); dV.textContent = deg;
+    const models = [];
+    for (let t = 0; t < T; t++) {
+      const { xs, ys } = sampleData(1000 + t * 17, 18, sigma);
+      models.push(polyfit(xs.map(U), ys, deg));
+    }
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1, xticks: [0, 2, 4, 6, 8, 10], yticks: [0, 4, 8] });
+
+    const clamp = v => Math.max(y0 - 2, Math.min(y1 + 2, v));
+    // thin model curves
+    for (const coef of models) {
+      const px = [], py = [];
+      for (let x = x0; x <= x1; x += 0.08) { px.push(sx(x)); py.push(sy(clamp(polyval(coef, U(x))))); }
+      g.appendChild(el("path", { d: pathFrom(px, py), fill: "none", stroke: "#2f6f4f",
+        "stroke-width": 1, opacity: 0.22 }));
+    }
+    // mean curve (thick) + true f (dashed)
+    const meanAt = x => models.reduce((s, c) => s + polyval(c, U(x)), 0) / T;
+    let px = [], py = [];
+    for (let x = x0; x <= x1; x += 0.05) { px.push(sx(x)); py.push(sy(clamp(meanAt(x)))); }
+    g.appendChild(el("path", { d: pathFrom(px, py), fill: "none", stroke: "#2f6f4f", "stroke-width": 3 }));
+    px = []; py = [];
+    for (let x = x0; x <= x1; x += 0.05) { px.push(sx(x)); py.push(sy(TRUE_F(x))); }
+    g.appendChild(el("path", { d: pathFrom(px, py), fill: "none", stroke: "#9b3b46",
+      "stroke-width": 2, "stroke-dasharray": "5 4" }));
+
+    // measure bias^2 and variance averaged over grid
+    let bias2 = 0, varc = 0;
+    for (const x of grid) {
+      const preds = models.map(c => polyval(c, U(x)));
+      const mean = preds.reduce((a, b) => a + b, 0) / T;
+      bias2 += (TRUE_F(x) - mean) ** 2;
+      varc += preds.reduce((s, p) => s + (p - mean) ** 2, 0) / T;
+    }
+    bias2 /= grid.length; varc /= grid.length;
+    readout.innerHTML = `степень ${deg}  ·  смещение² = <b>${bias2.toFixed(2)}</b>  ·  ` +
+      `разброс = <b>${varc.toFixed(2)}</b>  ·  сумма = <b>${(bias2 + varc).toFixed(2)}</b>` +
+      `  (+ шум σ²≈${(sigma * sigma).toFixed(2)})`;
+  }
+  dS.addEventListener("input", render);
+  render();
+})();
+</script>
+
+</body>
+</html>

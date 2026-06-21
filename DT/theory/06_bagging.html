@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Глава 6 · Бэггинг и случайный лес</title>
+<link rel="stylesheet" href="assets/style.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script src="assets/common.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="home" href="index.html">Деревья и ансамбли · теория</a>
+    <span class="nav-prev-next">
+      <a href="05_bias_variance.html">← назад</a>
+      <a href="07_boosting.html">далее →</a>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="chapter-tag">Глава 6</div>
+  <h1>Ансамбли усреднением: бэггинг и случайный лес</h1>
+
+  <p>В главе 5 мы выяснили: у глубокого дерева крошечное смещение, но огромный
+  <strong>разброс</strong> — оно дико меняется от выборки к выборке. Напрашивается идея:
+  если разброс — это «дрожание» вокруг правильного среднего, давайте обучим
+  <strong>много</strong> деревьев и <strong>усредним</strong> их. Дрожание погасится, а
+  правильное среднее останется. На этой мысли стоят бэггинг и случайный лес.</p>
+
+  <!-- =========================================================== -->
+  <h2>6.1. Bootstrap: где взять «много разных выборок»</h2>
+
+  <p>Чтобы деревья получились разными, их нужно учить на разных данных. Но выборка у нас
+  одна. Выход — <strong>bootstrap</strong>: из исходной выборки размера $\ell$ берём $\ell$
+  объектов <strong>с возвращением</strong> (один и тот же объект может попасть несколько раз,
+  а какой-то — ни разу). Каждая такая псевдо-выборка чуть отличается — этого хватает.</p>
+
+  <p>Замечательный факт: в каждую бутстрэп-выборку попадает примерно <strong>63%</strong>
+  уникальных объектов, а около <strong>37%</strong> остаются «за бортом» (out-of-bag).
+  Покрутите размер выборки и убедитесь, что доля «за бортом» быстро выходит на $1/e$:</p>
+
+  <!-- WIDGET A: bootstrap 37% -->
+  <div class="widget" id="w-boot">
+    <div class="widget-title">Доля объектов «за бортом» бутстрэпа</div>
+    <div class="widget-sub">Кривая — вероятность $(1-1/\ell)^\ell$, что конкретный объект ни
+      разу не выбран. Пунктир — предел $1/e \approx 0.368$.</div>
+    <svg viewBox="0 0 600 300" id="svg-boot"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>размер выборки $\ell$ =</label>
+        <input type="range" id="boot-n" min="1" max="200" step="1" value="10">
+        <span class="val" id="boot-n-val">10</span>
+      </div>
+    </div>
+    <div class="readout" id="boot-readout"></div>
+  </div>
+
+  <details class="derivation">
+    <summary>Для любознательных: откуда берётся 37%</summary>
+    <p>Берём $\ell$ объектов с возвращением. Вероятность, что при <em>одном</em> вытягивании
+    выбран <b>не</b> наш конкретный объект, равна $1 - \tfrac{1}{\ell}$. Вытягиваний $\ell$, и
+    они независимы, поэтому вероятность, что объект не выбран <b>ни разу</b>:</p>
+    $$ P(\text{за бортом}) = \left(1 - \frac{1}{\ell}\right)^{\ell}. $$
+    <p>Воспользуемся вторым замечательным пределом $\left(1+\tfrac{x}{\ell}\right)^\ell \to e^x$
+    при $\ell\to\infty$ (здесь $x=-1$):</p>
+    $$ \left(1 - \frac{1}{\ell}\right)^{\ell} \xrightarrow[\ell\to\infty]{} e^{-1} \approx 0.368. $$
+    <p>Значит «за бортом» ≈ 37%, а внутри ≈ 63%. Уже при $\ell \approx 50$ приближение почти
+    точное — это и видно на графике.</p>
+  </details>
+
+  <!-- =========================================================== -->
+  <h2>6.2. Бэггинг (Bootstrap AGGregating)</h2>
+
+  <p>Алгоритм предельно прост:</p>
+  <ol>
+    <li>сделать $M$ бутстрэп-выборок;</li>
+    <li>на каждой обучить свою (глубокую!) модель $a_1, \dots, a_M$;</li>
+    <li>усреднить ответы — для регрессии среднее, для классификации голосование:</li>
+  </ol>
+
+  $$ a_{\text{bag}}(x) = \frac{1}{M} \sum_{m=1}^{M} a_m(x). $$
+
+  <p>Почему усреднение снижает именно разброс? Посмотрим на дисперсию среднего $M$ моделей.
+  Пусть у каждой дисперсия $v$, а попарная корреляция между ними — $\rho$ (модели не
+  независимы: их учили на пересекающихся данных). Тогда</p>
+
+  $$ \mathrm{Var}\!\left(a_{\text{bag}}\right)
+     = \rho v + \frac{1 - \rho}{M}\, v. $$
+
+  <details class="derivation">
+    <summary>Для любознательных: вывод формулы дисперсии среднего</summary>
+    <p>Дисперсия суммы — это сумма всех дисперсий и всех попарных ковариаций. У нас
+    $\mathrm{Var}(a_m) = v$ для каждой модели и $\mathrm{Cov}(a_i, a_j) = \rho v$ для каждой
+    пары $i \ne j$ (это и есть определение корреляции $\rho$ при равных дисперсиях). Считаем:</p>
+    $$\begin{aligned}
+      \mathrm{Var}\!\left(\frac1M\sum_{m} a_m\right)
+      &= \frac{1}{M^2}\,\mathrm{Var}\!\left(\sum_m a_m\right)
+       = \frac{1}{M^2}\Big[\underbrace{\sum_m \mathrm{Var}(a_m)}_{M\,\text{слагаемых}=Mv}
+         + \underbrace{\sum_{i\ne j}\mathrm{Cov}(a_i,a_j)}_{M(M-1)\,\text{пар}=M(M-1)\rho v}\Big] \\
+      &= \frac{Mv + M(M-1)\rho v}{M^2}
+       = \frac{v}{M} + \frac{M-1}{M}\rho v
+       = \rho v + \frac{1-\rho}{M}\,v.
+    \end{aligned}$$
+  </details>
+
+  <div class="box idea">
+    <div class="box-title">Читаем формулу</div>
+    Второе слагаемое $\dfrac{1-\rho}{M}v$ с ростом числа моделей $M$ <b>тает до нуля</b> —
+    это та часть разброса, что гасится усреднением. А вот первое, $\rho v$, — это
+    <b>«пол»</b>: сколько деревьев ни добавляй, ниже него не опуститься. Чтобы пробить пол,
+    нужно уменьшить <b>корреляцию</b> $\rho$ между деревьями. Подвигайте $\rho$ и $M$:
+  </div>
+
+  <!-- WIDGET B: variance reduction -->
+  <div class="widget" id="w-var">
+    <div class="widget-title">Снижение разброса усреднением (нормируем $v=1$)</div>
+    <div class="widget-sub">Кривая — $\mathrm{Var}=\rho + \tfrac{1-\rho}{M}$ как функция числа
+      деревьев $M$. Пунктир — «пол» $\rho$. Точка — выбранное $M$.</div>
+    <svg viewBox="0 0 600 300" id="svg-var"></svg>
+    <div class="controls">
+      <div class="control">
+        <label>корреляция $\rho$ =</label>
+        <input type="range" id="var-rho" min="0" max="1" step="0.01" value="0.5">
+        <span class="val" id="var-rho-val">0.50</span>
+      </div>
+      <div class="control">
+        <label>число деревьев $M$ =</label>
+        <input type="range" id="var-m" min="1" max="50" step="1" value="8">
+        <span class="val" id="var-m-val">8</span>
+      </div>
+    </div>
+    <div class="readout" id="var-readout"></div>
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>6.3. Случайный лес: бьём по «полу» $\rho v$</h2>
+
+  <p>Обычный бэггинг над деревьями оставляет корреляцию высокой: на похожих данных деревья
+  строят похожие сильные разбиения (один и тот же «самый информативный» признак лезет в корень
+  у всех). <strong>Случайный лес</strong> добавляет второй источник случайности, который
+  принудительно <strong>декоррелирует</strong> деревья: в <em>каждом узле</em> разбиение
+  ищут не по всем признакам, а по случайному их подмножеству размера
+  <code>max_features</code>.</p>
+
+  <p>Тогда сильный признак не может доминировать во всех деревьях — где-то его просто не
+  окажется среди кандидатов, и дерево найдёт другие структуры. Деревья получаются разными
+  → $\rho$ падает → <strong>пол $\rho v$ опускается</strong> → усреднение работает глубже.
+  Типичные значения:</p>
+
+  $$ \texttt{max\_features} \approx \sqrt{n}\ \text{(классификация)}, \qquad
+     \approx \frac{n}{3}\ \text{(регрессия)}. $$
+
+  <div class="box warn">
+    <div class="box-title">Компромисс декорреляции</div>
+    Слишком маленький <code>max_features</code> сильнее декоррелирует (хорошо для $\rho$), но
+    делает каждое отдельное дерево слабее (растёт его собственная дисперсия $v$ и смещение).
+    Поэтому это именно <b>настраиваемая ручка</b>, а не «чем меньше, тем лучше».
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>6.4. Out-of-bag (OOB): бесплатная валидация</h2>
+
+  <p>Вспомним 6.1: каждый объект лежит «за бортом» примерно у 37% деревьев — тех, в чью
+  бутстрэп-выборку он не попал. Значит, для каждого объекта есть подмножество деревьев,
+  которые его <strong>не видели на обучении</strong>. Спрогнозируем ответ для объекта,
+  усреднив только по этим деревьям, — получится честная оценка <em>как на новых данных</em>.
+  Усреднив качество по всем объектам, получаем <strong>OOB-оценку</strong>.</p>
+
+  <div class="box def">
+    <div class="box-title">Зачем это удобно</div>
+    OOB-оценка ≈ тестовому качеству, но <b>не требует отдельной отложенной выборки и
+    кросс-валидации</b> — мы переиспользуем «бортовую» структуру бутстрэпа. На больших данных
+    это экономит и данные, и время.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>6.5. Когда бэггинг помогает, а когда нет</h2>
+
+  <p>Из формулы $\mathrm{Var}=\rho v+\frac{1-\rho}{M}v$ видно: усреднение окупается, когда
+  гасить есть <strong>что</strong> — то есть когда базовая модель <strong>высокодисперсна</strong>.
+  Поэтому:</p>
+
+  <ul>
+    <li><strong>Глубокие деревья</strong> — идеальный кандидат: низкое смещение (его усреднение
+        не портит) и высокий разброс (его усреднение убивает). Отсюда правило: в лесу деревья
+        делают <em>глубокими</em>.</li>
+    <li><strong>Устойчивые модели</strong> (линейная/логистическая регрессия) бэггинг почти не
+        улучшает: они и так низкодисперсны, гасить нечего. Более того, среднее линейных моделей
+        — снова линейная модель, так что <em>форма</em> границы не станет богаче. На «кружке
+        внутри кружка» бэггинг логрега так и оставит прямую границу, а бэггинг деревьев аккуратно
+        обведёт круг.</li>
+  </ul>
+
+  <p>А <strong>важность признаков</strong> лес оценивает почти даром: можно складывать
+  суммарное снижение неоднородности от разбиений по каждому признаку (gain importance) или
+  измерять, насколько просядет качество при случайной перестановке признака (permutation
+  importance).</p>
+
+  <div class="box takeaway">
+    <div class="box-title">Итог главы</div>
+    <ul>
+      <li><b>Bootstrap</b>: выборка с возвращением; ≈63% объектов внутри, ≈37% за бортом
+          ($\to 1/e$).</li>
+      <li><b>Бэггинг</b>: усреднить $M$ глубоких моделей; $\mathrm{Var}=\rho v+\frac{1-\rho}{M}v$.</li>
+      <li>Усреднение убивает слагаемое $\frac{1-\rho}{M}v$, но оставляет <b>пол</b> $\rho v$.</li>
+      <li><b>Случайный лес</b> = бэггинг + случайные признаки в узле → меньше $\rho$ → ниже пол.</li>
+      <li><b>OOB</b> — бесплатная валидация по деревьям, не видевшим объект.</li>
+      <li>Бэггинг лечит <b>разброс</b> высокодисперсных моделей; для устойчивых моделей бесполезен.</li>
+    </ul>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="05_bias_variance.html">← Глава 5. Разложение ошибки</a>
+    <a href="07_boosting.html">Глава 7. Градиентный бустинг →</a>
+  </div>
+
+</div>
+
+<script>
+// ---- Widget A: bootstrap OOB fraction ----
+(function () {
+  const svg = document.getElementById("svg-boot");
+  const W = 600, H = 300, padL = 44, padR = 16, padT = 16, padB = 30;
+  const x0 = 1, x1 = 200, y0 = 0.3, y1 = 1.02;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const nS = document.getElementById("boot-n"), nV = document.getElementById("boot-n-val");
+  const readout = document.getElementById("boot-readout");
+  const oob = n => Math.pow(1 - 1 / n, n);
+  const invE = Math.exp(-1);
+
+  function render() {
+    const n = parseInt(nS.value); nV.textContent = n;
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1,
+      xticks: [1, 50, 100, 150, 200], yticks: [0.4, 0.6, 0.8, 1.0] });
+    // 1/e line
+    g.appendChild(el("line", { x1: sx(x0), y1: sy(invE), x2: sx(x1), y2: sy(invE),
+      stroke: "#9b3b46", "stroke-width": 1.5, "stroke-dasharray": "5 4" }));
+    const t = el("text", { x: sx(x1) - 6, y: sy(invE) - 6, class: "tick-label",
+      "text-anchor": "end", fill: "#9b3b46" }); t.textContent = "1/e ≈ 0.368"; g.appendChild(t);
+    // curve
+    const xs = [], ys = [];
+    for (let k = 1; k <= x1; k++) { xs.push(sx(k)); ys.push(sy(oob(k))); }
+    g.appendChild(el("path", { d: pathFrom(xs, ys), fill: "none", stroke: "#2f6f4f", "stroke-width": 2.5 }));
+    // marker
+    g.appendChild(el("circle", { cx: sx(n), cy: sy(oob(n)), r: 5, fill: "#2f6f4f" }));
+    const frac = oob(n);
+    readout.innerHTML = `ℓ=${n}:  за бортом <b>${(100 * frac).toFixed(1)}%</b>  ·  ` +
+      `внутри <b>${(100 * (1 - frac)).toFixed(1)}%</b>`;
+  }
+  nS.addEventListener("input", render);
+  render();
+})();
+
+// ---- Widget B: variance reduction curve ----
+(function () {
+  const svg = document.getElementById("svg-var");
+  const W = 600, H = 300, padL = 40, padR = 16, padT = 16, padB = 30;
+  const x0 = 1, x1 = 50, y0 = 0, y1 = 1.05;
+  const sx = scale([x0, x1], [padL, W - padR]);
+  const sy = scale([y0, y1], [H - padB, padT]);
+  const rS = document.getElementById("var-rho"), rV = document.getElementById("var-rho-val");
+  const mS = document.getElementById("var-m"), mV = document.getElementById("var-m-val");
+  const readout = document.getElementById("var-readout");
+  const variance = (rho, M) => rho + (1 - rho) / M;
+
+  function render() {
+    const rho = parseFloat(rS.value), M = parseInt(mS.value);
+    rV.textContent = rho.toFixed(2); mV.textContent = M;
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const g = el("g"); svg.appendChild(g);
+    drawFrame(g, { x: sx, y: sy, x0, x1, y0, y1,
+      xticks: [1, 10, 20, 30, 40, 50], yticks: [0, 0.25, 0.5, 0.75, 1.0] });
+    // floor rho
+    g.appendChild(el("line", { x1: sx(x0), y1: sy(rho), x2: sx(x1), y2: sy(rho),
+      stroke: "#9b3b46", "stroke-width": 1.5, "stroke-dasharray": "5 4" }));
+    const t = el("text", { x: sx(x1) - 6, y: sy(rho) - 6, class: "tick-label",
+      "text-anchor": "end", fill: "#9b3b46" }); t.textContent = "пол ρv = " + rho.toFixed(2); g.appendChild(t);
+    // curve
+    const xs = [], ys = [];
+    for (let k = 1; k <= x1; k += 0.5) { xs.push(sx(k)); ys.push(sy(variance(rho, k))); }
+    g.appendChild(el("path", { d: pathFrom(xs, ys), fill: "none", stroke: "#2f6f4f", "stroke-width": 2.5 }));
+    // marker at chosen M
+    g.appendChild(el("circle", { cx: sx(M), cy: sy(variance(rho, M)), r: 5, fill: "#2f6f4f" }));
+
+    const vNow = variance(rho, M);
+    readout.innerHTML = `при ρ=${rho.toFixed(2)}, M=${M}:  Var = <b>${vNow.toFixed(3)}</b>  ·  ` +
+      `пол (M→∞) = <b>${rho.toFixed(3)}</b>  ·  гасимая часть = <b>${((1 - rho) / M).toFixed(3)}</b>`;
+  }
+  rS.addEventListener("input", render);
+  mS.addEventListener("input", render);
+  render();
+})();
+</script>
+
+</body>
+</html>
