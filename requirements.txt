@@ -6,3 +6,5 @@ seaborn
 pydotplus
 ipywidgets
 tqdm
+catboost
+shap
