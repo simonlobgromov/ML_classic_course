@@ -8,3 +8,9 @@ ipywidgets
 tqdm
 catboost
 shap
+datasets==3.6.0
+librosa
+plotly
+nbformat
+huggingface_hub
+pyarrow

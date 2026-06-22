@@ -5,3 +5,5 @@ env/
 data/
 .DS_Store
 catboost_info/
+speaker_emb.npz
+*.npz
