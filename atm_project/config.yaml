@@ -1,0 +1,50 @@
+# Configuration for the MBank ATM synthetic dataset generator.
+# All high-level knobs live here; detailed behavioural profiles (hourly curves,
+# intensity factors) live in the generator modules and are tuned later.
+
+seed: 42
+
+period:
+  start: "2024-01-01"
+  end: "2025-12-31"          # 731 days, leap year 2024
+
+network:
+  n_atms: 120
+  # Share of ATMs that are commissioned *during* the period (rest exist from day 1).
+  installed_during_period_share: 0.12
+  # Year-2 expansion: new ATMs are biased towards the start of year 2.
+
+customers:
+  n_customers: 550000
+  n_cards: 700000
+  multi_card_share: 0.22       # fraction of customers holding 2+ cards
+  # Off-us cards (other banks / tourists) are generated on the fly at
+  # transaction time and are NOT part of dim_card.
+
+# ATM location archetypes (hidden type that drives behaviour). Shares sum to 1.
+atm_types:
+  transport_market: 0.18
+  office_business:  0.15
+  residential:      0.22
+  shopping_mall:    0.12
+  tourist_center:   0.08
+  pension_social:   0.13
+  highway_gas:      0.12
+
+calendar:
+  # USD/KGS exchange rate model (synthetic in v1, replaced by real series later).
+  fx:
+    base_rate: 89.0            # approx USD/KGS at start of 2024
+    daily_vol: 0.0008          # std of daily log-returns (KGS is fairly stable)
+    drift_per_year: 0.01       # mild depreciation
+    shock_prob: 0.01           # probability of a shock day
+    shock_size: 0.012          # magnitude of a shock (fractional jump)
+  weather:
+    # Monthly climatology of Bishkek (mean temp °C, relative precip 0..1).
+    # Used to synthesise daily temp/precip; replaced by real data later.
+    source: synthetic
+
+output:
+  data_dir: "data"
+  meta_dir: "meta"
+  write_csv_mirror: true       # also write small dim tables as CSV for readability
