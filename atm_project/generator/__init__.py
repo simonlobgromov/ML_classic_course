@@ -9,6 +9,7 @@ from pathlib import Path
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+EXTERNAL_DIR = PROJECT_ROOT / "external"
 
 
 def load_config(path: str | Path | None = None) -> dict:

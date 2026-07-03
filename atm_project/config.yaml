@@ -31,6 +31,35 @@ atm_types:
   pension_social:   0.13
   highway_gas:      0.12
 
+# Intensity model (generator/intensity.py). Only high-level knobs live here;
+# the hourly/weekly shapes and calendar boosts are defined in the module.
+intensity:
+  volume_scale: 0.52           # global λ multiplier to hit the ~12M target volume
+  profile_jitter: 0.28         # per-ATM shape jitter on H/D → within-type spread (§9.10)
+  daily_noise_sigma: 0.20      # sigma of the lognormal day multiplier ε (Cox jitter)
+  trend_year2_uplift: 0.12     # net volume growth reached by the end of year 2
+  nb_dispersion: 8.0           # NegBinomial dispersion r (higher -> closer to Poisson)
+
+# Cash management (generator/cash_ops.py, TZ §6).
+cash:
+  low_cash_fraction: 0.25      # replenish when balance drops below this share
+  max_refill_lag_days: 1       # crew arrival lag; longer lag → more out_of_cash
+
+# Anomaly injection (generator/anomalies.py, TZ §7). Kept modest (~0.1-1%).
+anomalies:
+  network_fault:
+    events_per_atm_year: 3       # random downtime windows (91/92/96)
+    max_duration_hours: 8
+  stuck_terminal:
+    events_total: 15             # flatline windows across the network
+    max_duration_hours: 12
+  fraud_skimming:
+    n_atms_affected: 6           # ATMs hit by a skimming burst
+    bursts_per_atm: 3
+    txns_per_burst: 12
+  geo_impossible:
+    n_cases: 20                  # one card on far ATMs within minutes
+
 calendar:
   # USD/KGS exchange rate model (synthetic in v1, replaced by real series later).
   fx:

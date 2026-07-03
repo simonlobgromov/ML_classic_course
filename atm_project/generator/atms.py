@@ -7,10 +7,15 @@ ATMs, microdistricts get residential/pension ATMs, etc.). Hardware attributes
 from per-archetype parameters.
 """
 
+import logging
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
 from .geography import ZONES
+
+log = logging.getLogger(__name__)
 
 # Per-archetype parameters. base_intensity is the latent daily baseline scale
 # (expected withdrawals/day at neutral conditions); tuned with the intensity model.
@@ -86,6 +91,9 @@ def build_atms(config: dict, rng: np.random.Generator | None = None) -> pd.DataF
     start_year = int(config["period"]["start"][:4])
     n_new = int(round(n_atms * config["network"]["installed_during_period_share"]))
 
+    from . import EXTERNAL_DIR
+    osm_by_zone = _load_osm_by_zone(EXTERNAL_DIR)
+
     rows = []
     for atm_type, k in counts.items():
         params = TYPE_PARAMS[atm_type]
@@ -93,14 +101,19 @@ def build_atms(config: dict, rng: np.random.Generator | None = None) -> pd.DataF
         chosen = rng.choice(zone_idx, size=k, p=zone_w)
         for zi in chosen:
             z = ZONES[zi]
+            lat, lon = _pick_coords(z, osm_by_zone, rng)
             vendor = rng.choice(list(VENDORS))
             model = rng.choice(VENDORS[vendor])
+            denom_set = DENOM_SETS[rng.integers(0, len(DENOM_SETS))]
+            # Per-operation limit is physical: MBank ATMs dispense at most ~40
+            # notes per withdrawal, so the cap follows the loaded denominations.
+            txn_limit = int(round(40 * np.median(denom_set) / 1000) * 1000)
             rows.append(dict(
                 atm_type=atm_type,
                 district_id=z["district_id"],
                 location_name=z["name"],
-                lat=round(z["lat_center"] + rng.normal(0, 0.004), 6),
-                lon=round(z["lon_center"] + rng.normal(0, 0.004), 6),
+                lat=lat,
+                lon=lon,
                 placement=params["placement"],
                 is_24_7=bool(rng.random() < params["p_24_7"]),
                 vendor=vendor,
@@ -111,10 +124,11 @@ def build_atms(config: dict, rng: np.random.Generator | None = None) -> pd.DataF
                 is_recycler=bool(rng.random() < params["p_recycler"]),
                 supports_fx=bool(rng.random() < params["p_fx"]),
                 num_cassettes=int(rng.integers(3, 5)),
-                denominations=DENOM_SETS[rng.integers(0, len(DENOM_SETS))],
+                denominations=denom_set,
                 cash_capacity=int(rng.integers(params["cap"][0], params["cap"][1])),
-                txn_limit=int(rng.choice([20000, 25000])),
-                daily_limit=int(rng.choice([60000, 100000, 150000])),
+                txn_limit=txn_limit,
+                # Daily card limit: 100k fee-free, up to 225k by tariff (MBank).
+                daily_limit=int(rng.choice([100000, 150000, 225000])),
                 base_intensity=round(
                     params["base_intensity"] * rng.lognormal(0, 0.25), 1),
             ))
@@ -157,3 +171,44 @@ def build_atms(config: dict, rng: np.random.Generator | None = None) -> pd.DataF
         "base_intensity",
     ]
     return df[column_order]
+
+
+def _load_osm_by_zone(external_dir: Path) -> dict[str, list[tuple[float, float]]]:
+    """Load OSM ATM locations and bucket them by nearest zone. Returns {} if unavailable."""
+    path = external_dir / "atm_locations.parquet"
+    if not path.exists():
+        return {}
+
+    osm = pd.read_parquet(path, columns=["lat", "lon"])
+    if osm.empty:
+        return {}
+
+    zone_lats = np.array([z["lat_center"] for z in ZONES])
+    zone_lons = np.array([z["lon_center"] for z in ZONES])
+    zone_ids  = [z["district_id"] for z in ZONES]
+
+    buckets: dict[str, list[tuple[float, float]]] = {zid: [] for zid in zone_ids}
+    for _, row in osm.iterrows():
+        dists = (zone_lats - row["lat"]) ** 2 + (zone_lons - row["lon"]) ** 2
+        nearest = zone_ids[int(np.argmin(dists))]
+        buckets[nearest].append((row["lat"], row["lon"]))
+
+    n_total = sum(len(v) for v in buckets.values())
+    log.info("ATMs: OSM skeleton loaded — %d locations across %d zones",
+             n_total, sum(1 for v in buckets.values() if v))
+    return buckets
+
+
+def _pick_coords(zone: dict, osm_by_zone: dict,
+                 rng: np.random.Generator) -> tuple[float, float]:
+    """Return (lat, lon) from OSM pool for zone or fall back to synthetic jitter."""
+    pool = osm_by_zone.get(zone["district_id"], [])
+    if pool:
+        lat, lon = pool[rng.integers(0, len(pool))]
+        # Tiny jitter so two ATMs don't land on the exact same point.
+        lat = round(lat + rng.normal(0, 0.0005), 6)
+        lon = round(lon + rng.normal(0, 0.0005), 6)
+    else:
+        lat = round(zone["lat_center"] + rng.normal(0, 0.004), 6)
+        lon = round(zone["lon_center"] + rng.normal(0, 0.004), 6)
+    return lat, lon

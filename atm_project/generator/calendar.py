@@ -5,8 +5,13 @@ but realistic in v1 (Bishkek climatology; a random walk for USD/KGS) and can be
 swapped for downloaded real series later without touching the schema.
 """
 
+import logging
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+
+log = logging.getLogger(__name__)
 
 # Fixed-date public holidays of the Kyrgyz Republic (month, day) -> name.
 FIXED_HOLIDAYS = {
@@ -148,4 +153,54 @@ def build_calendar(config: dict, rng: np.random.Generator | None = None) -> pd.D
     df["year_index"] = (dates.year - dates.year.min()).astype(int)
 
     df = df.drop(columns=["day"])
+
+    # Replace synthetic placeholders with real downloaded series if available.
+    from . import EXTERNAL_DIR
+    _merge_real_weather(df, EXTERNAL_DIR)
+    _merge_real_fx(df, EXTERNAL_DIR)
+
     return df
+
+
+def _merge_real_weather(df: pd.DataFrame, external_dir: Path) -> None:
+    path = external_dir / "weather_daily.parquet"
+    if not path.exists():
+        return
+    w = pd.read_parquet(path)
+    w["date"] = pd.to_datetime(w["date"]).dt.normalize()
+    idx = w.set_index("date")
+
+    dates_norm = pd.to_datetime(df["date"]).dt.normalize()
+    matched = dates_norm.isin(idx.index).sum()
+
+    for col in ("temp_avg", "precip_mm"):
+        if col in idx.columns:
+            df[col] = dates_norm.map(idx[col]).fillna(df[col]).values
+
+    for col in ("snowfall_mm", "wind_max", "weathercode"):
+        if col in idx.columns:
+            df[col] = dates_norm.map(idx[col]).values
+
+    log.info("Calendar: real weather merged (%d/%d days matched)", matched, len(df))
+
+
+def _merge_real_fx(df: pd.DataFrame, external_dir: Path) -> None:
+    path = external_dir / "fx_usd_kgs.parquet"
+    if not path.exists():
+        return
+    fx = pd.read_parquet(path)
+    fx["date"] = pd.to_datetime(fx["date"]).dt.normalize()
+    idx = fx.set_index("date")["rate"]
+
+    dates_norm = pd.to_datetime(df["date"]).dt.normalize()
+    matched = dates_norm.isin(idx.index).sum()
+
+    real_rate = dates_norm.map(idx)
+    if real_rate.notna().any():
+        df["usd_kgs_rate"] = real_rate.fillna(df["usd_kgs_rate"]).values
+        prev = df["usd_kgs_rate"].shift(1)
+        df["fx_change_pct"] = ((df["usd_kgs_rate"] - prev) / prev * 100).round(3).fillna(0).values
+        shock_threshold = 0.7  # same fraction as synthetic
+        df["fx_shock"] = df["fx_change_pct"].abs() > shock_threshold
+
+    log.info("Calendar: real FX merged (%d/%d days matched)", matched, len(df))

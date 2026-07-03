@@ -1,3 +1,17 @@
+# Python bytecode / notebook checkpoints.
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
 # Generated dataset and internal generation metadata — not committed.
 data/
 meta/
+external/
+labels/
+
+# Assembled release folder: keep the docs, ignore the (regenerable) data.
+dataset/dimensions/
+dataset/facts/
+dataset/labels/
+dataset/external/
+dataset/MANIFEST.md
