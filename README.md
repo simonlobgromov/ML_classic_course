@@ -40,7 +40,7 @@ adapted from MIT 18.065. Each student works with one "anchor" dataset throughout
 
 | Phase | Weeks | Theme | Status |
 |---|---|---|---|
-| 1. Data as vectors | 1–4 | Descriptive statistics, distributions, vectors, dot product, covariance | **In progress:** 7 lessons, 2 seminars, homework, 3 practicums |
+| 1. Data as vectors | 1–4 | Descriptive statistics, distributions, vectors, dot product, covariance | **In progress:** 8 lessons, 2 seminars, homework, 3 practicums |
 | 2. Matrices as operators | 5–8 | Operators, determinant, eigenvectors, PCA/SVD | Planned |
 | 3. Estimation and first models | 9–12 | Least squares, linear regression, MLE, logistic regression | Planned |
 | 4. Classic DS and the project | 13–16 | Trees, ensembles, metrics; research project | Modules `DT/` and `unsupervised/` ready |
@@ -51,7 +51,7 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
 
 | Path | What it is | Status |
 |---|---|---|
-| [`math_for_ds/`](math_for_ds/) | **Mathematics for DS:** Colab lessons L1–L7, a seminar, homework, the bus practicum | actively developed |
+| [`math_for_ds/`](math_for_ds/) | **Mathematics for DS:** Colab lessons L1–L8, a seminar, homework, the bus practicum | actively developed |
 | [`practice/`](practice/) | Practicums on dirty real data: Lalafo phones and cars (five cases each) | done for L1–L4 |
 | [`DT/`](DT/) | **Decision trees and ensembles:** 4 notebooks and an interactive HTML theory handbook | ready, to be re-linked to the math block |
 | [`unsupervised/`](unsupervised/) | **Unsupervised learning:** SVD/PCA/t-SNE, K-Means, GMM/EM, DBSCAN/HDBSCAN, hierarchical clustering | ready, to be re-linked to the math block |
@@ -66,7 +66,7 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
    **L4** Percentiles, boxplots, IQR, robust scaling → **practicums** Lalafo phones and cars
 3. **L5** Probability, Bernoulli, binomial, normal, three sigma → **L6** From histogram to probability (PDF, CDF, z) →
    **bus practicum** «Моссовет → Азия Молл»
-4. **L7** Sampling distribution, standard error, CLT → *next: L8 statistical tests*
+4. **L7** Sampling distribution, standard error, CLT → **L8** Confidence intervals and bootstrap → *next: L9 statistical tests*
 5. Phase 4: `DT/` (trees → bias–variance → bagging/RF → gradient boosting), `unsupervised/` (01 → 05)
 
 ## Data and related repositories

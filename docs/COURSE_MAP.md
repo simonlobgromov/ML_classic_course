@@ -2,7 +2,7 @@
 
 **What has been built, where it lives, in what order it is taught, and why it looks the way it does.**
 
-> **This document is kept up to date as the course grows.** Last updated: **2026-10-01**, after Lesson 7.
+> **This document is kept up to date as the course grows.** Last updated: **2026-10-01**, after Lesson 8.
 > It combines a course programme, a table of contents and methodological notes.
 > The teaching materials are in Russian; this map is in English so the whole team can use it.
 > How to work in the repo (build, validate, edit) is in [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md).
@@ -64,9 +64,9 @@ disagree about *intent*, ask the course author.
 
 | Phase | Weeks | Theme (syllabus) | Status (2026-10-01) |
 |---|---|---|---|
-| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L7 built. The statistics track is ahead of the plan; the linear-algebra track has stopped after week 1. |
+| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L8 built. The statistics track is ahead of the plan; the linear-algebra track has stopped after week 1. |
 | **2. Matrices as operators** | 5–8 | Operators, determinant and inverse, eigenvectors, PCA (+ SVD overview) | Not started. `unsupervised/01` already covers SVD/PCA as an ML lesson. |
-| **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | Not started. L7 and the planned L8 bring sampling and testing forward. |
+| **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | Not started. L7–L8 bring sampling and estimation forward; tests are planned for L9. |
 | **4. Classic DS and the project** | 13–16 | Trees, ensembles, metrics, cross-validation; research project | Modules `DT/` and `unsupervised/` exist (built June 2026, before the math block). Project not designed. |
 
 ---
@@ -91,7 +91,8 @@ and from references inside the notebooks, and is not necessarily the date of the
 | 10 | L | **L6 — From histogram to probability** · `math_for_ds/06_stat_distribution.ipynb` | random variable, PMF, density histogram, PDF, area, CDF, z, tails, model vs. sample | L5 | W2, extended | Sep 22 |
 | 11 | P | **Bus practicum "Моссовет → Азия Молл"** · `math_for_ds/practicum_mossovet_asia_mall_KEY.ipynb` | real GPS feed; trips via vectors and dot product; ECDF, normal model vs. data, waiting-time paradox, Monte Carlo | L1–L6 | integrative | Sep 28 |
 | 12 | L | **L7 — Sampling, standard error, CLT** · `math_for_ds/07_stat_sampling_clt.ipynb` | sampling distribution, SE, LLN, CLT, difference of two means; reuses the bus data | L6, bus practicum | beyond plan (prepares W12) | Sep 30 |
-| 13 | L | **L8 — Statistical tests and significance** | announced at the end of L7 §7 | L7 | W12 brought forward | *not built* |
+| 13 | L | **L8 — Confidence intervals and bootstrap** · `math_for_ds/08_stat_ci_bootstrap.ipynb` | known-σ intervals, coverage, bootstrap SE and percentile intervals, resampling schemes | L7 | estimation brought forward | Oct 1 |
+| 14 | L | **L9 — Statistical tests and significance** | bridge from L8 §9; tests and p-values remain untaught | L7–L8 | W12 brought forward | *not built* |
 | — | — | **Phase 4 modules** · `DT/`, `unsupervised/` | trees and ensembles; dimensionality reduction and clustering (§7) | Phases 1–3 | W13+ | June 2026 |
 
 Evidence for the less obvious positions:
@@ -301,7 +302,32 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 - **Notes.** **Designed for two meetings** (1–4; then 5–8 and practice). Sources: Penn State STAT 200/414/555 and
   OpenStax.
 - **Bridges.** §7 ends with "is the difference large compared with ordinary random spread?" and announces
-  **statistical tests and significance** for the next lesson.
+  **statistical tests and significance** for the next lesson. The author subsequently inserted L8 on
+  confidence intervals and bootstrap; formal tests are now planned for L9. The original L7 bridge is unchanged.
+
+
+### L8 — «Насколько точно мы знаем среднее?» (confidence intervals and bootstrap)
+
+- **Files.** `math_for_ds/08_stat_ci_bootstrap.ipynb` ← `build_lesson8.py` + `lesson8_widgets.js`.
+- **Data.** The synthetic delivery generator from L7 (10 + exponential waiting time; mean 30, SD 20).
+  Truth is available for method validation, then hidden when estimating from one sample. No data downloads.
+- **Sections.** 1) point estimate and precision; 2) central area for sampling means; 3) inversion into a CI;
+  4) repeated-study coverage; 5) delivery interpretation task; 6) a full bootstrap chapter (replacement,
+  empirical distribution, SE, percentile interval, nested coverage simulation, SciPy); 7) parametric vs.
+  nonparametric bootstrap, paired/cluster/block schemes, optional strata, and percentile/basic/BCa intervals;
+  8) practice and oral definitions; 9) a short hypothesis-testing bridge.
+- **Visuals.** Nine self-contained SVG widgets: sampling, shaded sampling distribution, interval inversion,
+  coverage forest, indexed resampling cards, bootstrap estimate/interval, bootstrap coverage, optional fitted
+  model comparison, optional row vs. cluster bootstrap. Eight matplotlib/seaborn figures in worked code.
+- **Notes.** Two meetings (1–5; 6 plus the overview in 7 and practice); optional experiments can move to a seminar.
+  Every displayed theory equation has a glossary. Important conclusions are boxed. Worked code is explicitly
+  separated from unanswered student tasks. Normal intervals use known population SD; for skewed deliveries
+  coverage is approximate. Bootstrap percentile coverage is checked, not promised. No t-tests or p-values.
+- **Limits.** Bus data appear only as a reasoning task about dependence; cluster resampling is illustrated on
+  synthetic equal-size independent days. A glossary of bootstrap variants is introductory, not a claim that
+  students can independently apply every advanced method.
+- **Bridges.** Which parameter values agree with our interval? A hypothesis is defined, but p-values, test rules
+  and statistical significance are left for L9.
 
 ---
 
@@ -314,7 +340,7 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 | W3 | Poisson; basis, rank, multicollinearity | — | **Not built.** |
 | W4 | Covariance, correlation, covariance matrix; milestone presentation 1 | — | **Not built.** Students still do not know correlation, which constrains every practice task. |
 | — | *(not in the syllabus)* | L4 | Robust, non-parametric tools, needed because the real data are dirty. |
-| — | *(not in the syllabus)* | Bus practicum, L7, planned L8 | Sampling, SE, CLT, tests. The syllabus only says tests "return" in W12; we introduce them earlier. |
+| — | *(not in the syllabus)* | Bus practicum, L7–L8, planned L9 | Sampling, SE, CLT, confidence intervals and bootstrap; tests next. The syllabus only says tests "return" in W12; we prepare them earlier. |
 | W8 | PCA, SVD overview | `unsupervised/01` | Exists as an ML lesson, without the covariance and eigenvector groundwork the syllabus intends. |
 | W13 | Trees, ensembles, metrics, cross-validation | `DT/` | Exists. It predates the math block. Metrics and cross-validation have no dedicated lesson. |
 
@@ -326,7 +352,7 @@ covariance), which is the road into Phase 2.
 
 ## 6. What students know so far
 
-*As of L7.* Practice tasks must stay inside this list. Anything outside it has to be taught first.
+*As of L8.* Practice tasks must stay inside this list. Anything outside it has to be taught first.
 
 **Linear algebra.** Vector as an observation; feature space ℝⁿ; addition, scaling, linear combination (introduced
 only); L2 norm, distance; centroid as the mean vector; dot product, projection, angle; cosine similarity and
@@ -345,11 +371,16 @@ observed frequencies. From the bus practicum: the empirical CDF, Monte Carlo sim
 **Sampling.** The sample mean as a statistic; the sampling distribution; SE = σ/√n and its estimate s/√n; the law of
 large numbers; the classical CLT; the difference of two group means and its SE.
 
+**Estimation (L8).** Confidence intervals, confidence level, repeated-study coverage; known-σ normal intervals
+(exact for normal observations, CLT approximation otherwise); ordinary nonparametric bootstrap, bootstrap SE,
+percentile intervals and nested coverage simulation. Parametric, paired, cluster, block and stratified schemes
+and basic/BCa intervals are introduced as an overview. A statistical hypothesis is defined as a bridge only.
+
 **Tools.** numpy, pandas (`describe`, `groupby`, `quantile`), seaborn (histograms, KDE, boxplots),
-`scipy.stats.norm` (`cdf`, `sf`), sklearn scalers and `NearestNeighbors`.
+`scipy.stats.norm` (`cdf`, `sf`, `ppf`), `scipy.stats.bootstrap`, NumPy resampling (`Generator.choice`), sklearn scalers and `NearestNeighbors`.
 
 **Not taught yet. Do not use without teaching it first:** correlation (Pearson r, `df.corr()`) and covariance; the
-covariance matrix; Poisson; hypothesis tests, p-values, confidence intervals; matrices as operators, rank,
+covariance matrix; Poisson; hypothesis tests, p-values; matrices as operators, rank,
 determinant, inverse, eigenvectors; PCA/SVD; least squares and linear regression; MLE; logistic regression; any ML
 model, train/test split, metrics.
 
@@ -424,7 +455,7 @@ students a familiar dataset here.
 | Telecom churn | CSV from the mlcourse.ai GitHub repo | `bagging_rf` | |
 | sklearn toy sets, 20 Newsgroups | sklearn | `DT/`, `unsupervised/` | |
 | Keyword-spotting audio features | HF `aiacademy-kg/kws-dataset` | `kws-project` (external) | Features already extracted |
-| Synthetic data | generated in the notebook | L6, L7, `bias_variance_demo`, `gradient_boosting` | The law is known, so every result can be checked |
+| Synthetic data | generated in the notebook | L6, L7, L8, `bias_variance_demo`, `gradient_boosting` | The law is known, so every result can be checked |
 
 **Where the data come from.** All `aiacademy-kg/*` datasets are published on the school's Hugging Face organization,
 [huggingface.co/aiacademy-kg](https://huggingface.co/aiacademy-kg). The scrapers that build the house.kg and Lalafo
@@ -442,11 +473,11 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 
 ### 9.1 Teaching
 
-- **Experience first, then the name, then the formula.** L5–L7 use this "genetic" order explicitly: an experiment or
+- **Experience first, then the name, then the formula.** L5–L8 use this "genetic" order explicitly: an experiment or
   widget → «что мы увидели» → a precise definition.
 - **Predict, act, explain.** Before moving a slider, the student predicts the result; afterwards, they explain it in
   words.
-- **A «Где: …» block under every displayed formula**, explaining every symbol (CSS class `.where`; in L6–L7 enforced
+- **A «Где: …» block under every displayed formula**, explaining every symbol (CSS class `.where`; in L6–L8 enforced
   by the `eq()` helper).
 - **Optional depth** goes into `<details>` blocks («для тех, кто хочет глубже»), so the main line stays short.
 - **English terminology is introduced gradually:** an English gloss next to the Russian term (class `.en`).
@@ -460,7 +491,7 @@ binary target. The list of students' anchor datasets is not recorded in the repo
   Y" with group medians, a scatter or 2D KDE, and centroids instead.
 - **Practicum framing.** The layperson vs. the researcher. Real dirty data are left dirty. Mathematics is
   recommended only where it is needed. Students defend their conclusions with plots and a short memo or talk.
-- **Long lessons mark their split points** (L6 and L7 are each designed for two meetings).
+- **Long lessons mark their split points** (L6, L7 and L8 are each designed for two meetings).
 
 ### 9.2 Tone and language
 
@@ -482,7 +513,7 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 - Theory visualisations are **live JS/SVG** (draggable points, sliders), not matplotlib. Matplotlib/seaborn appear in
   the code students write. Angles and circles need the square plane `plane(half)`.
 - MathJax with `$…$` and `$$…$$` delimiters only.
-- Current pattern (L6–L7): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
+- Current pattern (L6–L8): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
   glossary guard; references to authoritative sources (NIST, SciPy, Penn State, OpenStax).
 
 ### 9.4 Practicum format
@@ -499,7 +530,8 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 
 **Next to build**
 
-1. **L8: statistical tests and significance**, announced at the end of L7.
+1. **L9: statistical tests and significance**, prepared by L7 and the new L8. CI and bootstrap come first,
+   following the author’s agreed sequence; t-tests and p-values are not part of L8.
 2. **Resume the linear-algebra track:** linear combinations → basis, rank, multicollinearity (W3) →
    covariance and correlation, covariance matrix (W4). This is the road into Phase 2.
 3. **Poisson** (W3; foreshadowed in L5).
@@ -521,6 +553,9 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 
 **Technical debt**
 
+- L7 §7 still announces tests for “the next lesson”. The author-approved sequence now inserts L8 (CI/bootstrap)
+  before tests in L9. L8 explains the detour; update that historical bridge when L7 is next revised.
+
 - `build_lesson1.py` still writes to the old folder `linear_algebra/`. This is left as is on purpose: the L1 notebook
   is edited by hand, and a rebuild would overwrite those edits.
 - `practice/*/build_*.py` write to the current directory, so run them from inside their folder.
@@ -528,6 +563,10 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 ---
 
 ## 11. Changelog
+
+- **2026-10-01:** Added L8 on confidence intervals and bootstrap, with nine widgets and eight Python figures.
+  Deferred formal tests/p-values to L9 by agreement with the course author. Updated the concept inventory,
+  sequence, README and contributor navigation. L7 was not rebuilt.
 
 - **2026-10-01:** Map created. Covers L1–L7, Seminar 1, the vector-algebra homework, three practicums (phones, cars,
   bus) and the `DT/` and `unsupervised/` modules. `build_lesson2–7.py` now write next to themselves (the old
