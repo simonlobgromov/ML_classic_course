@@ -6,4 +6,5 @@ data/
 .DS_Store
 catboost_info/
 speaker_emb.npz
+__pycache__/
 *.npz

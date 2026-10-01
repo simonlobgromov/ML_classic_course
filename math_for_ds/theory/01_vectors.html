@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Урок 1. Вектор: наблюдение как точка в пространстве</title>
+<link rel="stylesheet" href="assets/style.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script src="assets/common.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="home" href="index.html">Линейная алгебра · Неделя 1</a>
+    <span class="nav-prev-next"><a href="02_norm_dot.html">Урок 2 →</a></span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="chapter-tag">Фаза 1 · Данные как векторы · Урок 1</div>
+  <h1>Вектор: наблюдение как точка в пространстве признаков</h1>
+
+  <p>Пока вы смотрите на датасет как на <em>таблицу</em>, вы видите ячейки. Наша цель на
+  этой неделе — научиться видеть в той же таблице <strong>точки в пространстве</strong>.
+  Как только это переключение произойдёт, почти вся дальнейшая математика курса станет
+  геометрией: расстояние между наблюдениями, направление наибольшего разброса, проекция
+  на модель — всё это будут действия с точками и стрелками.</p>
+
+  <div class="box idea">
+    <div class="box-title">Что вы унесёте с этого урока</div>
+    Одна строка датасета — это вектор. Над векторами есть ровно две базовые операции:
+    <b>сложить</b> и <b>умножить на число</b>. Всё остальное в линейной алгебре собрано
+    из этих двух. Пространство, в котором это можно делать не выходя за его пределы,
+    называется <b>векторным пространством</b> — и пространство признаков вашего датасета
+    именно такое.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.1. От строки таблицы — к вектору</h2>
+
+  <p>Возьмём датасет. Строки — это <strong>наблюдения</strong> (люди, транзакции, дни),
+  столбцы — <strong>признаки</strong> (рост, сумма, температура). Одно наблюдение с
+  $n$ числовыми признаками — это просто упорядоченный список из $n$ чисел:</p>
+
+  $$ \mathbf{x} = (x_1,\, x_2,\, \dots,\, x_n). $$
+
+  <p>Такой список и называется <strong>вектором</strong>, а число $n$ — его
+  <strong>размерностью</strong>. Договоримся: наблюдение — это вектор-<em>столбец</em>,
+  просто в тексте мы пишем его в строку ради экономии места. Например, наблюдение о
+  человеке с признаками (рост = 180, вес = 75) — это вектор $\mathbf{x} = (180,\,75)$
+  в <strong>двумерном</strong> пространстве признаков.</p>
+
+  <table>
+    <thead><tr><th></th><th>рост</th><th>вес</th><th>возраст</th></tr></thead>
+    <tbody>
+      <tr><td><b>Аня</b></td><td>165</td><td>58</td><td>29</td></tr>
+      <tr><td><b>Борис</b></td><td>182</td><td>88</td><td>41</td></tr>
+    </tbody>
+  </table>
+
+  <p>Здесь «Аня» — это вектор $(165,\,58,\,29)$, точка в <strong>трёхмерном</strong>
+  пространстве. «Борис» — другая точка. Весь датасет — это <em>облако точек</em>: сколько
+  строк, столько точек; сколько числовых столбцов, столько измерений у пространства.</p>
+
+  <div class="box def">
+    <div class="box-title">Ключевой сдвиг</div>
+    «Наблюдение» и «точка в пространстве признаков» — это одно и то же, сказанное на языке
+    таблиц и на языке геометрии. Дальше мы будем свободно переходить туда-сюда.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.2. Две картинки одного вектора: точка и стрелка</h2>
+
+  <p>У вектора есть <strong>два одинаково правильных</strong> геометрических образа, и оба
+  пригодятся:</p>
+  <ul>
+    <li><strong>Точка</strong> с координатами $(x_1, x_2)$ — «где находится наблюдение».</li>
+    <li><strong>Стрелка</strong> из начала координат в эту точку — «в каком направлении и
+      как далеко» от нуля.</li>
+  </ul>
+
+  <p>Компоненты вектора — это в точности <em>значения признаков</em>, они же — длины
+  проекций стрелки на оси. Потяните точку мышью и посмотрите, как меняются числа.</p>
+
+  <div class="widget" id="w-dual">
+    <div class="widget-title">Перетащите наблюдение по плоскости признаков</div>
+    <div class="widget-sub">Ось $x_1$ — признак «рост (норм.)», ось $x_2$ — «вес (норм.)».
+      Переключайте, что рисовать: точку или стрелку из начала координат.</div>
+    <svg viewBox="0 0 600 380" id="svg-dual"></svg>
+    <div class="controls">
+      <button class="btn ghost" id="dual-mode">Показать стрелку</button>
+      <div class="control"><label>показывать проекции</label>
+        <input type="checkbox" id="dual-proj" checked></div>
+    </div>
+    <div class="readout" id="dual-readout"></div>
+  </div>
+
+  <div class="box idea">
+    <div class="box-title">Зачем нам две картинки</div>
+    <b>Точка</b> удобна, когда мы думаем про облако данных (кластеры, выбросы, соседей).
+    <b>Стрелка</b> удобна, когда мы <em>складываем</em> векторы и умножаем их на число —
+    об этом весь остаток урока. Один и тот же объект, разный акцент.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.3. Размерность: почему 2D — это не игрушка</h2>
+
+  <p>Реальные датасеты живут в $\mathbb{R}^{50}$, $\mathbb{R}^{300}$ и выше — нарисовать
+  их нельзя. Но вся математика, которую мы отрабатываем на плоскости, <strong>дословно</strong>
+  переносится в любую размерность: формулы те же, просто индексов больше. Поэтому мы честно
+  строим интуицию в 2D и 3D, а затем доверяем формулам в $n$-мерном пространстве. Это не
+  упрощение «для школьников» — это рабочий приём: специалист по данным думает про 300 мерностей
+  <em>картинкой из двух</em>.</p>
+
+  <!-- =========================================================== -->
+  <h2>1.4. Операция 1 — умножение на число (масштабирование)</h2>
+
+  <p>Умножить вектор на число $t$ — значит умножить на $t$ <em>каждую</em> его компоненту:</p>
+
+  $$ t\cdot\mathbf{x} = (t\,x_1,\ t\,x_2,\ \dots,\ t\,x_n). $$
+
+  <p>Геометрически стрелка <strong>растягивается</strong> в $t$ раз (при $|t|>1$),
+  <strong>сжимается</strong> (при $|t|<1$) и <strong>разворачивается назад</strong> при
+  $t<0$. Направление либо сохраняется, либо становится строго противоположным — вектор
+  остаётся на одной прямой, проходящей через ноль.</p>
+
+  <div class="widget" id="w-scale">
+    <div class="widget-title">Умножение вектора на число</div>
+    <div class="widget-sub">Синяя стрелка — исходный $\mathbf{v}$ (перетащите её конец).
+      Зелёная — $t\cdot\mathbf{v}$ (двигайте ползунок $t$).</div>
+    <svg viewBox="0 0 600 380" id="svg-scale"></svg>
+    <div class="controls">
+      <div class="control"><label>$t =$</label>
+        <input type="range" id="scale-t" min="-2" max="2" step="0.1" value="1.5">
+        <span class="val" id="scale-t-val">1.5</span>
+      </div>
+    </div>
+    <div class="readout" id="scale-readout"></div>
+  </div>
+
+  <div class="box def">
+    <div class="box-title">Смысл для данных</div>
+    Масштабирование — это смена единиц измерения и стандартизация признаков. Перевести рост
+    из сантиметров в метры — умножить столбец на $0{,}01$. На следующем уроке мы поделим
+    вектор на его длину — тоже умножение на число — и получим приведение к единичному «размеру».
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.5. Операция 2 — сложение векторов</h2>
+
+  <p>Сложить два вектора — значит сложить их <em>покомпонентно</em>:</p>
+
+  $$ \mathbf{a} + \mathbf{b} = (a_1+b_1,\ a_2+b_2,\ \dots,\ a_n+b_n). $$
+
+  <p>Геометрически это правило <strong>«хвост к голове»</strong>: приставьте начало
+  $\mathbf{b}$ к концу $\mathbf{a}$ — куда попадёте, там и конец суммы. Эквивалентно —
+  правило <strong>параллелограмма</strong>. Перетаскивайте концы обеих стрелок.</p>
+
+  <div class="widget" id="w-add">
+    <div class="widget-title">Сложение векторов: хвост к голове</div>
+    <div class="widget-sub">Перетащите концы $\mathbf{a}$ (синяя) и $\mathbf{b}$ (янтарная).
+      Красная — сумма $\mathbf{a}+\mathbf{b}$; пунктир достраивает параллелограмм.</div>
+    <svg viewBox="0 0 600 380" id="svg-add"></svg>
+    <div class="readout" id="add-readout"></div>
+  </div>
+
+  <div class="box idea">
+    <div class="box-title">Смысл для данных</div>
+    Сложение и деление на число дают <b>среднее наблюдение</b>: центр облака (центроид) —
+    это $\tfrac{1}{m}(\mathbf{x}_1+\dots+\mathbf{x}_m)$. Именно так k-means будет считать
+    центры кластеров, а вычитание среднего из каждой точки — <b>центрирование данных</b> —
+    станет первым шагом PCA в фазе 2.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.6. Обе операции вместе: линейная комбинация</h2>
+
+  <p>Соединив обе операции, получаем главную конструкцию всего курса —
+  <strong>линейную комбинацию</strong>:</p>
+
+  $$ \alpha\,\mathbf{a} + \beta\,\mathbf{b}, \qquad \alpha,\beta \in \mathbb{R}. $$
+
+  <p>Меняя два числа $\alpha$ и $\beta$, можно попасть в разные точки плоскости. Множество
+  <em>всех</em> достижимых точек называется <strong>линейной оболочкой</strong> векторов
+  $\mathbf{a}$ и $\mathbf{b}$. Покрутите ползунки и проследите за красной точкой.</p>
+
+  <div class="widget" id="w-lc">
+    <div class="widget-title">Линейная комбинация $\alpha\mathbf{a} + \beta\mathbf{b}$</div>
+    <div class="widget-sub">Синяя и янтарная — базовые $\mathbf{a}$, $\mathbf{b}$.
+      Пунктиром показаны слагаемые $\alpha\mathbf{a}$ и $\beta\mathbf{b}$, красная точка — их сумма.</div>
+    <svg viewBox="0 0 600 380" id="svg-lc"></svg>
+    <div class="controls">
+      <div class="control"><label>$\alpha =$</label>
+        <input type="range" id="lc-a" min="-2" max="2" step="0.1" value="1"><span class="val" id="lc-a-val">1.0</span></div>
+      <div class="control"><label>$\beta =$</label>
+        <input type="range" id="lc-b" min="-2" max="2" step="0.1" value="0.6"><span class="val" id="lc-b-val">0.6</span></div>
+    </div>
+    <div class="readout" id="lc-readout"></div>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">Забегая вперёд (недели 3, 8)</div>
+    Пока $\mathbf{a}$ и $\mathbf{b}$ смотрят в разные стороны, их линейной комбинацией можно
+    покрыть <em>всю</em> плоскость. А если они лежат на одной прямой (один — кратное другого),
+    то сколько ни крути $\alpha,\beta$, вы останетесь на этой прямой — двух «настоящих»
+    направлений уже нет. Это и есть <b>линейная зависимость</b>, из-за которой возникает
+    <b>мультиколлинеарность</b> и падает <b>ранг</b> матрицы признаков. Здесь мы это только
+    называем; разберём подробно на неделе 3.
+  </div>
+
+  <!-- =========================================================== -->
+  <h2>1.7. Что такое векторное пространство</h2>
+
+  <p>Мы всё время неявно пользовались одним свойством: сложив два наблюдения или умножив
+  наблюдение на число, мы снова получаем объект той же природы — вектор той же размерности.
+  Мы <strong>не выпадаем</strong> из пространства признаков. Множество, замкнутое относительно
+  этих двух операций, и называется <strong>векторным пространством</strong>.</p>
+
+  <div class="box def">
+    <div class="box-title">Определение (рабочее)</div>
+    <b>Векторное пространство</b> — это множество объектов («векторов»), которые можно
+    складывать друг с другом и умножать на числа так, что результат всегда остаётся в этом же
+    множестве, а операции ведут себя привычно (переставимость сложения, распределительный
+    закон и т.п.). Пространство всех наблюдений с $n$ числовыми признаками — это
+    $\mathbb{R}^n$, стандартный пример.
+  </div>
+
+  <details class="derivation">
+    <summary>Для любознательных: восемь аксиом — и почему их не надо зубрить</summary>
+    <p>Формально $V$ — векторное пространство над $\mathbb{R}$, если сложение коммутативно
+    ($\mathbf{a}+\mathbf{b}=\mathbf{b}+\mathbf{a}$) и ассоциативно, есть нулевой вектор
+    $\mathbf{0}$ и противоположный $-\mathbf{a}$, а умножение на число согласовано со
+    сложением:</p>
+    $$ \alpha(\mathbf{a}+\mathbf{b}) = \alpha\mathbf{a}+\alpha\mathbf{b}, \quad
+       (\alpha+\beta)\mathbf{a} = \alpha\mathbf{a}+\beta\mathbf{a}, \quad
+       (\alpha\beta)\mathbf{a} = \alpha(\beta\mathbf{a}), \quad 1\cdot\mathbf{a}=\mathbf{a}. $$
+    <p>Для $\mathbb{R}^n$ все восемь проверяются в одну строчку, потому что операции
+    покомпонентные, а числа складывать и умножать мы умеем. Ценность аксиом не в заучивании,
+    а в том, что <em>тот же</em> аппарат работает и для менее очевидных «векторов» — например,
+    для функций или для строк-эмбеддингов из языковой модели. Если объект умеет складываться и
+    масштабироваться по этим правилам — к нему применима вся линейная алгебра курса.</p>
+  </details>
+
+  <div class="box takeaway">
+    <div class="box-title">Итог урока</div>
+    <ul>
+      <li>Строка датасета = вектор; датасет = облако точек в $\mathbb{R}^n$.</li>
+      <li>Вектор — это и точка (где), и стрелка (направление и длина).</li>
+      <li>Две базовые операции: <b>умножение на число</b> (масштаб) и <b>сложение</b>
+        (покомпонентно, «хвост к голове»).</li>
+      <li>Их комбинация $\alpha\mathbf{a}+\beta\mathbf{b}$ — линейная комбинация; множество
+        всех таких точек — линейная оболочка.</li>
+      <li><b>Векторное пространство</b> — множество, из которого эти операции не выводят;
+        пространство признаков — это $\mathbb{R}^n$.</li>
+    </ul>
+  </div>
+
+  <div class="box idea">
+    <div class="box-title">Задание на свой датасет</div>
+    Возьмите две строки своего датасета-якоря (два наблюдения) и два числовых признака.
+    (1) Выпишите оба наблюдения как двумерные векторы и нарисуйте их точками. (2) Посчитайте
+    руками их сумму и среднее $\tfrac12(\mathbf{a}+\mathbf{b})$ — где оно оказалось
+    относительно двух точек и почему? (3) Ответьте словами: если умножить признак «рост» на
+    $0{,}01$ (см → м), <em>что</em> геометрически произойдёт с облаком точек и изменится ли
+    <em>взаимное</em> расположение наблюдений?
+  </div>
+
+  <div class="chapter-nav">
+    <a class="disabled">← назад</a>
+    <a href="02_norm_dot.html">Урок 2. Длина и угол: норма и скалярное произведение →</a>
+  </div>
+
+</div>
+
+<script>
+// ============================================================================
+// Shared plane geometry (near-equal aspect ratio so angles look honest).
+// ============================================================================
+const W = 600, H = 380, PADL = 36, PADR = 16, PADT = 16, PADB = 28;
+const X0 = -6, X1 = 6, Y0 = -3.7, Y1 = 3.7;
+const SX = scale([X0, X1], [PADL, W - PADR]);
+const SY = scale([Y0, Y1], [H - PADB, PADT]);
+const IX = scale([PADL, W - PADR], [X0, X1]);   // pixel -> data
+const IY = scale([H - PADB, PADT], [Y0, Y1]);
+const XT = [-6, -4, -2, 2, 4, 6], YT = [-3, -1, 1, 3];
+const OX = SX(0), OY = SY(0);                    // origin in pixels
+const COL = { a: "#2d5d8a", b: "#9a6b00", sum: "#9b3b46", v: "#2d5d8a", res: "#2f6f4f" };
+const fmt = v => (v >= 0 ? " " : "") + v.toFixed(2);
+
+function freshFrame(svg) {
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  const g = el("g"); svg.appendChild(g);
+  drawFrame(g, { x: SX, y: SY, x0: X0, x1: X1, y0: Y0, y1: Y1, xticks: XT, yticks: YT });
+  return g;
+}
+// A draggable handle (circle) at data point (dx,dy); onMove gets clamped data coords.
+function handle(g, dx, dy, color, onMove, svg) {
+  const c = el("circle", { cx: SX(dx), cy: SY(dy), r: 8, fill: color, "fill-opacity": 0.25,
+    stroke: color, "stroke-width": 2 });
+  g.appendChild(c);
+  onDrag(svg, c, p => onMove(clamp(IX(p.x), X0, X1), clamp(IY(p.y), Y0, Y1)));
+  return c;
+}
+function label(g, dx, dy, text, color) {
+  const t = el("text", { x: SX(dx), y: SY(dy), fill: color, "font-family":
+    "-apple-system, Segoe UI, sans-serif", "font-size": 15, "font-weight": 700 });
+  t.textContent = text; g.appendChild(t); return t;
+}
+
+// ============================================================================
+// Widget 1 — point / arrow duality with projections
+// ============================================================================
+(function () {
+  const svg = document.getElementById("svg-dual");
+  const readout = document.getElementById("dual-readout");
+  const btn = document.getElementById("dual-mode");
+  const projBox = document.getElementById("dual-proj");
+  let v = { x: 3.4, y: 1.8 }, showArrow = false;
+
+  function render() {
+    const g = freshFrame(svg);
+    if (projBox.checked) {                        // dashed projections onto axes
+      g.appendChild(el("line", { x1: SX(v.x), y1: SY(v.y), x2: SX(v.x), y2: OY,
+        stroke: "#b9c0c7", "stroke-width": 1.5, "stroke-dasharray": "4 4" }));
+      g.appendChild(el("line", { x1: SX(v.x), y1: SY(v.y), x2: OX, y2: SY(v.y),
+        stroke: "#b9c0c7", "stroke-width": 1.5, "stroke-dasharray": "4 4" }));
+      label(g, v.x, -0.28, "x₁=" + v.x.toFixed(1), "#8a929a");
+      label(g, 0.15, v.y, "x₂=" + v.y.toFixed(1), "#8a929a");
+    }
+    if (showArrow) g.appendChild(arrow(OX, OY, SX(v.x), SY(v.y), { color: COL.v }));
+    handle(g, v.x, v.y, COL.v, (x, y) => { v = { x, y }; render(); }, svg);
+    label(g, v.x + 0.2, v.y + 0.35, "x", COL.v);
+    readout.innerHTML = `наблюдение <b>x</b> = (${v.x.toFixed(2)}, ${v.y.toFixed(2)}) &nbsp;·&nbsp; `
+      + `рост(норм.) = <b>${v.x.toFixed(2)}</b>, вес(норм.) = <b>${v.y.toFixed(2)}</b>`;
+  }
+  btn.addEventListener("click", () => {
+    showArrow = !showArrow;
+    btn.textContent = showArrow ? "Показать точку" : "Показать стрелку";
+    render();
+  });
+  projBox.addEventListener("change", render);
+  render();
+})();
+
+// ============================================================================
+// Widget 2 — scalar multiplication
+// ============================================================================
+(function () {
+  const svg = document.getElementById("svg-scale");
+  const readout = document.getElementById("scale-readout");
+  const tS = document.getElementById("scale-t"), tV = document.getElementById("scale-t-val");
+  let v = { x: 2.6, y: 1.4 };
+
+  function render() {
+    const t = parseFloat(tS.value); tV.textContent = t.toFixed(1);
+    const g = freshFrame(svg);
+    // guide line through origin along v
+    const k = 6 / Math.max(Math.abs(v.x), Math.abs(v.y), 0.001);
+    g.appendChild(el("line", { x1: SX(-k * v.x), y1: SY(-k * v.y), x2: SX(k * v.x), y2: SY(k * v.y),
+      stroke: "#e2e6ea", "stroke-width": 1.5 }));
+    g.appendChild(arrow(OX, OY, SX(t * v.x), SY(t * v.y), { color: COL.res, width: 3 }));
+    g.appendChild(arrow(OX, OY, SX(v.x), SY(v.y), { color: COL.v }));
+    handle(g, v.x, v.y, COL.v, (x, y) => { v = { x, y }; render(); }, svg);
+    label(g, v.x + 0.2, v.y + 0.3, "v", COL.v);
+    label(g, t * v.x + 0.2, t * v.y - 0.2, "t·v", COL.res);
+    const dir = t > 0 ? "то же направление" : t < 0 ? "противоположное направление" : "нулевой вектор";
+    readout.innerHTML = `t·v = (${(t * v.x).toFixed(2)}, ${(t * v.y).toFixed(2)}) &nbsp;·&nbsp; `
+      + `длина ×${Math.abs(t).toFixed(1)} &nbsp;·&nbsp; ${dir}`;
+  }
+  tS.addEventListener("input", render);
+  render();
+})();
+
+// ============================================================================
+// Widget 3 — vector addition (tip-to-tail + parallelogram)
+// ============================================================================
+(function () {
+  const svg = document.getElementById("svg-add");
+  const readout = document.getElementById("add-readout");
+  let a = { x: 3, y: 1 }, b = { x: -1, y: 2.2 };
+
+  function render() {
+    const g = freshFrame(svg);
+    const s = { x: a.x + b.x, y: a.y + b.y };
+    // parallelogram guides: b shifted to tip of a, and a shifted to tip of b
+    g.appendChild(el("line", { x1: SX(a.x), y1: SY(a.y), x2: SX(s.x), y2: SY(s.y),
+      stroke: COL.b, "stroke-width": 1.6, "stroke-dasharray": "5 4", "stroke-opacity": 0.7 }));
+    g.appendChild(el("line", { x1: SX(b.x), y1: SY(b.y), x2: SX(s.x), y2: SY(s.y),
+      stroke: COL.a, "stroke-width": 1.6, "stroke-dasharray": "5 4", "stroke-opacity": 0.7 }));
+    g.appendChild(arrow(OX, OY, SX(s.x), SY(s.y), { color: COL.sum, width: 3 }));
+    g.appendChild(arrow(OX, OY, SX(a.x), SY(a.y), { color: COL.a }));
+    g.appendChild(arrow(OX, OY, SX(b.x), SY(b.y), { color: COL.b }));
+    handle(g, a.x, a.y, COL.a, (x, y) => { a = { x, y }; render(); }, svg);
+    handle(g, b.x, b.y, COL.b, (x, y) => { b = { x, y }; render(); }, svg);
+    label(g, a.x + 0.2, a.y + 0.3, "a", COL.a);
+    label(g, b.x + 0.2, b.y + 0.3, "b", COL.b);
+    label(g, s.x + 0.2, s.y + 0.3, "a+b", COL.sum);
+    readout.innerHTML = `a = (${a.x.toFixed(2)}, ${a.y.toFixed(2)}) &nbsp;+&nbsp; `
+      + `b = (${b.x.toFixed(2)}, ${b.y.toFixed(2)}) &nbsp;=&nbsp; `
+      + `<b>(${s.x.toFixed(2)}, ${s.y.toFixed(2)})</b>`;
+  }
+  render();
+})();
+
+// ============================================================================
+// Widget 4 — linear combination α·a + β·b
+// ============================================================================
+(function () {
+  const svg = document.getElementById("svg-lc");
+  const readout = document.getElementById("lc-readout");
+  const aS = document.getElementById("lc-a"), aV = document.getElementById("lc-a-val");
+  const bS = document.getElementById("lc-b"), bV = document.getElementById("lc-b-val");
+  const a = { x: 2.4, y: 0.8 }, b = { x: -0.9, y: 2.1 };   // fixed basis vectors
+
+  function render() {
+    const al = parseFloat(aS.value), be = parseFloat(bS.value);
+    aV.textContent = al.toFixed(1); bV.textContent = be.toFixed(1);
+    const g = freshFrame(svg);
+    const p = { x: al * a.x + be * b.x, y: al * a.y + be * b.y };
+    // scaled components as dashed arrows, tip-to-tail
+    g.appendChild(arrow(OX, OY, SX(al * a.x), SY(al * a.y), { color: COL.a, dash: "5 4", width: 2 }));
+    g.appendChild(arrow(SX(al * a.x), SY(al * a.y), SX(p.x), SY(p.y), { color: COL.b, dash: "5 4", width: 2 }));
+    g.appendChild(arrow(OX, OY, SX(a.x), SY(a.y), { color: COL.a }));
+    g.appendChild(arrow(OX, OY, SX(b.x), SY(b.y), { color: COL.b }));
+    g.appendChild(el("circle", { cx: SX(p.x), cy: SY(p.y), r: 6, fill: COL.sum }));
+    label(g, a.x + 0.2, a.y + 0.3, "a", COL.a);
+    label(g, b.x - 0.5, b.y + 0.3, "b", COL.b);
+    readout.innerHTML = `α·a + β·b = ${al.toFixed(1)}·(${a.x},${a.y}) + ${be.toFixed(1)}·(${b.x},${b.y}) `
+      + `= <b>(${p.x.toFixed(2)}, ${p.y.toFixed(2)})</b>`;
+  }
+  aS.addEventListener("input", render);
+  bS.addEventListener("input", render);
+  render();
+})();
+</script>
+
+</body>
+</html>
