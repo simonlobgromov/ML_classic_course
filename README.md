@@ -40,7 +40,7 @@ adapted from MIT 18.065. Each student works with one "anchor" dataset throughout
 
 | Phase | Weeks | Theme | Status |
 |---|---|---|---|
-| 1. Data as vectors | 1–4 | Descriptive statistics, distributions, vectors, dot product, covariance | **In progress:** 8 lessons, 2 seminars, homework, 3 practicums |
+| 1. Data as vectors | 1–4 | Descriptive statistics, distributions, vectors, dot product, covariance | **In progress:** 8 lessons, 2 seminars, homework, 4 practicums |
 | 2. Matrices as operators | 5–8 | Operators, determinant, eigenvectors, PCA/SVD | Planned |
 | 3. Estimation and first models | 9–12 | Least squares, linear regression, MLE, logistic regression | Planned |
 | 4. Classic DS and the project | 13–16 | Trees, ensembles, metrics; research project | Modules `DT/` and `unsupervised/` ready |
@@ -52,7 +52,7 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
 | Path | What it is | Status |
 |---|---|---|
 | [`math_for_ds/`](math_for_ds/) | **Mathematics for DS:** Colab lessons L1–L8, a seminar, homework | actively developed |
-| [`practice/`](practice/) | Practicums on dirty real data: Lalafo phones and cars (five cases each), bus practicum (student and KEY notebooks) | Lalafo: L1–L4; buses: L1–L6 |
+| [`practice/`](practice/) | Lalafo phones and cars; bus travel/waiting and bus comparison with bootstrap and permutations (both with student and KEY versions) | Lalafo: L1–L4; buses: L1–L6, then L7–L8 |
 | [`DT/`](DT/) | **Decision trees and ensembles:** 4 notebooks and an interactive HTML theory handbook | ready, to be re-linked to the math block |
 | [`unsupervised/`](unsupervised/) | **Unsupervised learning:** SVD/PCA/t-SNE, K-Means, GMM/EM, DBSCAN/HDBSCAN, hierarchical clustering | ready, to be re-linked to the math block |
 | [`docs/`](docs/) | Course map and the protocol for contributors and AI agents | living documents |
@@ -67,7 +67,10 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
 3. **L5** Probability, Bernoulli, binomial, normal, three sigma → **L6** From histogram to probability (PDF, CDF, z) →
    **bus practicum** «Моссовет → Азия Молл» — [student notebook](practice/practicum_mossovet_asia_mall.ipynb),
    [teacher's answers (KEY)](practice/practicum_mossovet_asia_mall_KEY.ipynb)
-4. **L7** Sampling distribution, standard error, CLT → **L8** Confidence intervals and bootstrap → *next: L9 statistical tests*
+4. **L7** Sampling distribution, standard error, CLT → **L8** Confidence intervals and bootstrap →
+   **bus resampling practicum** — [student notebook](practice/practicum_mossovet_asia_mall_bootstrap.ipynb),
+   [teacher's answers (KEY)](practice/practicum_mossovet_asia_mall_bootstrap_KEY.ipynb)
+   → *next: L9 statistical tests*
 5. Phase 4: `DT/` (trees → bias–variance → bagging/RF → gradient boosting), `unsupervised/` (01 → 05)
 
 ## Data and related repositories

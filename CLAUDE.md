@@ -29,6 +29,8 @@ math_for_ds/            Phase 1 — "Математика для DS" (Colab less
 practice/               practicums on real data
   practicum_mossovet_asia_mall.ipynb       bus practicum, student tasks (written by hand)
   practicum_mossovet_asia_mall_KEY.ipynb   bus practicum, teacher answers and outputs (written by hand)
+  practicum_mossovet_asia_mall_bootstrap.ipynb      after L8: route comparison, permutations, bootstrap, CI (student tasks)
+  practicum_mossovet_asia_mall_bootstrap_KEY.ipynb  teacher answers and outputs for the same practicum
   <topic>/              Lalafo (phones, cars): recon.py, RECON.md, build_<topic>.py → <topic>_practice.ipynb
 DT/                     Phase 4: decision trees and ensembles (4 notebooks, theory/ HTML handbook, third-party PDFs)
 unsupervised/           Phase 4: dimensionality reduction and clustering (5 notebooks)
@@ -53,7 +55,7 @@ There are no tests. Validation is the checklist in AGENT_PROTOCOL §7.
 2. **Use only taught concepts** in tasks (COURSE_MAP §6). For example, there is no correlation, regression or
    hypothesis testing yet.
 3. **Never run `build_lesson1.py`.** L1 is edited by hand. Rebuilding L4 drops its 17 in-class cells, so ask first.
-   `seminar_1`, both bus practicum notebooks in `practice/`, `DT/` and `unsupervised/` have no build scripts;
+   `seminar_1`, the bus practicum notebooks in `practice/`, `DT/` and `unsupervised/` have no build scripts;
    edit those notebooks directly.
 4. **Lesson format:** Colab `.ipynb`, committed un-executed; dark HTML theory in collapsed `#@title` cells; every
    output self-contained; live JS/SVG widgets; MathJax `$…$` / `$$…$$` only; a «Где:» glossary under every formula.

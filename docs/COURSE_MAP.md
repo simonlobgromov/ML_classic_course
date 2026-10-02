@@ -2,7 +2,7 @@
 
 **What has been built, where it lives, in what order it is taught, and why it looks the way it does.**
 
-> **This document is kept up to date as the course grows.** Last updated: **2026-10-02**, after moving the bus practicum to `practice/`.
+> **This document is kept up to date as the course grows.** Last updated: **2026-10-02**, after adding the student version of the approved bus resampling practicum.
 > It combines a course programme, a table of contents and methodological notes.
 > The teaching materials are in Russian; this map is in English so the whole team can use it.
 > How to work in the repo (build, validate, edit) is in [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md).
@@ -62,7 +62,7 @@ disagree about *intent*, ask the course author.
 
 ## 2. Phases and status
 
-| Phase | Weeks | Theme (syllabus) | Status (2026-10-01) |
+| Phase | Weeks | Theme (syllabus) | Status (2026-10-02) |
 |---|---|---|---|
 | **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L8 built. The statistics track is ahead of the plan; the linear-algebra track has stopped after week 1. |
 | **2. Matrices as operators** | 5–8 | Operators, determinant and inverse, eigenvectors, PCA (+ SVD overview) | Not started. `unsupervised/01` already covers SVD/PCA as an ML lesson. |
@@ -92,7 +92,8 @@ and from references inside the notebooks, and is not necessarily the date of the
 | 11 | P | **Bus practicum "Моссовет → Азия Молл"** · [student tasks](../practice/practicum_mossovet_asia_mall.ipynb), [teacher KEY](../practice/practicum_mossovet_asia_mall_KEY.ipynb) | real GPS feed; trips via vectors and dot product; ECDF, normal model vs. data, waiting-time paradox, Monte Carlo | L1–L6 | integrative | Sep 28 |
 | 12 | L | **L7 — Sampling, standard error, CLT** · `math_for_ds/07_stat_sampling_clt.ipynb` | sampling distribution, SE, LLN, CLT, difference of two means; reuses the bus data | L6, bus practicum | beyond plan (prepares W12) | Sep 30 |
 | 13 | L | **L8 — Confidence intervals and bootstrap** · `math_for_ds/08_stat_ci_bootstrap.ipynb` | known-σ intervals, coverage, bootstrap SE and percentile intervals, resampling schemes | L7 | estimation brought forward | Oct 1 |
-| 14 | L | **L9 — Statistical tests and significance** | bridge from L8 §9; tests and p-values remain untaught | L7–L8 | W12 brought forward | *not built* |
+| 14 | P | **Bus comparison: permutations and bootstrap** · [student tasks](../practice/practicum_mossovet_asia_mall_bootstrap.ipynb), [teacher KEY](../practice/practicum_mossovet_asia_mall_bootstrap_KEY.ipynb) | paired daily route means, sign-flip simulation, one-sample bootstrap of daily differences, approximate normal and percentile CIs | L7–L8, bus practicum | estimation in practice | Oct 2 |
+| 15 | L | **L9 — Statistical tests and significance** | bridge from L8 §9 and the resampling practicum; formal tests and p-values remain untaught | L7–L8, new practicum | W12 brought forward | *not built* |
 | — | — | **Phase 4 modules** · `DT/`, `unsupervised/` | trees and ensembles; dimensionality reduction and clustering (§7) | Phases 1–3 | W13+ | June 2026 |
 
 Evidence for the less obvious positions:
@@ -334,6 +335,51 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 
 ---
 
+### Bus resampling practicum — «Какой маршрут быстрее: №118 или №169?»
+
+- **Files.** [practicum_mossovet_asia_mall_bootstrap.ipynb](../practice/practicum_mossovet_asia_mall_bootstrap.ipynb)
+  contains student tasks; [practicum_mossovet_asia_mall_bootstrap_KEY.ipynb](../practice/practicum_mossovet_asia_mall_bootstrap_KEY.ipynb)
+  contains teacher answers and saved outputs. Both are maintained by hand; the author approved the shortened KEY.
+- **Preparation.** Dependencies and all of Part 0 (source cells 4–39) are copied unchanged from the original bus
+  KEY. Both versions preserve cell sources and metadata; only the KEY retains saved outputs. The student copy
+  clears outputs and execution counts throughout. The same loader uses a local zip, a prepared HF extract, or a raw-HF
+  rebuild. The author explicitly authorized the fallback download for validation of this practicum.
+- **Question and unit.** Compare travel time of routes 118 and 169, first by time window, then within one morning
+  window (07–10). One analysis observation is the difference between two route means from the same date/window.
+  Every date has equal weight; this is not the trip-weighted mean or a prediction for an individual trip.
+- **Flow.** Three-window overview → one morning comparison per date → mean difference → one label-swap example
+  and a short permutation loop → one bootstrap sample and a short bootstrap loop → two approximate confidence
+  intervals → a 3–4 sentence answer for a passenger. The main analysis uses 07–10 only; no separate season study
+  or additional three-window resampling task.
+- **Teaching.** One meeting after the shared preparation. Four short cells tagged `student-core` contain tasks
+  A–D in the student version and solutions in the KEY; grouping and plotting are provided in both.
+  Students fill eight expressions: one mean, two steps in each resampling loop, and three interval calculations.
+  Plain Markdown and Python only, without custom HTML/JS or widgets.
+  Four standard figures show the overview, daily differences, permutation means, and bootstrap means/intervals.
+  Brief method reminders precede the code; every displayed equation has a glossary. Teacher notes contain actual
+  numerical conclusions; the student version has questions and places to write answers instead.
+  KEY prose outside preparation was reduced from about 3,240 to 1,340 whitespace-delimited words.
+- **Conditions.** Sign flips model symmetric daily differences about zero, not arbitrary equal-mean distributions.
+  Bootstrap assumes sufficiently independent, comparable days; the text states this briefly.
+  Intervals are approximate; neither normal nor percentile intervals promise exact coverage.
+  The permutation output is the empirical fraction of simulated means at least as far from zero, not a posterior
+  probability that a difference is random. No formal hypothesis decision rule, t-test or p-value lesson is introduced.
+- **Sources.** L8; Hesterberg §2; SciPy paired permutations and bootstrap.
+- **Checked results.** Full HF data reproduce the original trip counts and 37 paired mornings. With the fixed
+  seeds: mean daily difference ≈ −0.578 min; normal CI [−1.160, +0.003], percentile CI [−1.143, −0.008];
+  605/9999 sign-flip means are at least as far from zero. A teacher note explains the near-zero boundaries and
+  why approximate methods need not agree on which side of zero their last decimal falls.
+- **Validation.** The shortened notebook was executed locally against the full prepared HF extract. The earlier
+  statistical checks against SciPy remain applicable to the retained permutation/bootstrap loops. All four new PNG
+  figures were inspected; source/metadata/output identity of the copied preparation was verified. No custom browser runtime remains;
+  execution in Colab itself has not been checked.
+- **Student validation.** Cell sources and metadata in the shared preparation match the KEY, and all provided
+  code is unchanged. A temporary copy with the four KEY solutions substituted was executed on the full local
+  extract; the distributed assignment remains unexecuted, with no teacher notes or saved answers.
+- **Next.** Use the student assignment after L8, before introducing formal statistical tests in L9.
+
+---
+
 ## 5. Syllabus vs. what was built
 
 | Syllabus | Planned | Built | Comment |
@@ -343,7 +389,7 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 | W3 | Poisson; basis, rank, multicollinearity | — | **Not built.** |
 | W4 | Covariance, correlation, covariance matrix; milestone presentation 1 | — | **Not built.** Students still do not know correlation, which constrains every practice task. |
 | — | *(not in the syllabus)* | L4 | Robust, non-parametric tools, needed because the real data are dirty. |
-| — | *(not in the syllabus)* | Bus practicum, L7–L8, planned L9 | Sampling, SE, CLT, confidence intervals and bootstrap; tests next. The syllabus only says tests "return" in W12; we prepare them earlier. |
+| — | *(not in the syllabus)* | Bus practicums, L7–L8, planned L9 | Sampling, SE, CLT, CIs and bootstrap; the second bus practicum introduces sign-flip simulations before formal tests. The syllabus only says tests "return" in W12; we prepare them earlier. |
 | W8 | PCA, SVD overview | `unsupervised/01` | Exists as an ML lesson, without the covariance and eigenvector groundwork the syllabus intends. |
 | W13 | Trees, ensembles, metrics, cross-validation | `DT/` | Exists. It predates the math block. Metrics and cross-validation have no dedicated lesson. |
 
@@ -378,6 +424,11 @@ large numbers; the classical CLT; the difference of two group means and its SE.
 (exact for normal observations, CLT approximation otherwise); ordinary nonparametric bootstrap, bootstrap SE,
 percentile intervals and nested coverage simulation. Parametric, paired, cluster, block and stratified schemes
 and basic/BCa intervals are introduced as an overview. A statistical hypothesis is defined as a bridge only.
+
+**Introduced in the post-L8 bus practicum (pending classroom use).** Pairing by date/window, equally weighted daily
+differences, within-pair label swaps/sign flips, a two-sided empirical tail fraction under an explicit symmetric
+scenario, one-sample bootstrap of differences, two approximate intervals. These do not yet constitute a formal
+lesson on hypotheses, p-values or significance rules.
 
 **Tools.** numpy, pandas (`describe`, `groupby`, `quantile`), seaborn (histograms, KDE, boxplots),
 `scipy.stats.norm` (`cdf`, `sf`, `ppf`), `scipy.stats.bootstrap`, NumPy resampling (`Generator.choice`), sklearn scalers and `NearestNeighbors`.
@@ -452,7 +503,7 @@ students a familiar dataset here.
 | house.kg listings (Bishkek) | HF `aiacademy-kg/house_kg_full_dataset`, file `data/listings.parquet` | house.kg seminar project, L4, L5 | Filter `deal == "sale"`, `type == "apartment"`, `city == "Бишкек"`; `price_usd` is strongly skewed |
 | Lalafo phones | HF `aiacademy-kg/lalafo-kg-phones` | `practice/phones` | Load `listings` and `users`; never `images` (~5 GB) |
 | Lalafo cars | HF `aiacademy-kg/lalafo-kg-cars` | `practice/cars` | Never `images` (78 GB); ≈40% of prices are in USD |
-| Bishkek public-transport feed | HF `aiacademy-kg/bishkek-transport` (pinned revision) | Bus practicum; L7 (embedded summaries) | 372 M rows; use the 21 MB practicum extract |
+| Bishkek public-transport feed | HF `aiacademy-kg/bishkek-transport` (pinned revision) | Two bus practicums; L7 (embedded summaries) | 372 M rows; 21 MB extract or original loader fallback |
 | Speaker audio + WavLM embeddings | HF `aiacademy-kg/audio-3-speaker-dataset-v2` / `aiacademy-kg/audio-3-speaker-dataset` | Seminar 1 / `unsupervised/` | Load only the embedding columns where possible |
 | Iris; Rice (zip on Dropbox) | seaborn; Dropbox link in the notebook | `dt_demo` | |
 | Telecom churn | CSV from the mlcourse.ai GitHub repo | `bagging_rf` | |
@@ -535,6 +586,7 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 
 1. **L9: statistical tests and significance**, prepared by L7 and the new L8. CI and bootstrap come first,
    following the author’s agreed sequence; t-tests and p-values are not part of L8.
+   The bus resampling practicum is ready in student and KEY versions, with four short coding tasks, to use before L9.
 2. **Resume the linear-algebra track:** linear combinations → basis, rank, multicollinearity (W3) →
    covariance and correlation, covariance matrix (W4). This is the road into Phase 2.
 3. **Poisson** (W3; foreshadowed in L5).
@@ -564,6 +616,18 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 ---
 
 ## 11. Changelog
+
+- **2026-10-02:** Created the student bus resampling assignment from the author-approved shortened KEY.
+  Preserved all preparation and provided plotting code, replaced only A–D with TODO placeholders, removed saved
+  outputs and teacher answers, and added spaces for students' own conclusions. The KEY is unchanged.
+
+- **2026-10-02:** Rewrote the bus resampling KEY for beginners at the author's request. Cut new prose by about 59%,
+  removed HTML/JS widgets and the optional season/three-window analysis, retained four short coding tasks and four
+  standard figures. Teacher notes now give concrete conclusions. Shared preparation is unchanged.
+
+- **2026-10-02:** Added the post-L8 bus resampling KEY for review: unchanged shared preparation, paired daily
+  route differences, sign-flip experiments, one-sample bootstrap, SE and two approximate CIs; two embedded widgets,
+  standard Python figures and four essential coding tasks. Student version deferred until author review.
 
 - **2026-10-02:** Moved the bus practicum KEY from `math_for_ds/` to `practice/` unchanged and added the student
   notebook alongside it. Updated paths and the repository layout in README, CLAUDE and AGENT_PROTOCOL;

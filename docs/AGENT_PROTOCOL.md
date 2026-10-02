@@ -84,6 +84,16 @@ step; tasks with «Ваш вывод» cells; memos. **Pin the dataset revision*
 fallback rebuild from the raw data. Keep a KEY version with «Для преподавателя» notes and a student version without
 them. The bus notebooks are maintained by hand in `practice/`: `practicum_mossovet_asia_mall.ipynb`
 (student tasks) and `practicum_mossovet_asia_mall_KEY.ipynb` (answers and saved outputs).
+The follow-up after L8 has two versions: `practicum_mossovet_asia_mall_bootstrap.ipynb` (student tasks) and
+`practicum_mossovet_asia_mall_bootstrap_KEY.ipynb` (teacher answers, approved by the author).
+Dependencies and the entire Part 0 are copied from the original KEY: cell sources and metadata are identical
+in both versions; the KEY retains saved outputs, while the student version clears outputs and execution counts.
+Keep that shared preparation intact; student coding begins in the new tasks, in the four short cells tagged
+`student-core`. These contain TODO placeholders in the assignment and solutions in the KEY.
+Grouping and plotting are provided code. The follow-up uses **Markdown and Python only**:
+no custom HTML, CSS, JavaScript or widgets. Keep it short, introduce each method through a concrete action,
+and put actual numerical conclusions in the teacher notes rather than lengthy methodological instructions.
+Both versions are maintained by hand. Student interpretation cells ask for conclusions without supplying answers.
 
 ### 2.3 Editing existing material
 
@@ -133,6 +143,8 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 | `seminar_1.ipynb` | The notebook | No script |
 | `practice/practicum_mossovet_asia_mall.ipynb` | The notebook (student tasks, without answers or outputs) | No script |
 | `practice/practicum_mossovet_asia_mall_KEY.ipynb` | The notebook (KEY, with outputs) | No script |
+| `practice/practicum_mossovet_asia_mall_bootstrap.ipynb` | The notebook (student tasks; preserve copied Part 0, clear outputs) | No script |
+| `practice/practicum_mossovet_asia_mall_bootstrap_KEY.ipynb` | The notebook (teacher answers and outputs; preserve copied Part 0) | No script |
 | `practice/<topic>/<topic>_practice.ipynb` | `practice/<topic>/build_<topic>.py` | Yes, run from inside the folder |
 | `DT/*.ipynb`, `unsupervised/*.ipynb` | The notebooks | No scripts |
 | `DT/theory/*.html` | The HTML files (shared `assets/style.css`, `assets/common.js`) | — |
