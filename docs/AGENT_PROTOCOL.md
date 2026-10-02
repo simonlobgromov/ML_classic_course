@@ -82,7 +82,8 @@ Read in this order:
 **Research pattern** (bus practicum): one real question; a Part 0 pipeline prepared in advance and explained step by
 step; tasks with «Ваш вывод» cells; memos. **Pin the dataset revision** and ship a small prepared extract with a
 fallback rebuild from the raw data. Keep a KEY version with «Для преподавателя» notes and a student version without
-them.
+them. The bus notebooks are maintained by hand in `practice/`: `practicum_mossovet_asia_mall.ipynb`
+(student tasks) and `practicum_mossovet_asia_mall_KEY.ipynb` (answers and saved outputs).
 
 ### 2.3 Editing existing material
 
@@ -130,7 +131,8 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 | L7 `07_stat_sampling_clt.ipynb` | `build_lesson7.py` + `lesson7_widgets.js` | Yes. Byte-identical rebuilds |
 | L8 `08_stat_ci_bootstrap.ipynb` | `build_lesson8.py` + `lesson8_widgets.js` | Yes. Byte-identical rebuilds |
 | `seminar_1.ipynb` | The notebook | No script |
-| `practicum_mossovet_asia_mall_KEY.ipynb` | The notebook (KEY, with outputs) | No script |
+| `practice/practicum_mossovet_asia_mall.ipynb` | The notebook (student tasks, without answers or outputs) | No script |
+| `practice/practicum_mossovet_asia_mall_KEY.ipynb` | The notebook (KEY, with outputs) | No script |
 | `practice/<topic>/<topic>_practice.ipynb` | `practice/<topic>/build_<topic>.py` | Yes, run from inside the folder |
 | `DT/*.ipynb`, `unsupervised/*.ipynb` | The notebooks | No scripts |
 | `DT/theory/*.html` | The HTML files (shared `assets/style.css`, `assets/common.js`) | — |

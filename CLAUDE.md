@@ -23,11 +23,13 @@ math_for_ds/            Phase 1 — "Математика для DS" (Colab less
   build_lessonN.py      generators (nbformat); theme.py = shared dark theme, SETUP cell, viz()
   lessonN_widgets.js    widget renderers for L6–L8, embedded into the notebook at build time
   seminar_1.ipynb       seminar: cosine similarity on speaker embeddings (written by hand)
-  practicum_mossovet_asia_mall_KEY.ipynb   bus practicum, teacher KEY version (written by hand)
   vektornaya-algebra-hw.md/.pdf            vector-algebra homework
   images/               photos embedded into L5
   theory/               legacy HTML prototype of L1 (replaced; do not extend)
-practice/<topic>/       Lalafo practicums (phones, cars): recon.py, RECON.md, build_<topic>.py → <topic>_practice.ipynb
+practice/               practicums on real data
+  practicum_mossovet_asia_mall.ipynb       bus practicum, student tasks (written by hand)
+  practicum_mossovet_asia_mall_KEY.ipynb   bus practicum, teacher answers and outputs (written by hand)
+  <topic>/              Lalafo (phones, cars): recon.py, RECON.md, build_<topic>.py → <topic>_practice.ipynb
 DT/                     Phase 4: decision trees and ensembles (4 notebooks, theory/ HTML handbook, third-party PDFs)
 unsupervised/           Phase 4: dimensionality reduction and clustering (5 notebooks)
 docs/                   COURSE_MAP.md, AGENT_PROTOCOL.md
@@ -51,7 +53,8 @@ There are no tests. Validation is the checklist in AGENT_PROTOCOL §7.
 2. **Use only taught concepts** in tasks (COURSE_MAP §6). For example, there is no correlation, regression or
    hypothesis testing yet.
 3. **Never run `build_lesson1.py`.** L1 is edited by hand. Rebuilding L4 drops its 17 in-class cells, so ask first.
-   `seminar_1`, the bus KEY practicum, `DT/` and `unsupervised/` have no build scripts; edit those notebooks directly.
+   `seminar_1`, both bus practicum notebooks in `practice/`, `DT/` and `unsupervised/` have no build scripts;
+   edit those notebooks directly.
 4. **Lesson format:** Colab `.ipynb`, committed un-executed; dark HTML theory in collapsed `#@title` cells; every
    output self-contained; live JS/SVG widgets; MathJax `$…$` / `$$…$$` only; a «Где:» glossary under every formula.
 5. **Language:** prose and UI strings in Russian (academic, textbook tone, no conversational metaphors); code comments

@@ -2,7 +2,7 @@
 
 **What has been built, where it lives, in what order it is taught, and why it looks the way it does.**
 
-> **This document is kept up to date as the course grows.** Last updated: **2026-10-01**, after Lesson 8.
+> **This document is kept up to date as the course grows.** Last updated: **2026-10-02**, after moving the bus practicum to `practice/`.
 > It combines a course programme, a table of contents and methodological notes.
 > The teaching materials are in Russian; this map is in English so the whole team can use it.
 > How to work in the repo (build, validate, edit) is in [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md).
@@ -89,7 +89,7 @@ and from references inside the notebooks, and is not necessarily the date of the
 | 8 | P | **Lalafo practicums: phones, cars** · `practice/phones/`, `practice/cars/` | 5 cases each on dirty marketplace data, using only L1–L4 tools | L1–L4 | Phase 1 practice | Sep 10 |
 | 9 | L | **L5 — Randomness, probability, the normal distribution** · `math_for_ds/05_stat_normal.ipynb` | event, probability, Bernoulli, binomial, normal, 2D normal, three-sigma rule | L3–L4 | W2 | Sep 16 |
 | 10 | L | **L6 — From histogram to probability** · `math_for_ds/06_stat_distribution.ipynb` | random variable, PMF, density histogram, PDF, area, CDF, z, tails, model vs. sample | L5 | W2, extended | Sep 22 |
-| 11 | P | **Bus practicum "Моссовет → Азия Молл"** · `math_for_ds/practicum_mossovet_asia_mall_KEY.ipynb` | real GPS feed; trips via vectors and dot product; ECDF, normal model vs. data, waiting-time paradox, Monte Carlo | L1–L6 | integrative | Sep 28 |
+| 11 | P | **Bus practicum "Моссовет → Азия Молл"** · [student tasks](../practice/practicum_mossovet_asia_mall.ipynb), [teacher KEY](../practice/practicum_mossovet_asia_mall_KEY.ipynb) | real GPS feed; trips via vectors and dot product; ECDF, normal model vs. data, waiting-time paradox, Monte Carlo | L1–L6 | integrative | Sep 28 |
 | 12 | L | **L7 — Sampling, standard error, CLT** · `math_for_ds/07_stat_sampling_clt.ipynb` | sampling distribution, SE, LLN, CLT, difference of two means; reuses the bus data | L6, bus practicum | beyond plan (prepares W12) | Sep 30 |
 | 13 | L | **L8 — Confidence intervals and bootstrap** · `math_for_ds/08_stat_ci_bootstrap.ipynb` | known-σ intervals, coverage, bootstrap SE and percentile intervals, resampling schemes | L7 | estimation brought forward | Oct 1 |
 | 14 | L | **L9 — Statistical tests and significance** | bridge from L8 §9; tests and p-values remain untaught | L7–L8 | W12 brought forward | *not built* |
@@ -268,8 +268,11 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 
 ### Bus practicum — «Какой автобус выбрать? Моссовет → Азия Молл»
 
-- **File.** `math_for_ds/practicum_mossovet_asia_mall_KEY.ipynb`, the **teacher's KEY version**: saved outputs and
-  a «Для преподавателя» note after every task. There is no build script, and the student copy is not in the repo.
+- **Files.** Both notebooks live in `practice/` and are maintained by hand, without a build script:
+  [practicum_mossovet_asia_mall.ipynb](../practice/practicum_mossovet_asia_mall.ipynb) contains **student tasks**
+  without teacher notes or saved outputs;
+  [practicum_mossovet_asia_mall_KEY.ipynb](../practice/practicum_mossovet_asia_mall_KEY.ipynb) contains
+  **teacher answers**, saved outputs and «Для преподавателя» notes.
 - **Data.** `aiacademy-kg/bishkek-transport`, the open feed of Bishkek's public-transport monitoring system for
   25.07–22.09.2026 (372 M rows), pinned to revision `4aa20aab…` (23.09.2026). The notebook downloads a prepared 21 MB
   extract (`practicum/mossovet_asia_mall_2026.zip`). If the extract is missing, it rebuilds it from the raw feed
@@ -542,8 +545,6 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 - **L3, S4 Task 8** asks for a correlation coefficient before correlation is taught. Reword it, or treat it as a
   deliberate spoiler?
 - **Language of task statements:** English (L2) or Russian (L3 onwards) from now on?
-- **Bus practicum:** only the KEY version is in the repo and it has no build script. Should the student copy live here
-  too, or a script that strips the teacher notes and outputs?
 - **`04_stat_boxplot.ipynb`:** keep the 17 in-class cells in the canonical version, or move them to the build script
   or to a separate class log? A rebuild currently drops them.
 - **`vektornaya-algebra-hw`:** credit the source textbook.
@@ -563,6 +564,10 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 ---
 
 ## 11. Changelog
+
+- **2026-10-02:** Moved the bus practicum KEY from `math_for_ds/` to `practice/` unchanged and added the student
+  notebook alongside it. Updated paths and the repository layout in README, CLAUDE and AGENT_PROTOCOL;
+  resolved the question about keeping a student copy in the repo. Teaching order and prerequisites are unchanged.
 
 - **2026-10-01:** Added L8 on confidence intervals and bootstrap, with nine widgets and eight Python figures.
   Deferred formal tests/p-values to L9 by agreement with the course author. Updated the concept inventory,

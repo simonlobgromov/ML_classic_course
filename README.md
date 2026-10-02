@@ -51,8 +51,8 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
 
 | Path | What it is | Status |
 |---|---|---|
-| [`math_for_ds/`](math_for_ds/) | **Mathematics for DS:** Colab lessons L1–L8, a seminar, homework, the bus practicum | actively developed |
-| [`practice/`](practice/) | Practicums on dirty real data: Lalafo phones and cars (five cases each) | done for L1–L4 |
+| [`math_for_ds/`](math_for_ds/) | **Mathematics for DS:** Colab lessons L1–L8, a seminar, homework | actively developed |
+| [`practice/`](practice/) | Practicums on dirty real data: Lalafo phones and cars (five cases each), bus practicum (student and KEY notebooks) | Lalafo: L1–L4; buses: L1–L6 |
 | [`DT/`](DT/) | **Decision trees and ensembles:** 4 notebooks and an interactive HTML theory handbook | ready, to be re-linked to the math block |
 | [`unsupervised/`](unsupervised/) | **Unsupervised learning:** SVD/PCA/t-SNE, K-Means, GMM/EM, DBSCAN/HDBSCAN, hierarchical clustering | ready, to be re-linked to the math block |
 | [`docs/`](docs/) | Course map and the protocol for contributors and AI agents | living documents |
@@ -65,7 +65,8 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
 2. **L3** Population and sample, descriptive statistics, z-scores → house.kg **seminar project** (separate repo) →
    **L4** Percentiles, boxplots, IQR, robust scaling → **practicums** Lalafo phones and cars
 3. **L5** Probability, Bernoulli, binomial, normal, three sigma → **L6** From histogram to probability (PDF, CDF, z) →
-   **bus practicum** «Моссовет → Азия Молл»
+   **bus practicum** «Моссовет → Азия Молл» — [student notebook](practice/practicum_mossovet_asia_mall.ipynb),
+   [teacher's answers (KEY)](practice/practicum_mossovet_asia_mall_KEY.ipynb)
 4. **L7** Sampling distribution, standard error, CLT → **L8** Confidence intervals and bootstrap → *next: L9 statistical tests*
 5. Phase 4: `DT/` (trees → bias–variance → bagging/RF → gradient boosting), `unsupervised/` (01 → 05)
 
