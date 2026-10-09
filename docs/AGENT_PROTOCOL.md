@@ -15,8 +15,8 @@ What exists and in what order is described in [COURSE_MAP.md](COURSE_MAP.md). Ke
    questions that would change the result, and wait for an explicit "ok". Materials built without agreement get
    rejected and redone.
 2. **Use only concepts already taught.** Before you use a method in a task, check it against
-   [COURSE_MAP §6](COURSE_MAP.md#6-what-students-know-so-far). As of L8, correlation, covariance, Poisson,
-   tests and p-values, regression and every ML model are **not taught**.
+   [COURSE_MAP §6](COURSE_MAP.md#6-what-students-know-so-far). L9 adds hypotheses, permutation p-values and significance.
+   Correlation, covariance, Poisson, t-tests, regression and every ML model are still **not taught**.
 3. **Never regenerate a notebook that is edited by hand** (see §4). In particular, never run `build_lesson1.py`.
 4. **Never download heavy data:** the `images` configs of the Lalafo datasets (5–78 GB), the raw `bishkek-transport`
    feed (GBs), the speaker audio (2.65 GB). Use extracts and column subsets.
@@ -35,7 +35,8 @@ Read in this order:
 
 1. `CLAUDE.md`: the repo map and commands.
 2. [COURSE_MAP.md](COURSE_MAP.md): §3 (sequence), §6 (what students know), §10 (open questions).
-3. **The newest build script** (`math_for_ds/build_lesson8.py`): this is the current pattern to copy.
+3. **The newest build script** (`math_for_ds/build_lesson9.py`), together with `build_lesson8.py`: the shared
+   dark HTML theory cells and self-contained JS/SVG widgets used by theoretical lessons.
 4. The lesson before the one you are working on: its last sections usually set up the next topic ("bridges").
 5. `syllabus.docx`, as a compass for intent. It is not a contract. To read it without extra packages:
 
@@ -54,7 +55,8 @@ Read in this order:
    departs from the syllabus.
 2. **Outline, for agreement:** the sections, every widget (what the student moves and what they should see), the
    tasks and the interpretation questions.
-3. **Implement** `math_for_ds/build_lessonN.py`, starting from `build_lesson8.py` (§5).
+3. **Implement** `math_for_ds/build_lessonN.py`, following the HTML/JS theoretical-lesson pattern in
+   `build_lesson8.py` and `build_lesson9.py` (§5). A practicum’s Markdown-only format does not apply to theory lessons.
 4. **Build:** `venv/bin/python math_for_ds/build_lessonN.py`. It writes `math_for_ds/NN_<slug>.ipynb`.
 5. **Validate** with the checklist in §7.
 6. **Document** in COURSE_MAP: a row in §3, a note in §4, an update to §5, the new concepts in §6, a line in §11.
@@ -99,7 +101,7 @@ Both versions are maintained by hand. Student interpretation cells ask for concl
 
 1. Find the source of truth in §4. If the material is built by a script, edit the script.
 2. **Rebuild safely:** build into a scratch copy, compare cell sources with the committed notebook, and only then
-   replace it. Scripts 2–8 write next to themselves, so copy the folder and run the copy:
+   replace it. Scripts 2–9 write next to themselves, so copy the folder and run the copy:
 
    ```bash
    cp -R math_for_ds /tmp/mfd && rm /tmp/mfd/*.ipynb && venv/bin/python /tmp/mfd/build_lesson5.py
@@ -140,6 +142,7 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 | L6 `06_stat_distribution.ipynb` | `build_lesson6.py` + `lesson6_widgets.js` | Yes. Byte-identical rebuilds |
 | L7 `07_stat_sampling_clt.ipynb` | `build_lesson7.py` + `lesson7_widgets.js` | Yes. Byte-identical rebuilds |
 | L8 `08_stat_ci_bootstrap.ipynb` | `build_lesson8.py` + `lesson8_widgets.js` | Yes. Byte-identical rebuilds |
+| L9 `09_stat_hypotheses.ipynb` | `build_lesson9.py` + `lesson9_widgets.js` + `lesson9_helpers.py` | Yes. JS widgets and Python helpers are embedded; preserve unexecuted output |
 | `seminar_1.ipynb` | The notebook | No script |
 | `practice/practicum_mossovet_asia_mall.ipynb` | The notebook (student tasks, without answers or outputs) | No script |
 | `practice/practicum_mossovet_asia_mall_KEY.ipynb` | The notebook (KEY, with outputs) | No script |
@@ -153,6 +156,15 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 ---
 
 ## 5. Lesson implementation spec
+
+**Theoretical lessons use the shared HTML/JS format below, including L9.** The Markdown/Python-only rule
+for practicums applies to those practicums. Keep the author’s process instructions out of student prose: title
+definition boxes with the mathematical concept, and state the definition itself.
+
+**L9 scope.** One two-hour meeting (110 minutes of work plus a break), three JS/SVG widgets and three short
+`student-core` tasks. Embed `lesson9_widgets.js` and `lesson9_helpers.py` into the setup cell so students need
+only the notebook. Python examples and ordinary plots accompany the interactive theory. Validate the ready
+code and a temporary completed copy.
 
 **Skeleton** (copy it from `build_lesson8.py`):
 
@@ -192,7 +204,7 @@ theory cells, widgets, short numpy experiments and tasks → a check of understa
 appears collapsed in Colab. Use `$…$` and `$$…$$` only. Every displayed formula is followed by a «Где: …» /
 «Обозначения.» glossary. Depth goes into `<details>`.
 
-**Widgets (L6–L8 pattern).** A Python `widget(kind, title, instruction, charts, controls, question, optional=False)`
+**Widgets (L6–L9 pattern).** A Python `widget(kind, title, instruction, charts, controls, question, optional=False)`
 emits a cell with a fixed anatomy: title → instruction → controls (`slider`, `select`) → SVG charts → a live
 `readout` (`aria-live`) → a «Проверь себя» question → a footnote saying it is a simulation. The JS renderer lives in
 `lessonN_widgets.js` (`window.<Name>.mount(root, kind)`) and is embedded at build time. Students need only the
@@ -213,7 +225,7 @@ Never put the finished line of code in a student cell.
   gitignored too.
 - Lesson notebooks load data at runtime in Colab. Do not embed large data. Small derived summaries may be embedded
   (L7 embeds rounded bus statistics).
-- Synthetic data are welcome where a known law makes results checkable (L6, L7, L8). Say clearly in the text that the
+- Synthetic data are welcome where a known law makes results checkable (L6–L9). Say clearly in the text that the
   data are synthetic.
 
 ---
@@ -228,6 +240,8 @@ Never put the finished line of code in a student cell.
 **Rendering**
 - [ ] HTML outputs are self-contained; widgets mount; sliders and drags update the readout. At minimum, open the
       generated HTML in a browser. If you could not check it in Colab, say so.
+- [ ] Execute the ready Python cells and a temporary completed copy of student tasks; inspect the ordinary
+      plot outputs. Distinguish local/browser checks from actual Colab UI validation.
 - [ ] MathJax uses `$` / `$$` only. Each formula has its glossary. No raw `<`, `>` or `&` break the HTML.
 - [ ] Angles and circles are drawn on a square plane.
 

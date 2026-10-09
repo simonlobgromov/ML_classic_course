@@ -2,7 +2,7 @@
 
 **What has been built, where it lives, in what order it is taught, and why it looks the way it does.**
 
-> **This document is kept up to date as the course grows.** Last updated: **2026-10-02**, after adding the student version of the approved bus resampling practicum.
+> **This document is kept up to date as the course grows.** Last updated: **2026-10-08**, after adding L9, the final statistics meeting on hypotheses, p-values and useful delivery improvements.
 > It combines a course programme, a table of contents and methodological notes.
 > The teaching materials are in Russian; this map is in English so the whole team can use it.
 > How to work in the repo (build, validate, edit) is in [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md).
@@ -62,11 +62,11 @@ disagree about *intent*, ask the course author.
 
 ## 2. Phases and status
 
-| Phase | Weeks | Theme (syllabus) | Status (2026-10-02) |
+| Phase | Weeks | Theme (syllabus) | Status (2026-10-08) |
 |---|---|---|---|
-| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L8 built. The statistics track is ahead of the plan; the linear-algebra track has stopped after week 1. |
+| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L9 built. The initial statistics block closes with L9; the linear-algebra track has stopped after week 1. |
 | **2. Matrices as operators** | 5–8 | Operators, determinant and inverse, eigenvectors, PCA (+ SVD overview) | Not started. `unsupervised/01` already covers SVD/PCA as an ML lesson. |
-| **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | Not started. L7–L8 bring sampling and estimation forward; tests are planned for L9. |
+| **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | Models not started. Sampling, estimation and permutation hypothesis tests were brought forward into L7–L9. |
 | **4. Classic DS and the project** | 13–16 | Trees, ensembles, metrics, cross-validation; research project | Modules `DT/` and `unsupervised/` exist (built June 2026, before the math block). Project not designed. |
 
 ---
@@ -93,7 +93,7 @@ and from references inside the notebooks, and is not necessarily the date of the
 | 12 | L | **L7 — Sampling, standard error, CLT** · `math_for_ds/07_stat_sampling_clt.ipynb` | sampling distribution, SE, LLN, CLT, difference of two means; reuses the bus data | L6, bus practicum | beyond plan (prepares W12) | Sep 30 |
 | 13 | L | **L8 — Confidence intervals and bootstrap** · `math_for_ds/08_stat_ci_bootstrap.ipynb` | known-σ intervals, coverage, bootstrap SE and percentile intervals, resampling schemes | L7 | estimation brought forward | Oct 1 |
 | 14 | P | **Bus comparison: permutations and bootstrap** · [student tasks](../practice/practicum_mossovet_asia_mall_bootstrap.ipynb), [teacher KEY](../practice/practicum_mossovet_asia_mall_bootstrap_KEY.ipynb) | paired daily route means, sign-flip simulation, one-sample bootstrap of daily differences, approximate normal and percentile CIs | L7–L8, bus practicum | estimation in practice | Oct 2 |
-| 15 | L | **L9 — Statistical tests and significance** | bridge from L8 §9 and the resampling practicum; formal tests and p-values remain untaught | L7–L8, new practicum | W12 brought forward | *not built* |
+| 15 | L | **L9 — Hypotheses, p-values and statistical significance** · [09_stat_hypotheses.ipynb](../math_for_ds/09_stat_hypotheses.ipynb) | two delivery methods; permutation p-value, null/alternative, α and false rejections, bootstrap CI for a difference, practical threshold | L7–L8, bus resampling practicum | W12 brought forward; final statistics meeting | Oct 8 |
 | — | — | **Phase 4 modules** · `DT/`, `unsupervised/` | trees and ensembles; dimensionality reduction and clustering (§7) | Phases 1–3 | W13+ | June 2026 |
 
 Evidence for the less obvious positions:
@@ -307,7 +307,7 @@ where a material deliberately prepares a later topic. They are worth keeping whe
   OpenStax.
 - **Bridges.** §7 ends with "is the difference large compared with ordinary random spread?" and announces
   **statistical tests and significance** for the next lesson. The author subsequently inserted L8 on
-  confidence intervals and bootstrap; formal tests are now planned for L9. The original L7 bridge is unchanged.
+  confidence intervals and bootstrap; formal tests are covered in L9. The original L7 bridge is unchanged.
 
 
 ### L8 — «Насколько точно мы знаем среднее?» (confidence intervals and bootstrap)
@@ -378,6 +378,46 @@ where a material deliberately prepares a later topic. They are worth keeping whe
   extract; the distributed assignment remains unexecuted, with no teacher notes or saved answers.
 - **Next.** Use the student assignment after L8, before introducing formal statistical tests in L9.
 
+### L9 — «Новая доставка действительно быстрее?» (hypotheses and significance)
+
+- **Files.** [09_stat_hypotheses.ipynb](../math_for_ds/09_stat_hypotheses.ipynb) ← `build_lesson9.py` +
+  `lesson9_widgets.js` + `lesson9_helpers.py`. Both sources are embedded; only the notebook is needed in Colab.
+- **Scope.** One final statistics meeting: 110 minutes of work plus a 10-minute break. The author has two months
+  left for the course and explicitly requested closure of this block. No t-test, Student distribution, extra
+  bootstrap variants or separate advanced-statistics session. Short explanations progress from the delivery
+  question to the definitions and their interpretation.
+- **Data and question.** Independent synthetic deliveries: 10 plus exponential delay with mean 20 for A;
+  B differs only by a constant time shift. Default: 200 per group, true improvement 6 minutes. Estimate B − A.
+  The business threshold (5 minutes) and α = 0.05 are chosen before inspecting results.
+- **Flow.** Observe the difference → formulate null and two-sided alternative → permute labels → define and
+  calculate p-value → observe false rejections under a true null → separately bootstrap each group → interpret
+  a 95% percentile CI against zero and −5 → write a four-sentence recommendation.
+- **Definitions.** Named definition boxes explain statistical hypotheses, test statistic, p-value, significance level,
+  type-I error, statistical significance and the confidence interval. The p-value definition conditions on H0
+  and model assumptions and specifies extremeness through the alternative. Failing to reject does not prove H0.
+- **Format.** The same dark HTML theory cells and self-contained JS/SVG visuals as L6–L8. Three widgets show
+  accumulating label permutations with both tails, repeated null experiments, and sample-size/effect comparison.
+  Standard Python examples and matplotlib/seaborn figures connect these demonstrations to code. Only three
+  short coding tasks: observed difference, p-value, bootstrap bounds.
+- **Statistical conditions.** In the teaching shift model equal means imply identical distributions, justifying
+  pooled label permutations; this is not asserted for arbitrary equal-mean distributions. Equal group sizes give
+  a symmetric exhaustive permutation distribution; use absolute tails and the (k+1)/(R+1) Monte Carlo correction.
+  Bootstrap preserves the independent groups. The CI is approximate and is not an exact inversion of this test.
+- **Verified Python example.** Estimated difference −7.538 min, p ≈ 0.0004, percentile CI [−11.753, −3.372] min.
+  The result is significant at 0.05, but the full interval does not support improvement beyond five minutes.
+  The initial null simulation produces 3 false rejections in 100 trials, not a forced 5%. Controls include
+  both a small detectable effect (800/group, gain 2) and a CI fully below −5 (800/group, gain 8).
+  JS uses the same delivery values with independent resampling draws: its default p ≈ 0.0007 and CI
+  [−11.657, −3.319] min give the same conclusions; the widget footnote explains the numerical difference.
+- **Validation.** Ready cells and a completed copy executed locally; Python results match the previous numerical
+  example. Exact permutation tails and independent bootstrap SE were checked. Node checks cover JS probability
+  calculations, reproducibility and every control handler using a simulated DOM. HTML outputs were exported;
+  actual browser rendering could not be inspected because browser/computer access was unavailable in this session.
+  Neither browser appearance nor the Colab UI is claimed as verified. Build is deterministic; the distributed
+  notebook remains unexecuted and the author's edited bus notebook is unchanged.
+- **Sources.** ASA p-value statement, Hesterberg, SciPy permutation/bootstrap documentation; links back to L8
+  and the student bus practicum. Existing course notebooks were not rebuilt.
+
 ---
 
 ## 5. Syllabus vs. what was built
@@ -389,7 +429,7 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 | W3 | Poisson; basis, rank, multicollinearity | — | **Not built.** |
 | W4 | Covariance, correlation, covariance matrix; milestone presentation 1 | — | **Not built.** Students still do not know correlation, which constrains every practice task. |
 | — | *(not in the syllabus)* | L4 | Robust, non-parametric tools, needed because the real data are dirty. |
-| — | *(not in the syllabus)* | Bus practicums, L7–L8, planned L9 | Sampling, SE, CLT, CIs and bootstrap; the second bus practicum introduces sign-flip simulations before formal tests. The syllabus only says tests "return" in W12; we prepare them earlier. |
+| — | *(not in the syllabus)* | Bus practicums, L7–L9 | Sampling, SE, CLT, CIs and bootstrap; L9 closes the block with permutation hypotheses, p-values and practical interpretation. Tests were brought forward from W12. |
 | W8 | PCA, SVD overview | `unsupervised/01` | Exists as an ML lesson, without the covariance and eigenvector groundwork the syllabus intends. |
 | W13 | Trees, ensembles, metrics, cross-validation | `DT/` | Exists. It predates the math block. Metrics and cross-validation have no dedicated lesson. |
 
@@ -401,7 +441,8 @@ covariance), which is the road into Phase 2.
 
 ## 6. What students know so far
 
-*As of L8.* Practice tasks must stay inside this list. Anything outside it has to be taught first.
+*Material through L9; L9 is newly built.* Practice tasks must stay inside this list and account for which lessons
+the group has actually completed. Anything outside it has to be taught first.
 
 **Linear algebra.** Vector as an observation; feature space ℝⁿ; addition, scaling, linear combination (introduced
 only); L2 norm, distance; centroid as the mean vector; dot product, projection, angle; cosine similarity and
@@ -425,16 +466,22 @@ large numbers; the classical CLT; the difference of two group means and its SE.
 percentile intervals and nested coverage simulation. Parametric, paired, cluster, block and stratified schemes
 and basic/BCa intervals are introduced as an overview. A statistical hypothesis is defined as a bridge only.
 
-**Introduced in the post-L8 bus practicum (pending classroom use).** Pairing by date/window, equally weighted daily
+**From the completed post-L8 bus practicum.** Pairing by date/window, equally weighted daily
 differences, within-pair label swaps/sign flips, a two-sided empirical tail fraction under an explicit symmetric
 scenario, one-sample bootstrap of differences, two approximate intervals. These do not yet constitute a formal
 lesson on hypotheses, p-values or significance rules.
+
+**Hypothesis testing (L9, pending classroom use).** Null and two-sided alternative, test statistic, conditional
+p-value definition, Monte Carlo plus-one correction, preselected α, type-I error and statistical significance.
+Failure to reject vs. proof of equality; independent two-sample bootstrap for the mean difference; CI vs. test;
+practical improvement threshold. No t-distribution or t-test, power calculation, multiple-testing correction,
+or comprehensive test-selection catalogue.
 
 **Tools.** numpy, pandas (`describe`, `groupby`, `quantile`), seaborn (histograms, KDE, boxplots),
 `scipy.stats.norm` (`cdf`, `sf`, `ppf`), `scipy.stats.bootstrap`, NumPy resampling (`Generator.choice`), sklearn scalers and `NearestNeighbors`.
 
 **Not taught yet. Do not use without teaching it first:** correlation (Pearson r, `df.corr()`) and covariance; the
-covariance matrix; Poisson; hypothesis tests, p-values; matrices as operators, rank,
+covariance matrix; Poisson; t-tests and the Student distribution; matrices as operators, rank,
 determinant, inverse, eigenvectors; PCA/SVD; least squares and linear regression; MLE; logistic regression; any ML
 model, train/test split, metrics.
 
@@ -509,7 +556,7 @@ students a familiar dataset here.
 | Telecom churn | CSV from the mlcourse.ai GitHub repo | `bagging_rf` | |
 | sklearn toy sets, 20 Newsgroups | sklearn | `DT/`, `unsupervised/` | |
 | Keyword-spotting audio features | HF `aiacademy-kg/kws-dataset` | `kws-project` (external) | Features already extracted |
-| Synthetic data | generated in the notebook | L6, L7, L8, `bias_variance_demo`, `gradient_boosting` | The law is known, so every result can be checked |
+| Synthetic data | generated in the notebook | L6–L9, `bias_variance_demo`, `gradient_boosting` | The law is known, so every result can be checked |
 
 **Where the data come from.** All `aiacademy-kg/*` datasets are published on the school's Hugging Face organization,
 [huggingface.co/aiacademy-kg](https://huggingface.co/aiacademy-kg). The scrapers that build the house.kg and Lalafo
@@ -531,7 +578,7 @@ binary target. The list of students' anchor datasets is not recorded in the repo
   widget → «что мы увидели» → a precise definition.
 - **Predict, act, explain.** Before moving a slider, the student predicts the result; afterwards, they explain it in
   words.
-- **A «Где: …» block under every displayed formula**, explaining every symbol (CSS class `.where`; in L6–L8 enforced
+- **A «Где: …» block under every displayed formula**, explaining every symbol (CSS class `.where`; in L6–L9 enforced
   by the `eq()` helper).
 - **Optional depth** goes into `<details>` blocks («для тех, кто хочет глубже»), so the main line stays short.
 - **English terminology is introduced gradually:** an English gloss next to the Russian term (class `.en`).
@@ -567,8 +614,11 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 - Theory visualisations are **live JS/SVG** (draggable points, sliders), not matplotlib. Matplotlib/seaborn appear in
   the code students write. Angles and circles need the square plane `plane(half)`.
 - MathJax with `$…$` and `$$…$$` delimiters only.
-- Current pattern (L6–L8): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
+- Current pattern (L6–L9): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
   glossary guard; references to authoritative sources (NIST, SciPy, Penn State, OpenStax).
+- L9 uses this same theoretical-lesson format, with short definitions and explanations. Its numerical helpers
+  and standard Python plots are also embedded. The Markdown-only bus practicum format does not carry over
+  to theoretical lessons.
 
 ### 9.4 Practicum format
 
@@ -584,13 +634,13 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 
 **Next to build**
 
-1. **L9: statistical tests and significance**, prepared by L7 and the new L8. CI and bootstrap come first,
-   following the author’s agreed sequence; t-tests and p-values are not part of L8.
-   The bus resampling practicum is ready in student and KEY versions, with four short coding tasks, to use before L9.
-2. **Resume the linear-algebra track:** linear combinations → basis, rank, multicollinearity (W3) →
+The author requested one final statistics meeting, now L9, then moving on within the remaining two months.
+Further statistical detail should be introduced when a later task needs it.
+
+1. **Resume the linear-algebra track (agree the next scope with the author):** linear combinations → basis, rank, multicollinearity (W3) →
    covariance and correlation, covariance matrix (W4). This is the road into Phase 2.
-3. **Poisson** (W3; foreshadowed in L5).
-4. **Milestone presentation 1** (W4): not designed yet.
+2. **Milestone presentation 1** (W4): not designed yet.
+3. **Poisson** remains syllabus backlog; do not add another statistics meeting automatically.
 
 **Decisions needed**
 
@@ -616,6 +666,12 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 ---
 
 ## 11. Changelog
+
+- **2026-10-08:** Added L9 as the final two-hour statistics lesson on delivery comparisons: precise
+  definitions of hypotheses, p-value and significance; false-positive simulation; two-sample bootstrap CI and a
+  five-minute practical threshold. Uses the established dark HTML theory cells, three self-contained JS/SVG
+  widgets and three small coding tasks. Clarified that the Markdown-only format belongs to practicums, not
+  theoretical lessons. Existing notebooks and the author’s edited bus assignment were preserved.
 
 - **2026-10-02:** Created the student bus resampling assignment from the author-approved shortened KEY.
   Preserved all preparation and provided plotting code, replaced only A–D with TODO placeholders, removed saved
