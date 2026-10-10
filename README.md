@@ -40,8 +40,8 @@ adapted from MIT 18.065. Each student works with one "anchor" dataset throughout
 
 | Phase | Weeks | Theme | Status |
 |---|---|---|---|
-| 1. Data as vectors | 1–4 | Descriptive statistics, distributions, vectors, dot product, covariance | **In progress:** 9 lessons, 2 seminars, homework, 4 practicums |
-| 2. Matrices as operators | 5–8 | Operators, determinant, eigenvectors, PCA/SVD | Planned |
+| 1. Data as vectors | 1–4 | Descriptive statistics, distributions, vectors, dot product, covariance | **In progress:** 10 math lessons, 2 seminars, homework, 4 practicums; rank and covariance still pending |
+| 2. Matrices as operators | 5–8 | Operators, determinant, eigenvectors, PCA/SVD | L10 introduces matrix operations and transformations; the rest is planned |
 | 3. Estimation and first models | 9–12 | Least squares, linear regression, MLE, logistic regression | Planned |
 | 4. Classic DS and the project | 13–16 | Trees, ensembles, metrics; research project | Modules `DT/` and `unsupervised/` ready |
 
@@ -51,7 +51,7 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
 
 | Path | What it is | Status |
 |---|---|---|
-| [`math_for_ds/`](math_for_ds/) | **Mathematics for DS:** Colab lessons L1–L9, a seminar, homework | actively developed |
+| [`math_for_ds/`](math_for_ds/) | **Mathematics for DS:** Colab lessons L1–L10, a seminar, homework | actively developed |
 | [`practice/`](practice/) | Lalafo phones and cars; bus travel/waiting and bus comparison with bootstrap and permutations (both with student and KEY versions) | Lalafo: L1–L4; buses: L1–L6, then L7–L8 |
 | [`DT/`](DT/) | **Decision trees and ensembles:** 4 notebooks and an interactive HTML theory handbook | ready, to be re-linked to the math block |
 | [`unsupervised/`](unsupervised/) | **Unsupervised learning:** SVD/PCA/t-SNE, K-Means, GMM/EM, DBSCAN/HDBSCAN, hierarchical clustering | ready, to be re-linked to the math block |
@@ -72,7 +72,11 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
    [teacher's answers (KEY)](practice/practicum_mossovet_asia_mall_bootstrap_KEY.ipynb)
    → **[L9 hypotheses, p-values and statistical significance](math_for_ds/09_stat_hypotheses.ipynb)**
    (one final statistics meeting, using delivery data)
-5. Phase 4: `DT/` (trees → bias–variance → bagging/RF → gradient boosting), `unsupervised/` (01 → 05)
+5. **[L10 matrices and matrix multiplication](math_for_ds/10_matrices.ipynb)** — return to linear algebra:
+   rows and columns, operations in NumPy, geometric transformations and composition, weighted sums for all
+   observations at once. One theory meeting, followed by four short class/homework tasks: rotation, car prices
+   with given weights, several weight sets at once, and a small threshold network's forward calculation.
+6. Phase 4: `DT/` (trees → bias–variance → bagging/RF → gradient boosting), `unsupervised/` (01 → 05)
 
 ## Data and related repositories
 

@@ -2,7 +2,7 @@
 
 **What has been built, where it lives, in what order it is taught, and why it looks the way it does.**
 
-> **This document is kept up to date as the course grows.** Last updated: **2026-10-08**, after adding L9, the final statistics meeting on hypotheses, p-values and useful delivery improvements.
+> **This document is kept up to date as the course grows.** Last updated: **2026-10-09**, after adding L10 on matrices and its student tasks on rotation, given weights and a small threshold network.
 > It combines a course programme, a table of contents and methodological notes.
 > The teaching materials are in Russian; this map is in English so the whole team can use it.
 > How to work in the repo (build, validate, edit) is in [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md).
@@ -62,10 +62,10 @@ disagree about *intent*, ask the course author.
 
 ## 2. Phases and status
 
-| Phase | Weeks | Theme (syllabus) | Status (2026-10-08) |
+| Phase | Weeks | Theme (syllabus) | Status (2026-10-09) |
 |---|---|---|---|
-| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L9 built. The initial statistics block closes with L9; the linear-algebra track has stopped after week 1. |
-| **2. Matrices as operators** | 5–8 | Operators, determinant and inverse, eigenvectors, PCA (+ SVD overview) | Not started. `unsupervised/01` already covers SVD/PCA as an ML lesson. |
+| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L10 built. L9 closes the initial statistics block; L10 resumes linear algebra. Basis, rank and covariance remain pending. |
+| **2. Matrices as operators** | 5–8 | Operators, determinant and inverse, eigenvectors, PCA (+ SVD overview) | Introductory matrix operations, transformations and composition in L10. The remaining groundwork is not built. `unsupervised/01` already covers SVD/PCA as an ML lesson. |
 | **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | Models not started. Sampling, estimation and permutation hypothesis tests were brought forward into L7–L9. |
 | **4. Classic DS and the project** | 13–16 | Trees, ensembles, metrics, cross-validation; research project | Modules `DT/` and `unsupervised/` exist (built June 2026, before the math block). Project not designed. |
 
@@ -94,6 +94,7 @@ and from references inside the notebooks, and is not necessarily the date of the
 | 13 | L | **L8 — Confidence intervals and bootstrap** · `math_for_ds/08_stat_ci_bootstrap.ipynb` | known-σ intervals, coverage, bootstrap SE and percentile intervals, resampling schemes | L7 | estimation brought forward | Oct 1 |
 | 14 | P | **Bus comparison: permutations and bootstrap** · [student tasks](../practice/practicum_mossovet_asia_mall_bootstrap.ipynb), [teacher KEY](../practice/practicum_mossovet_asia_mall_bootstrap_KEY.ipynb) | paired daily route means, sign-flip simulation, one-sample bootstrap of daily differences, approximate normal and percentile CIs | L7–L8, bus practicum | estimation in practice | Oct 2 |
 | 15 | L | **L9 — Hypotheses, p-values and statistical significance** · [09_stat_hypotheses.ipynb](../math_for_ds/09_stat_hypotheses.ipynb) | two delivery methods; permutation p-value, null/alternative, α and false rejections, bootstrap CI for a difference, practical threshold | L7–L8, bus resampling practicum | W12 brought forward; final statistics meeting | Oct 8 |
+| 16 | L | **L10 — Matrices and matrix multiplication** · [10_matrices.ipynb](../math_for_ds/10_matrices.ipynb) | dimensions and operations; dot product and linear combination revisited; Ax as a transformation; matrix multiplication, composition and NumPy; Xw; rotation, given weights and threshold-network tasks | L1–L2, basic NumPy | develops W2 linear combinations; groundwork for W3 and introductory W5 operators | Oct 9 |
 | — | — | **Phase 4 modules** · `DT/`, `unsupervised/` | trees and ensembles; dimensionality reduction and clustering (§7) | Phases 1–3 | W13+ | June 2026 |
 
 Evidence for the less obvious positions:
@@ -418,6 +419,68 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 - **Sources.** ASA p-value statement, Hesterberg, SciPy permutation/bootstrap documentation; links back to L8
   and the student bus practicum. Existing course notebooks were not rebuilt.
 
+### L10 — «Как матрица преобразует данные?» (matrices and multiplication)
+
+- **Files.** [10_matrices.ipynb](../math_for_ds/10_matrices.ipynb) ← `build_lesson10.py` +
+  `lesson10_widgets.js` + `images/lesson10_threshold_network.png`. The widget code, small data extract and
+  diagram attachment are embedded; only the notebook is needed in Colab.
+- **Scope.** One beginner two-hour theory meeting after the final statistics lesson, followed by short practice
+  for class or homework. The full assignment is not promised to fit the same meeting. Returns to the observations,
+  vectors and dot product of L1–L2. The aim is to understand matrix multiplication and what it computes;
+  no general basis/rank theory, determinants, inverses, eigenvectors or model fitting. The standard basis of
+  the plane is defined briefly to explain why the transformed unit vectors are the matrix columns.
+- **Data.** First six Davis observations, with measured weight and height, embedded from
+  `aiacademy-kg/davis_dataset` at revision `cfb0d88e0d0a8814998ecfb36179bd18d0cbbb5a`,
+  file `data/train-00000-of-00001.parquet`. Integer matrices and synthetic two-dimensional points are used for
+  arithmetic and geometry. The final example uses synthetic courier orders with distance and stop count;
+  its weights (3 min/km and 2 min/stop) are given, not fitted. Practice uses synthetic car features and given
+  price weights; the network diagram is supplied by the instructor and preserved byte-for-byte. No runtime downloads.
+- **Flow.** A data table and its observation vectors → matrix dimensions, indexing, rows and columns →
+  addition, subtraction, scalar multiplication and transpose → dot product and linear combination revisited →
+  Ax as row dot products and a combination of columns → action on a plane → matrix multiplication and
+  compatible dimensions → properties and composition → Xw for all observations, then X @ A.T for row-stored
+  points → four student tasks.
+- **Definitions and NumPy.** Repeat precise definitions of the real-vector dot product and linear combination
+  before using them. Explicitly distinguish elementwise `*` from matrix `@`/`np.matmul`;
+  `np.dot` is a scalar product for two one-dimensional vectors and a matrix product for two matrices.
+  Examples expose shapes and zero-based indexing, and explain that a one-dimensional array's `.T` does not
+  make it a column. Column-vector formulas and row-oriented data use the same operation with consistent shapes.
+- **Visuals.** Five self-contained JS/SVG widgets: select a Davis row and its point; inspect basic operations;
+  transform a grid and vectors; inspect a selected entry of a matrix product; compare orders of composition.
+  In the operations widget, k is explicitly identified as the scalar multiplier; its control appears only
+  when scalar multiplication is selected.
+  Geometric planes use equal scales. The standard basis vectors e1 = (1, 0) and e2 = (0, 1) show the matrix
+  columns after transformation; composition acts rightmost first. NumPy examples calculate the same operations,
+  with standard Python figures where useful.
+- **Properties.** Identity, associativity, distributivity and noncommutativity, with dimensions respected.
+  The course's existing linear-combination idea now explains each column of a product and the ML weighted-sum link.
+- **Practice (§9).** Four short student tasks with unanswered TODOs and interpretation questions:
+  a 90-degree rotation of a vector and row-stored triangle points; car prices from given weights; two weight
+  sets stored as columns of W for all cars at once; a three-input/two-hidden-unit/one-output threshold network.
+  Car features are a constant 1, engine volume in litres, age in years and mileage in thousands of kilometres;
+  weights [1000, 300, −70, −2] produce prices in thousands of som. The task makes feature order and coefficient
+  units explicit. A short introduction defines weighted sum, weight, threshold activation, hidden layer and
+  forward calculation before the network task. All three neurons use the author-confirmed threshold:
+  output 1 for a weighted sum ≥ 0.5, otherwise 0, without bias terms. The students check the boundary case.
+  No training is introduced. Plotting and result tables are provided with guards for unfinished answers;
+  no KEY was requested. Existing separate exercises remain intact.
+- **Format.** Shared dark HTML theory, boxed definitions, equation glossaries and standalone JS/SVG widgets,
+  following L8–L9. The distributed notebook is unexecuted.
+- **Validation.** The 72-cell student notebook executed with its unanswered TODOs and guards intact; a temporary
+  completed copy passed independent numerical checks for all four tasks, including all eight binary network
+  inputs and the inclusive threshold boundary. The output guard rejects nonbinary results without silently
+  truncating them. Node checks covered all five widgets, control and drag handlers, mathematical invariants,
+  repeated embedding, and the k slider's visibility, disabled state and scalar values. All 27 displayed formulas
+  have glossaries; all 201 TeX fragments rendered with MathJax 3 offline without errors. Python figures, including
+  the provided rotation plot, and exported SVG geometry snapshots were rendered to PNG and visually inspected.
+  These checks do not verify the full HTML layout or browser interactions: no browser was available, and
+  computer-use permissions were denied. Actual Colab UI remains unverified. The supplied diagram, source asset
+  and notebook attachment are byte-identical. The build is byte-identical from a different working directory;
+  the distributed notebook is unexecuted and unanswered. Preview exports are in gitignored
+  `data/lesson10_validation/`. Other course notebooks and separate exercises were not changed.
+- **Bridges.** Matrix columns and their linear combinations prepare basis and rank. The Xw example explains
+  the calculation used in a linear model without introducing regression training.
+
 ---
 
 ## 5. Syllabus vs. what was built
@@ -425,28 +488,38 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 | Syllabus | Planned | Built | Comment |
 |---|---|---|---|
 | W1 | Random variable, mean, variance, SD; vector, norm, dot product; z | L1, L2, L3, Seminar 1, H, house.kg seminar project | **Done.** The random variable is kept intuitive and formalised in L5–L6. |
-| W2 | Normal, three sigma, Bernoulli, binomial; LA: linear combinations | L5, L6 | Statistics done and extended (PDF/CDF in L6). Linear combinations were only introduced in L1, not developed. |
-| W3 | Poisson; basis, rank, multicollinearity | — | **Not built.** |
+| W2 | Normal, three sigma, Bernoulli, binomial; LA: linear combinations | L5, L6; L1 and L10 (LA) | Statistics done and extended (PDF/CDF in L6). L10 revisits linear combinations through matrix columns and multiplication. |
+| W3 | Poisson; basis, rank, multicollinearity | Prerequisites in L10 | **Not built.** L10 introduces the standard 2D basis; general basis theory, rank and multicollinearity remain pending. |
 | W4 | Covariance, correlation, covariance matrix; milestone presentation 1 | — | **Not built.** Students still do not know correlation, which constrains every practice task. |
+| W5 | Matrices as operators | Introductory part in L10 | Matrix action and composition introduced visually. The rest of Phase 2 remains pending. |
 | — | *(not in the syllabus)* | L4 | Robust, non-parametric tools, needed because the real data are dirty. |
 | — | *(not in the syllabus)* | Bus practicums, L7–L9 | Sampling, SE, CLT, CIs and bootstrap; L9 closes the block with permutation hypotheses, p-values and practical interpretation. Tests were brought forward from W12. |
 | W8 | PCA, SVD overview | `unsupervised/01` | Exists as an ML lesson, without the covariance and eigenvector groundwork the syllabus intends. |
 | W13 | Trees, ensembles, metrics, cross-validation | `DT/` | Exists. It predates the math block. Metrics and cross-validation have no dedicated lesson. |
 
-**The overall pattern:** the statistics track is ahead of the plan, and the linear-algebra track stopped after
-week 1. The main debt to the syllabus is resuming linear algebra (linear combinations → basis and rank →
-covariance), which is the road into Phase 2.
+**The overall pattern:** the statistics track is ahead of the plan. L10 resumes linear algebra with matrix
+operations and a visual introduction to operators. Basis, rank and covariance remain a substantial gap before
+the later Phase 2 topics; the next scope needs the author's agreement.
 
 ---
 
 ## 6. What students know so far
 
-*Material through L9; L9 is newly built.* Practice tasks must stay inside this list and account for which lessons
+*Material through L10; L9–L10 are newly built.* Practice tasks must stay inside this list and account for which lessons
 the group has actually completed. Anything outside it has to be taught first.
 
-**Linear algebra.** Vector as an observation; feature space ℝⁿ; addition, scaling, linear combination (introduced
-only); L2 norm, distance; centroid as the mean vector; dot product, projection, angle; cosine similarity and
+**Linear algebra (L1–L2).** Vector as an observation; feature space ℝⁿ; addition, scaling, linear combination
+(introduced); L2 norm, distance; centroid as the mean vector; dot product, projection, angle; cosine similarity and
 distance; L2 normalization; nearest neighbour by Euclidean vs. cosine distance; embeddings and attention (as ideas).
+
+**Matrices (L10, pending classroom use).** Dimensions, elements, rows and columns; equality, addition, subtraction,
+scalar multiplication and transpose; dot product and linear combination revisited; matrix-vector multiplication
+as row dot products and a combination of columns. Linear transformations in two dimensions, the standard basis
+e1 = (1, 0), e2 = (0, 1) and its images; matrix multiplication and compatible shapes; identity, associativity,
+distributivity, noncommutativity and composition order. Weighted sums Xw and transforming row-stored
+observations with X @ A.T. Practice adds feature order and coefficient units, multiple given weight sets as
+matrix columns, and a small threshold network's forward calculation: weighted sum, weight, threshold activation
+and hidden layer. No model fitting or neural-network training.
 
 **Descriptive statistics.** Population vs. sample, representativeness, bias; histogram, 1D and 2D KDE, mode; mean,
 median, variance, SD, SSE; group statistics (`groupby`); z-standardization; normalization by a meaningful
@@ -479,11 +552,14 @@ or comprehensive test-selection catalogue.
 
 **Tools.** numpy, pandas (`describe`, `groupby`, `quantile`), seaborn (histograms, KDE, boxplots),
 `scipy.stats.norm` (`cdf`, `sf`, `ppf`), `scipy.stats.bootstrap`, NumPy resampling (`Generator.choice`), sklearn scalers and `NearestNeighbors`.
+L10 adds explicit array-shape conventions, transpose, `@`, `np.matmul`, vector/matrix uses of `np.dot`,
+and their distinction from elementwise `*`.
 
 **Not taught yet. Do not use without teaching it first:** correlation (Pearson r, `df.corr()`) and covariance; the
-covariance matrix; Poisson; t-tests and the Student distribution; matrices as operators, rank,
-determinant, inverse, eigenvectors; PCA/SVD; least squares and linear regression; MLE; logistic regression; any ML
-model, train/test split, metrics.
+covariance matrix; Poisson; t-tests and the Student distribution; general basis theory, rank,
+determinant, inverse, eigenvectors; PCA/SVD; least squares and linear-regression fitting; MLE; logistic regression;
+ML model training, neural-network learning/backpropagation, train/test split, metrics. L10's given-weight price
+formula and threshold-network calculation do not constitute model-training lessons.
 
 ---
 
@@ -546,7 +622,7 @@ students a familiar dataset here.
 
 | Dataset | Source | Used in | Notes |
 |---|---|---|---|
-| Davis (height and weight, 200 people) | HF `aiacademy-kg/davis_dataset` | L1–L5 | Measured and self-reported values; small enough to compute by hand |
+| Davis (height and weight, 200 people) | HF `aiacademy-kg/davis_dataset` | L1–L5; six-row embedded extract in L10 | Measured and self-reported values; small enough to compute by hand |
 | house.kg listings (Bishkek) | HF `aiacademy-kg/house_kg_full_dataset`, file `data/listings.parquet` | house.kg seminar project, L4, L5 | Filter `deal == "sale"`, `type == "apartment"`, `city == "Бишкек"`; `price_usd` is strongly skewed |
 | Lalafo phones | HF `aiacademy-kg/lalafo-kg-phones` | `practice/phones` | Load `listings` and `users`; never `images` (~5 GB) |
 | Lalafo cars | HF `aiacademy-kg/lalafo-kg-cars` | `practice/cars` | Never `images` (78 GB); ≈40% of prices are in USD |
@@ -556,7 +632,7 @@ students a familiar dataset here.
 | Telecom churn | CSV from the mlcourse.ai GitHub repo | `bagging_rf` | |
 | sklearn toy sets, 20 Newsgroups | sklearn | `DT/`, `unsupervised/` | |
 | Keyword-spotting audio features | HF `aiacademy-kg/kws-dataset` | `kws-project` (external) | Features already extracted |
-| Synthetic data | generated in the notebook | L6–L9, `bias_variance_demo`, `gradient_boosting` | The law is known, so every result can be checked |
+| Synthetic data | generated in the notebook | L6–L10, `bias_variance_demo`, `gradient_boosting` | Known laws in statistics; simple matrices, points, courier orders and car features in L10 |
 
 **Where the data come from.** All `aiacademy-kg/*` datasets are published on the school's Hugging Face organization,
 [huggingface.co/aiacademy-kg](https://huggingface.co/aiacademy-kg). The scrapers that build the house.kg and Lalafo
@@ -578,7 +654,7 @@ binary target. The list of students' anchor datasets is not recorded in the repo
   widget → «что мы увидели» → a precise definition.
 - **Predict, act, explain.** Before moving a slider, the student predicts the result; afterwards, they explain it in
   words.
-- **A «Где: …» block under every displayed formula**, explaining every symbol (CSS class `.where`; in L6–L9 enforced
+- **A «Где: …» block under every displayed formula**, explaining every symbol (CSS class `.where`; in L6–L10 enforced
   by the `eq()` helper).
 - **Optional depth** goes into `<details>` blocks («для тех, кто хочет глубже»), so the main line stays short.
 - **English terminology is introduced gradually:** an English gloss next to the Russian term (class `.en`).
@@ -614,7 +690,7 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 - Theory visualisations are **live JS/SVG** (draggable points, sliders), not matplotlib. Matplotlib/seaborn appear in
   the code students write. Angles and circles need the square plane `plane(half)`.
 - MathJax with `$…$` and `$$…$$` delimiters only.
-- Current pattern (L6–L9): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
+- Current pattern (L6–L10): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
   glossary guard; references to authoritative sources (NIST, SciPy, Penn State, OpenStax).
 - L9 uses this same theoretical-lesson format, with short definitions and explanations. Its numerical helpers
   and standard Python plots are also embedded. The Markdown-only bus practicum format does not carry over
@@ -637,8 +713,9 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 The author requested one final statistics meeting, now L9, then moving on within the remaining two months.
 Further statistical detail should be introduced when a later task needs it.
 
-1. **Resume the linear-algebra track (agree the next scope with the author):** linear combinations → basis, rank, multicollinearity (W3) →
-   covariance and correlation, covariance matrix (W4). This is the road into Phase 2.
+1. **Continue after L10 (agree the next scope with the author):** matrix operations and linear combinations now
+   precede basis, rank and multicollinearity (W3), then covariance and correlation (W4). These topics remain pending;
+   L10's visual operator introduction does not complete Phase 2.
 2. **Milestone presentation 1** (W4): not designed yet.
 3. **Poisson** remains syllabus backlog; do not add another statistics meeting automatically.
 
@@ -666,6 +743,14 @@ Further statistical detail should be introduced when a later task needs it.
 ---
 
 ## 11. Changelog
+
+- **2026-10-09:** Added L10 on matrices and multiplication as the return to linear algebra after L9.
+  Reuses L1–L2 ideas, repeats dot-product and linear-combination definitions, and connects each operation
+  to NumPy. Five HTML/JS widgets link tables, vector geometry, multiplication and composition; Xw and
+  X @ A.T connect these calculations to row-oriented data. The theory occupies one meeting; added §9 practice
+  covers rotation, car prices from given weights, multiple weight sets and a small threshold network's forward
+  calculation. The instructor's network diagram is embedded unchanged. Clarified the scalar k control;
+  the author's separate exercises remain intact. Basis, rank, covariance and the rest of Phase 2 remain pending.
 
 - **2026-10-08:** Added L9 as the final two-hour statistics lesson on delivery comparisons: precise
   definitions of hypotheses, p-value and significance; false-positive simulation; two-sample bootstrap CI and a
