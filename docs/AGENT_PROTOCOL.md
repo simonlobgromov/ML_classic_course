@@ -36,7 +36,7 @@ Read in this order:
 
 1. `CLAUDE.md`: the repo map and commands.
 2. [COURSE_MAP.md](COURSE_MAP.md): §3 (sequence), §6 (what students know), §10 (open questions).
-3. **The newest build script** (`math_for_ds/build_lesson10.py`), together with `build_lesson8.py` and `build_lesson9.py`: the shared
+3. **The newest build script** (`math_for_ds/build_lesson11.py`), together with `build_lesson10.py`: the shared
    dark HTML theory cells and self-contained JS/SVG widgets used by theoretical lessons.
 4. The lesson before the one you are working on: its last sections usually set up the next topic ("bridges").
 5. `syllabus.docx`, as a compass for intent. It is not a contract. To read it without extra packages:
@@ -57,7 +57,7 @@ Read in this order:
 2. **Outline, for agreement:** the sections, every widget (what the student moves and what they should see), the
    tasks and the interpretation questions.
 3. **Implement** `math_for_ds/build_lessonN.py`, following the HTML/JS theoretical-lesson pattern in
-   `build_lesson8.py` through `build_lesson10.py` (§5). A practicum’s Markdown-only format does not apply to theory lessons.
+   `build_lesson8.py` through `build_lesson11.py` (§5). A practicum’s Markdown-only format does not apply to theory lessons.
 4. **Build:** `venv/bin/python math_for_ds/build_lessonN.py`. It writes `math_for_ds/NN_<slug>.ipynb`.
 5. **Validate** with the checklist in §7.
 6. **Document** in COURSE_MAP: a row in §3, a note in §4, an update to §5, the new concepts in §6, a line in §11.
@@ -102,7 +102,7 @@ Both versions are maintained by hand. Student interpretation cells ask for concl
 
 1. Find the source of truth in §4. If the material is built by a script, edit the script.
 2. **Rebuild safely:** build into a scratch copy, compare cell sources with the committed notebook, and only then
-   replace it. Scripts 2–10 write next to themselves, so copy the folder and run the copy:
+   replace it. Scripts 2–11 write next to themselves, so copy the folder and run the copy:
 
    ```bash
    cp -R math_for_ds /tmp/mfd && rm /tmp/mfd/*.ipynb && venv/bin/python /tmp/mfd/build_lesson5.py
@@ -145,6 +145,7 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 | L8 `08_stat_ci_bootstrap.ipynb` | `build_lesson8.py` + `lesson8_widgets.js` | Yes. Byte-identical rebuilds |
 | L9 `09_stat_hypotheses.ipynb` | `build_lesson9.py` + `lesson9_widgets.js` + `lesson9_helpers.py` | Yes. JS widgets and Python helpers are embedded; preserve unexecuted output |
 | L10 `10_matrices.ipynb` | `build_lesson10.py` + `lesson10_widgets.js` + `images/lesson10_threshold_network.png` | Yes. JS widgets, Davis extract and image attachment are embedded; preserve unexecuted output |
+| L11 `11_linear_dependence_rank.ipynb` | `build_lesson11.py` + `lesson11_widgets.js` | Yes. JS widgets and synthetic data are embedded; preserve unexecuted output |
 | `seminar_1.ipynb` | The notebook | No script |
 | `practice/practicum_mossovet_asia_mall.ipynb` | The notebook (student tasks, without answers or outputs) | No script |
 | `practice/practicum_mossovet_asia_mall_KEY.ipynb` | The notebook (KEY, with outputs) | No script |
@@ -159,7 +160,7 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 
 ## 5. Lesson implementation spec
 
-**Theoretical lessons use the shared HTML/JS format below, including L9–L10.** The Markdown/Python-only rule
+**Theoretical lessons use the shared HTML/JS format below, including L9–L11.** The Markdown/Python-only rule
 for practicums applies to those practicums. Keep the author’s process instructions out of student prose: title
 definition boxes with the mathematical concept, and state the definition itself.
 
@@ -182,6 +183,15 @@ All three neurons use the author-confirmed rule: output 1 when the weighted sum 
 there are no bias terms. Include the boundary value in the student check.
 Do not assume all the added practice fits the theory meeting. The standard 2D basis is briefly defined to
 explain matrix columns. General basis theory, rank, determinants, inverses and model training are outside this lesson.
+
+**L11 scope.** Continue L10 with linear dependence/independence, rank and singularity of a square matrix
+defined through rank. Use small synthetic examples without data downloads: two-vector combinations,
+morning/evening/total columns, a plane mapped to a plane/line/point, and volume in litres/millilitres as
+duplicate features with nonunique given weights. Four self-contained JS/SVG widgets, NumPy examples,
+standard Python figures and three short student tasks. Keep tasks unanswered; validate a temporary completed
+copy. Briefly define span, state row/column rank equality and full rank for rectangular as well as square
+matrices; keep the numerical-tolerance caveat optional. Do not add chapters on determinants, inverses,
+linear systems, general basis theory, SVD or model fitting.
 
 **Skeleton** (copy it from `build_lesson8.py`):
 
@@ -221,7 +231,7 @@ theory cells, widgets, short numpy experiments and tasks → a check of understa
 appears collapsed in Colab. Use `$…$` and `$$…$$` only. Every displayed formula is followed by a «Где: …» /
 «Обозначения.» glossary. Depth goes into `<details>`.
 
-**Widgets (L6–L10 pattern).** A Python `widget(kind, title, instruction, charts, controls, question, optional=False)`
+**Widgets (L6–L11 pattern).** A Python `widget(kind, title, instruction, charts, controls, question, optional=False)`
 emits a cell with a fixed anatomy: title → instruction → controls (`slider`, `select`) → SVG charts → a live
 `readout` (`aria-live`) → a «Проверь себя» question → a footnote identifying the data or simulation. The JS renderer lives in
 `lessonN_widgets.js` (`window.<Name>.mount(root, kind)`) and is embedded at build time. Students need only the
