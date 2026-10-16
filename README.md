@@ -40,9 +40,9 @@ adapted from MIT 18.065. Each student works with one "anchor" dataset throughout
 
 | Phase | Weeks | Theme | Status |
 |---|---|---|---|
-| 1. Data as vectors | 1–4 | Descriptive statistics, distributions, vectors, dot product, covariance | **In progress:** 11 math lessons, 2 seminars, homework, 4 practicums; general basis theory and covariance still pending |
-| 2. Matrices as operators | 5–8 | Operators, determinant, eigenvectors, PCA/SVD | L10–L11 introduce operations, transformations, rank and singularity; determinant, inverse and later topics are planned |
-| 3. Estimation and first models | 9–12 | Least squares, linear regression, MLE, logistic regression | Planned |
+| 1. Data as vectors | 1–4 | Descriptive statistics, distributions, vectors, dot product, covariance | **In progress:** 12 math lessons, 2 seminars, homework, 4 practicums; general basis theory and covariance still pending |
+| 2. Matrices as operators | 5–8 | Operators, determinant, eigenvectors, PCA/SVD | L10–L12 introduce operations, transformations, rank, linear systems, inverse and the 2D determinant; eigenvectors and later groundwork remain planned |
+| 3. Estimation and first models | 9–12 | Least squares, linear regression, MLE, logistic regression | L12 includes a first weight calculation using a supplied least-squares formula; the full modelling block is planned |
 | 4. Classic DS and the project | 13–16 | Trees, ensembles, metrics; research project | Modules `DT/` and `unsupervised/` ready |
 
 The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP.md](docs/COURSE_MAP.md)**.
@@ -51,7 +51,7 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
 
 | Path | What it is | Status |
 |---|---|---|
-| [`math_for_ds/`](math_for_ds/) | **Mathematics for DS:** Colab lessons L1–L11, a seminar, homework | actively developed |
+| [`math_for_ds/`](math_for_ds/) | **Mathematics for DS:** Colab lessons L1–L12, a seminar, homework | actively developed |
 | [`practice/`](practice/) | Lalafo phones and cars; bus travel/waiting and bus comparison with bootstrap and permutations (both with student and KEY versions) | Lalafo: L1–L4; buses: L1–L6, then L7–L8 |
 | [`DT/`](DT/) | **Decision trees and ensembles:** 4 notebooks and an interactive HTML theory handbook | ready, to be re-linked to the math block |
 | [`unsupervised/`](unsupervised/) | **Unsupervised learning:** SVD/PCA/t-SNE, K-Means, GMM/EM, DBSCAN/HDBSCAN, hierarchical clustering | ready, to be re-linked to the math block |
@@ -79,7 +79,12 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
 6. **[L11 linear dependence and rank](math_for_ds/11_linear_dependence_rank.ipynb)** — redundant columns,
    reachable linear combinations, a plane collapsing to a line or point, and square-matrix singularity defined
    through rank. Four interactive visuals, NumPy examples and three short student tasks on synthetic data.
-7. Phase 4: `DT/` (trees → bias–variance → bagging/RF → gradient boosting), `unsupervised/` (01 → 05)
+7. **[L12 linear systems and inverse matrices](math_for_ds/12_linear_systems_inverse.ipynb)** — one, no or infinitely
+   many solutions; recovering an input with an inverse; a short geometric introduction to the determinant.
+   Three interactive visuals connect the theory to NumPy. Six adapted exercises cover matrix equations,
+   linear systems and a first weight calculation using a supplied least-squares formula; two are optional.
+   The core theory is one meeting, with exercises available for class or homework. Correlation is planned next.
+8. Phase 4: `DT/` (trees → bias–variance → bagging/RF → gradient boosting), `unsupervised/` (01 → 05)
 
 ## Data and related repositories
 

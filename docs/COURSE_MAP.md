@@ -2,7 +2,7 @@
 
 **What has been built, where it lives, in what order it is taught, and why it looks the way it does.**
 
-> **This document is kept up to date as the course grows.** Last updated: **2026-10-14**, after adding L11 on linear dependence, rank and square-matrix singularity.
+> **This document is kept up to date as the course grows.** Last updated: **2026-10-15**, after adding L12 on linear systems, inverse matrices and the geometric meaning of the determinant.
 > It combines a course programme, a table of contents and methodological notes.
 > The teaching materials are in Russian; this map is in English so the whole team can use it.
 > How to work in the repo (build, validate, edit) is in [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md).
@@ -62,11 +62,11 @@ disagree about *intent*, ask the course author.
 
 ## 2. Phases and status
 
-| Phase | Weeks | Theme (syllabus) | Status (2026-10-14) |
+| Phase | Weeks | Theme (syllabus) | Status (2026-10-15) |
 |---|---|---|---|
-| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L11 built. L9 closes the initial statistics block; L10–L11 resume linear algebra through matrix operations and rank. General basis theory and covariance remain pending. |
-| **2. Matrices as operators** | 5–8 | Operators, determinant and inverse, eigenvectors, PCA (+ SVD overview) | Matrix operations, transformations and composition in L10; rank and square-matrix singularity in L11. Determinant, inverse and later groundwork remain pending. `unsupervised/01` already covers SVD/PCA as an ML lesson. |
-| **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | Models not started. Sampling, estimation and permutation hypothesis tests were brought forward into L7–L9. |
+| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L12 built. L9 closes the initial statistics block; L10–L12 resume linear algebra. L11 is completed in class. General basis theory and covariance remain pending. |
+| **2. Matrices as operators** | 5–8 | Operators, determinant and inverse, eigenvectors, PCA (+ SVD overview) | Matrix operations and transformations in L10; rank and singularity in L11; linear systems, inverse and 2D determinant geometry in L12. Eigenvectors and later groundwork remain pending. `unsupervised/01` already covers SVD/PCA as an ML lesson. |
+| **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | L12 includes a first weight calculation from a supplied least-squares formula; its derivation and the full modelling block remain pending. Sampling, estimation and permutation hypothesis tests were brought forward into L7–L9. |
 | **4. Classic DS and the project** | 13–16 | Trees, ensembles, metrics, cross-validation; research project | Modules `DT/` and `unsupervised/` exist (built June 2026, before the math block). Project not designed. |
 
 ---
@@ -96,6 +96,7 @@ and from references inside the notebooks, and is not necessarily the date of the
 | 15 | L | **L9 — Hypotheses, p-values and statistical significance** · [09_stat_hypotheses.ipynb](../math_for_ds/09_stat_hypotheses.ipynb) | two delivery methods; permutation p-value, null/alternative, α and false rejections, bootstrap CI for a difference, practical threshold | L7–L8, bus resampling practicum | W12 brought forward; final statistics meeting | Oct 8 |
 | 16 | L | **L10 — Matrices and matrix multiplication** · [10_matrices.ipynb](../math_for_ds/10_matrices.ipynb) | dimensions and operations; dot product and linear combination revisited; Ax as a transformation; matrix multiplication, composition and NumPy; Xw; rotation, given weights and threshold-network tasks | L1–L2, basic NumPy | develops W2 linear combinations; groundwork for W3 and introductory W5 operators | Oct 9 |
 | 17 | L | **L11 — Linear dependence and rank** · [11_linear_dependence_rank.ipynb](../math_for_ds/11_linear_dependence_rank.ipynb) | dependence/independence, redundant columns, rank, square-matrix singularity, nonunique given weights | L1–L2, L10 | W3 dependence/rank; geometric part of W5–W6 | Oct 14 |
+| 18 | L | **L12 — Linear systems and inverse matrices** · [12_linear_systems_inverse.ipynb](../math_for_ds/12_linear_systems_inverse.ipynb) | Ax = b, one/no/infinitely many solutions, inverse, determinant and area, NumPy solve, matrix equations and a supplied least-squares weight formula | L10–L11, basic NumPy | W5–W6; first formula application from W9–W10 | Oct 15 |
 | — | — | **Phase 4 modules** · `DT/`, `unsupervised/` | trees and ensembles; dimensionality reduction and clustering (§7) | Phases 1–3 | W13+ | June 2026 |
 
 Evidence for the less obvious positions:
@@ -484,6 +485,7 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 
 ### L11 — Linear dependence and rank
 
+- **Classroom status.** Completed by the group, as confirmed by the author on October 15.
 - **Files.** [11_linear_dependence_rank.ipynb](../math_for_ds/11_linear_dependence_rank.ipynb) ←
   `build_lesson11.py` + `lesson11_widgets.js`. Widget code and small synthetic data are embedded;
   only the notebook is needed in Colab, with no dataset download.
@@ -519,6 +521,52 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 - **Bridges.** Exact feature redundancy connects rank to later multicollinearity and model identifiability.
   These examples explain why weights can be nonunique without introducing model fitting.
 
+### L12 — Linear systems and inverse matrices
+
+- **Files.** [12_linear_systems_inverse.ipynb](../math_for_ds/12_linear_systems_inverse.ipynb) ←
+  `build_lesson12.py` + `lesson12_widgets.js`. The notebook embeds its widgets, exercise statements and small
+  seeded synthetic data; no dataset download or temporary source notebook is needed to build or run it.
+- **Scope.** One beginner two-hour core meeting after the completed L11, before the planned correlation lesson.
+  Explain linear systems and matrix equations, why a solution can be unique, absent or nonunique, and when a
+  square matrix has an inverse. Introduce the determinant briefly through 2D area scaling and orientation.
+  Keep the hand calculation to 2×2 matrices. No minors, Cramer's rule, LU decomposition, cross products,
+  MNIST or Gradio. Class/homework exercises extend the core; the entire task set need not fit the meeting.
+- **Flow.** Equations as simultaneous constraints → `Ax = b` and the intersection of two lines → connection
+  to rank and singularity → defining an inverse and undoing a transformation → determinant as signed area
+  scaling and the 2×2 inverse formula → `x = A⁻¹b` → `np.linalg.solve(A, b)` and checking `A @ x` →
+  matrix equations → adapted exercises.
+- **Visuals and definitions.** Three self-contained JS/SVG widgets show one/no/infinitely many solutions,
+  forward and inverse transformations, and determinant magnitude/sign through a transformed unit square.
+  Define a linear equation, a linear system and its solution, the identity and inverse matrices, and the
+  determinant before using the terms. Connect invertibility to full rank for square matrices; a singular
+  matrix has no inverse. Explain why a zero determinant does not by itself distinguish no solutions from
+  infinitely many: that also depends on the right-hand side.
+- **NumPy.** Use `np.linalg.solve` for nonsingular square systems. `np.linalg.inv` illustrates the inverse
+  operation and `np.linalg.det` checks determinants. Verify results with matrix multiplication and
+  `np.allclose`, without comparing floating-point results to zero as an exact mathematical singularity test.
+- **Practice and provenance.** Six unanswered exercises were adapted from the teacher's temporary
+  `linal_lab.ipynb`: source task 5 (2×2 determinant and inverse), 12 (`2AX − B = C`), 15 (4×4 system),
+  14 (weights from the supplied formula `w = (XᵀX)⁻¹Xᵀy`, seeded 10×7 synthetic data), and optional tasks
+  13 (`SXQ = B`, 5×5 matrices) and 16 (5×5 system). The two image-based statements are transcribed into
+  LaTeX and NumPy. The original temporary notebook is preserved and is not a runtime or build dependency.
+  The weight task is the first numerical least-squares weight calculation: state the full-column-rank
+  condition and calculate predictions, but do not present a derivation or a full ML training/evaluation pipeline.
+- **Format.** Shared dark HTML theory, boxed definitions, formula glossaries, standalone JS/SVG widgets and
+  visible worked NumPy examples, following L10–L11. Student task cells retain unanswered placeholders;
+  ready plotting/checking code is provided. No teacher KEY was requested.
+- **Validation.** All 67 cells executed with blank guarded tasks. A temporary completed copy passed independent
+  checks of all six solutions; the supplied weight formula also agrees with `np.linalg.lstsq`. The transcribed
+  matrices and signs were checked against the source screenshots. All three widgets passed arithmetic and
+  control checks across 34 systems, 867 inverse inputs and 289 determinant states, including singular cases,
+  equal-axis scales and unique SVG IDs after repeated embedding. Exported SVG/PNG views and two matplotlib
+  figures were visually inspected. All 111 TeX expressions render with MathJax; all 19 displayed equations
+  have symbol glossaries. An isolated rebuild using only the builder, JS and `theme.py` is byte-identical,
+  confirming independence from `linal_lab.ipynb`. The source notebook and older lesson hashes are unchanged;
+  the distributed L12 notebook is unexecuted. Browser layout/interactions and actual Colab UI remain unverified:
+  computer-use permissions were not granted. `git diff --check` passes.
+- **Bridges.** Continue next with correlation and covariance. The weight formula gives a concrete future
+  application of matrix operations; regression theory and a full model-training workflow remain separate topics.
+
 ---
 
 ## 5. Syllabus vs. what was built
@@ -529,29 +577,32 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 | W2 | Normal, three sigma, Bernoulli, binomial; LA: linear combinations | L5, L6; L1 and L10 (LA) | Statistics done and extended (PDF/CDF in L6). L10 revisits linear combinations through matrix columns and multiplication. |
 | W3 | Poisson; basis, rank, multicollinearity | L10 prerequisites; L11 dependence and rank | **Partly built.** Exact feature redundancy is illustrated in L11. General basis theory, broader multicollinearity and Poisson remain pending. |
 | W4 | Covariance, correlation, covariance matrix; milestone presentation 1 | — | **Not built.** Students still do not know correlation, which constrains every practice task. |
-| W5 | Matrices as operators | Introductory part in L10 | Matrix action and composition introduced visually. The rest of Phase 2 remains pending. |
-| W6 | Determinant and inverse; singularity | Rank-based singularity in L11 | **Partly built.** Plane/line/point geometry and singular square matrices; no determinant or inverse lesson. |
+| W5 | Matrices as operators | L10; inverse transformations in L12 | Matrix action, composition and undoing a nonsingular transformation introduced visually. Later Phase 2 topics remain pending. |
+| W6 | Determinant and inverse; singularity | L11–L12 | **Introductory scope built.** Rank-based singularity, linear systems, inverse and 2D determinant geometry. Hand determinant calculation stops at 2×2. |
 | — | *(not in the syllabus)* | L4 | Robust, non-parametric tools, needed because the real data are dirty. |
 | — | *(not in the syllabus)* | Bus practicums, L7–L9 | Sampling, SE, CLT, CIs and bootstrap; L9 closes the block with permutation hypotheses, p-values and practical interpretation. Tests were brought forward from W12. |
 | W8 | PCA, SVD overview | `unsupervised/01` | Exists as an ML lesson, without the covariance and eigenvector groundwork the syllabus intends. |
+| W9–W10 | Projections, least squares, linear regression | L12 supplied weight-formula exercise | **First application only.** Students calculate weights on synthetic data; derivation, regression theory and the training/evaluation workflow remain pending. |
 | W13 | Trees, ensembles, metrics, cross-validation | `DT/` | Exists. It predates the math block. Metrics and cross-validation have no dedicated lesson. |
 
-**The overall pattern:** the statistics track is ahead of the plan. L10–L11 resume linear algebra through matrix
-operations, transformations, dependence and rank. General basis theory, covariance and the remaining Phase 2
-topics are still pending; the next scope needs the author's agreement.
+**The overall pattern:** the statistics track is ahead of the plan. L10–L12 resume linear algebra through matrix
+operations, transformations, dependence, rank, linear systems and inverses. A brief determinant introduction and
+the supplied weight formula connect these calculations to later topics. Correlation is planned next; general
+basis theory and the remaining Phase 2 and model-training groundwork are still pending.
 
 ---
 
 ## 6. What students know so far
 
-*Material through L11; L11 is newly built.* Practice tasks must stay inside this list and account for which lessons
-the group has actually completed. Anything outside it has to be taught first.
+*Material through L12. L11 is completed in class; L12 is newly built and awaits classroom use.* Practice tasks
+must stay inside this list and account for which lessons the group has actually completed. The separate L9
+classroom status below has not been confirmed. Anything outside the inventory has to be taught first.
 
 **Linear algebra (L1–L2).** Vector as an observation; feature space ℝⁿ; addition, scaling, linear combination
 (introduced); L2 norm, distance; centroid as the mean vector; dot product, projection, angle; cosine similarity and
 distance; L2 normalization; nearest neighbour by Euclidean vs. cosine distance; embeddings and attention (as ideas).
 
-**Matrices (L10, pending classroom use).** Dimensions, elements, rows and columns; equality, addition, subtraction,
+**Matrices (L10).** Dimensions, elements, rows and columns; equality, addition, subtraction,
 scalar multiplication and transpose; dot product and linear combination revisited; matrix-vector multiplication
 as row dot products and a combination of columns. Linear transformations in two dimensions, the standard basis
 e1 = (1, 0), e2 = (0, 1) and its images; matrix multiplication and compatible shapes; identity, associativity,
@@ -560,12 +611,20 @@ observations with X @ A.T. Practice adds feature order and coefficient units, mu
 matrix columns, and a small threshold network's forward calculation: weighted sum, weight, threshold activation
 and hidden layer. No model fitting or neural-network training.
 
-**Dependence and rank (L11, pending classroom use).** Linear span; linear dependence and independence;
+**Dependence and rank (L11, completed in class).** Linear span; linear dependence and independence;
 zero and nonzero coefficient combinations; redundant columns and the maximum number of independent columns
 (rank). Equality of row and column rank; full rank for square and rectangular matrices. Two-dimensional matrix
 images with rank 2, 1 or 0; square-matrix singularity defined through rank. Duplicate units as exact feature
 redundancy; nonunique given weights can produce identical weighted sums. Numerical rank tolerance is mentioned
 in a short optional note, without SVD.
+
+**Linear systems and inverse (L12, pending classroom use).** Linear equation, system and solution; `Ax = b`
+with compatible shapes; one, no or infinitely many solutions; connection between square-matrix rank,
+singularity and invertibility. Inverse defined by `A⁻¹A = AA⁻¹ = I`; recovering an input, `x = A⁻¹b`, and
+checking by substitution. The 2×2 determinant formula, determinant magnitude as area scaling and its sign as
+orientation; zero determinant and collapse. Matrix equations preserve multiplication order. A first
+least-squares weight calculation uses the supplied formula `w = (XᵀX)⁻¹Xᵀy` for full-column-rank synthetic
+data, followed by predictions `Xw`; there is no derivation, regression-theory chapter or full training workflow.
 
 **Descriptive statistics.** Population vs. sample, representativeness, bias; histogram, 1D and 2D KDE, mode; mean,
 median, variance, SD, SSE; group statistics (`groupby`); z-standardization; normalization by a meaningful
@@ -600,12 +659,14 @@ or comprehensive test-selection catalogue.
 `scipy.stats.norm` (`cdf`, `sf`, `ppf`), `scipy.stats.bootstrap`, NumPy resampling (`Generator.choice`), sklearn scalers and `NearestNeighbors`.
 L10 adds explicit array-shape conventions, transpose, `@`, `np.matmul`, vector/matrix uses of `np.dot`,
 and their distinction from elementwise `*`. L11 adds `np.linalg.matrix_rank` on small synthetic matrices.
+L12 adds `np.linalg.solve`, `np.linalg.inv`, `np.linalg.det` and verification with `np.allclose`.
 
 **Not taught yet. Do not use without teaching it first:** correlation (Pearson r, `df.corr()`) and covariance; the
-covariance matrix; Poisson; t-tests and the Student distribution; general basis theory, determinant,
-inverse, linear systems, eigenvectors; PCA/SVD; least squares and linear-regression fitting; MLE; logistic regression;
-ML model training, neural-network learning/backpropagation, train/test split, metrics. L10's given-weight price
-formula and threshold-network calculation do not constitute model-training lessons.
+covariance matrix; Poisson; t-tests and the Student distribution; general basis theory and eigenvectors;
+PCA/SVD; least-squares derivation and linear-regression theory; MLE; logistic regression; the full ML model-training
+workflow, neural-network learning/backpropagation, train/test split, metrics. L10's given-weight price formula
+and threshold-network calculation are forward computations; L12 adds only a first supplied-formula weight
+calculation, not a complete model-training lesson. Its new concepts must be taught before use in later tasks.
 
 ---
 
@@ -678,7 +739,7 @@ students a familiar dataset here.
 | Telecom churn | CSV from the mlcourse.ai GitHub repo | `bagging_rf` | |
 | sklearn toy sets, 20 Newsgroups | sklearn | `DT/`, `unsupervised/` | |
 | Keyword-spotting audio features | HF `aiacademy-kg/kws-dataset` | `kws-project` (external) | Features already extracted |
-| Synthetic data | generated in the notebook | L6–L11, `bias_variance_demo`, `gradient_boosting` | Known laws in statistics; small matrices and points, courier/car features (L10), totals and duplicate volume units (L11) |
+| Synthetic data | generated in the notebook | L6–L12, `bias_variance_demo`, `gradient_boosting` | Known laws in statistics; small matrices and points, courier/car features (L10), totals and duplicate volume units (L11), linear systems and seeded 10×7 features (L12) |
 
 **Where the data come from.** All `aiacademy-kg/*` datasets are published on the school's Hugging Face organization,
 [huggingface.co/aiacademy-kg](https://huggingface.co/aiacademy-kg). The scrapers that build the house.kg and Lalafo
@@ -700,7 +761,7 @@ binary target. The list of students' anchor datasets is not recorded in the repo
   widget → «что мы увидели» → a precise definition.
 - **Predict, act, explain.** Before moving a slider, the student predicts the result; afterwards, they explain it in
   words.
-- **A «Где: …» block under every displayed formula**, explaining every symbol (CSS class `.where`; in L6–L11 enforced
+- **A «Где: …» block under every displayed formula**, explaining every symbol (CSS class `.where`; in L6–L12 enforced
   by the `eq()` helper).
 - **Optional depth** goes into `<details>` blocks («для тех, кто хочет глубже»), so the main line stays short.
 - **English terminology is introduced gradually:** an English gloss next to the Russian term (class `.en`).
@@ -736,7 +797,7 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 - Theory visualisations are **live JS/SVG** (draggable points, sliders), not matplotlib. Matplotlib/seaborn appear in
   the code students write. Angles and circles need the square plane `plane(half)`.
 - MathJax with `$…$` and `$$…$$` delimiters only.
-- Current pattern (L6–L11): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
+- Current pattern (L6–L12): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
   glossary guard; references to authoritative sources (NIST, SciPy, Penn State, OpenStax).
 - L9 uses this same theoretical-lesson format, with short definitions and explanations. Its numerical helpers
   and standard Python plots are also embedded. The Markdown-only bus practicum format does not carry over
@@ -759,9 +820,9 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 The author requested one final statistics meeting, now L9, then moving on within the remaining two months.
 Further statistical detail should be introduced when a later task needs it.
 
-1. **Continue after L11 (agree the next scope with the author):** matrix operations, dependence and rank now
-   provide the groundwork for general basis theory and broader multicollinearity, covariance and correlation,
-   and later operator topics. No next lesson is approved automatically; L10–L11 do not complete Phase 2.
+1. **Correlation and covariance after L12:** the author requested the linear-systems/inverse lesson before
+   moving on to correlation. Agree the concrete scope of that next lesson before building it. General basis
+   theory, broader multicollinearity and later operator topics remain backlog; L10–L12 do not complete Phase 2.
 2. **Milestone presentation 1** (W4): not designed yet.
 3. **Poisson** remains syllabus backlog; do not add another statistics meeting automatically.
 
@@ -789,6 +850,14 @@ Further statistical detail should be introduced when a later task needs it.
 ---
 
 ## 11. Changelog
+
+- **2026-10-15:** Recorded that L11 has been completed in class. Added L12 on linear systems, inverse matrices
+  and 2D determinant geometry, with three JS/SVG widgets and worked NumPy examples. Adapted six tasks from the
+  teacher's temporary `linal_lab.ipynb`, including a first weight calculation from a supplied least-squares
+  formula and two optional larger-matrix exercises. Image-based statements and all data are embedded as text
+  and arrays; the source notebook and existing course notebooks are preserved. The core theory is one meeting,
+  while tasks may continue as homework. Correlation is planned next; regression theory and a complete training
+  workflow remain pending. L9 classroom status is unchanged.
 
 - **2026-10-14:** Added L11 on linear dependence/independence, rank and square-matrix singularity defined by
   rank. Four widgets connect linear combinations, redundant columns, plane/line/point geometry and duplicate
