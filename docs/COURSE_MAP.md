@@ -2,7 +2,7 @@
 
 **What has been built, where it lives, in what order it is taught, and why it looks the way it does.**
 
-> **This document is kept up to date as the course grows.** Last updated: **2026-10-15**, after adding L12 on linear systems, inverse matrices and the geometric meaning of the determinant.
+> **This document is kept up to date as the course grows.** Last updated: **2026-10-16**, after adding L13 on covariance, correlation and multicollinearity.
 > It combines a course programme, a table of contents and methodological notes.
 > The teaching materials are in Russian; this map is in English so the whole team can use it.
 > How to work in the repo (build, validate, edit) is in [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md).
@@ -62,11 +62,11 @@ disagree about *intent*, ask the course author.
 
 ## 2. Phases and status
 
-| Phase | Weeks | Theme (syllabus) | Status (2026-10-15) |
+| Phase | Weeks | Theme (syllabus) | Status (2026-10-16) |
 |---|---|---|---|
-| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L12 built. L9 closes the initial statistics block; L10–L12 resume linear algebra. L11 is completed in class. General basis theory and covariance remain pending. |
+| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L13 built. L11–L12 are completed in class. L13 adds covariance, Pearson/Spearman correlation and multicollinearity; it awaits review/classroom use. General basis theory remains pending. |
 | **2. Matrices as operators** | 5–8 | Operators, determinant and inverse, eigenvectors, PCA (+ SVD overview) | Matrix operations and transformations in L10; rank and singularity in L11; linear systems, inverse and 2D determinant geometry in L12. Eigenvectors and later groundwork remain pending. `unsupervised/01` already covers SVD/PCA as an ML lesson. |
-| **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | L12 includes a first weight calculation from a supplied least-squares formula; its derivation and the full modelling block remain pending. Sampling, estimation and permutation hypothesis tests were brought forward into L7–L9. |
+| **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | L12 includes a supplied least-squares formula application. OLS/linear regression is planned after L13, before eigenvectors/PCA; that teaching block is not built yet. Sampling, estimation and permutation tests were brought forward into L7–L9. |
 | **4. Classic DS and the project** | 13–16 | Trees, ensembles, metrics, cross-validation; research project | Modules `DT/` and `unsupervised/` exist (built June 2026, before the math block). Project not designed. |
 
 ---
@@ -97,6 +97,7 @@ and from references inside the notebooks, and is not necessarily the date of the
 | 16 | L | **L10 — Matrices and matrix multiplication** · [10_matrices.ipynb](../math_for_ds/10_matrices.ipynb) | dimensions and operations; dot product and linear combination revisited; Ax as a transformation; matrix multiplication, composition and NumPy; Xw; rotation, given weights and threshold-network tasks | L1–L2, basic NumPy | develops W2 linear combinations; groundwork for W3 and introductory W5 operators | Oct 9 |
 | 17 | L | **L11 — Linear dependence and rank** · [11_linear_dependence_rank.ipynb](../math_for_ds/11_linear_dependence_rank.ipynb) | dependence/independence, redundant columns, rank, square-matrix singularity, nonunique given weights | L1–L2, L10 | W3 dependence/rank; geometric part of W5–W6 | Oct 14 |
 | 18 | L | **L12 — Linear systems and inverse matrices** · [12_linear_systems_inverse.ipynb](../math_for_ds/12_linear_systems_inverse.ipynb) | Ax = b, one/no/infinitely many solutions, inverse, determinant and area, NumPy solve, matrix equations and a supplied least-squares weight formula | L10–L11, basic NumPy | W5–W6; first formula application from W9–W10 | Oct 15 |
+| 19 | L | **L13 — Covariance and correlation** · [13_covariance_correlation.ipynb](../math_for_ds/13_covariance_correlation.ipynb) | sample covariance, Pearson as a centered-vector cosine, covariance/correlation matrices, Spearman, exact/near multicollinearity, feature transformations | L2–L3, L10–L12, NumPy/pandas | W3 multicollinearity and W4 covariance/correlation; prepares W9–W10 | Oct 16 |
 | — | — | **Phase 4 modules** · `DT/`, `unsupervised/` | trees and ensembles; dimensionality reduction and clustering (§7) | Phases 1–3 | W13+ | June 2026 |
 
 Evidence for the less obvious positions:
@@ -178,8 +179,8 @@ where a material deliberately prepares a later topic. They are worth keeping whe
   rate", distances before and after z, centroids, L2 vs. z normalization, SD globally vs. within groups, the scatter
   before and after z.
 - **Notes.** The statistics track starts **from data, with no formal probability**: probability is intuitive here
-  and is formalised in L5–L6. **S4 Task 8 asks for a correlation coefficient**, although correlation is officially
-  not taught yet (§10).
+  and is formalised in L5–L6. **S4 Task 8 asks for a correlation coefficient before it is introduced in the
+  teaching order**; the dedicated correlation lesson is now L13 (§10).
 - **Bridges.** z as the diagonal operator D⁻¹ (→ Phase 2). The cosine of centred vectors equals r, given as a
   "spoiler" (→ W4 covariance). Whitening via eigenvectors (→ PCA).
 
@@ -523,6 +524,7 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 
 ### L12 — Linear systems and inverse matrices
 
+- **Classroom status.** Completed by the group, as confirmed by the author on October 16.
 - **Files.** [12_linear_systems_inverse.ipynb](../math_for_ds/12_linear_systems_inverse.ipynb) ←
   `build_lesson12.py` + `lesson12_widgets.js`. The notebook embeds its widgets, exercise statements and small
   seeded synthetic data; no dataset download or temporary source notebook is needed to build or run it.
@@ -567,6 +569,56 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 - **Bridges.** Continue next with correlation and covariance. The weight formula gives a concrete future
   application of matrix operations; regression theory and a full model-training workflow remain separate topics.
 
+### L13 — Covariance and correlation
+
+- **Classroom status.** Newly built; awaiting the author's review and classroom use. L12 is the completed
+  prerequisite. The author approved this scope and requested an expanded hand-calculation practice block.
+- **Files.** [13_covariance_correlation.ipynb](../math_for_ds/13_covariance_correlation.ipynb) ←
+  `build_lesson13.py` + `lesson13_widgets.js` + `lesson13_tasks.py` + shared `theme.py`. The tasks module is
+  used only when building the notebook. All task cells, widget code and small synthetic data are embedded;
+  students need only the notebook and no dataset download.
+- **Scope and data.** One beginner theory meeting on synthetic apartment area, room count and price.
+  Begin with a scatterplot and paired deviations from feature means. Introduce sample covariance, revisit
+  sample standard deviation, and normalize covariance to obtain Pearson correlation. Connect the same
+  calculation to centered feature vectors, then covariance/correlation matrices and exact/near multicollinearity.
+  Briefly introduce Spearman through ranks and monotonic relationships, then preview feature transformations
+  `x²`, `x³`, `sin(x)`. No mutual information, eigenvalues/PCA or regression fitting.
+- **Definitions and conventions.** Sample covariance is the sum of paired centered products divided by
+  `n − 1`, for at least two paired observations. Use the same sample normalization for standard deviations.
+  Covariance has the product of feature units; Pearson is dimensionless and defined only when both sample
+  standard deviations are nonzero. It is the cosine between the two nonzero centered feature vectors, whose
+  entries run across observations, rather than between two individual observation vectors. Covariance-matrix
+  entries are pairwise covariances and diagonal entries are sample variances; the correlation matrix contains
+  pairwise Pearson coefficients. Spearman is Pearson correlation of ranks, using average ranks for ties.
+- **Interpretation.** Pearson measures linear association, not all dependence or causation. A zero coefficient
+  can coexist with a deterministic nonlinear relationship. Spearman describes monotonic association; it does
+  not detect every nonlinear relationship either. Exact linear dependence reduces the rank of the columns
+  involved. Near dependence may leave the matrix full rank; strong pairwise correlation alone does not imply
+  rank deficiency. Several columns can be dependent even when no pair has a coefficient close to ±1.
+- **Visuals and code.** Four self-contained JS/SVG widgets accompany ordinary NumPy/pandas/SciPy calculations
+  and seaborn figures. Show intermediate centered values/products and the standardization step before using
+  library results. Matrix calculations use rows as observations and columns as features. SciPy is used for
+  coefficients/ranks without opening a new chapter on correlation significance tests.
+- **Practice.** Eight unanswered tasks emphasize small calculations by hand, NumPy verification and written
+  interpretation. The first five form the core practice; three extensions may continue in class or as homework.
+  Do not promise that the complete practice set fits the two-hour theory meeting. Task definitions live in
+  `lesson13_tasks.py`; a completed copy is for validation only, with no teacher KEY requested.
+- **Format.** The established dark HTML theory, boxed definitions, formula glossaries, standalone widgets and
+  visible Python examples. The distributed notebook remains unexecuted and the student tasks unanswered.
+- **Validation.** All 83 cells executed with blank guarded tasks; a temporary completed copy with an additional
+  assertion cell also executed cleanly, covering all eight tasks. The five ready matplotlib/seaborn figure outputs
+  and seven figure outputs in the completed copy were visually inspected. All 88 TeX expressions render with
+  MathJax, including 16 displayed equations with symbol glossaries. The four widgets passed a Node DOM harness
+  covering 117 slope/noise states and 37 angles, with actual SVG angles and equal vector lengths checked;
+  unit changes, offsets, zero variance, ties, controls and repeated mounts also passed. Exported SVG/PNG views
+  were visually inspected. An isolated rebuild using only the builder, JS, task module and `theme.py` is
+  byte-identical from a different working directory. Hashes of all 13 existing notebooks are unchanged. Browser layout/interactions and
+  actual Colab UI remain unverified: the browser connector was unavailable and native computer-use access
+  was still pending.
+- **Bridges.** Next planned: OLS/linear regression, then eigenvectors and PCA. This places the W9–W10 modelling
+  introduction before W7–W8 in the practical sequence. Those later lessons are discussed plans, not completed
+  additions. Feature transformations here are a preview, with no model fitting or feature-selection procedure.
+
 ---
 
 ## 5. Syllabus vs. what was built
@@ -575,26 +627,28 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 |---|---|---|---|
 | W1 | Random variable, mean, variance, SD; vector, norm, dot product; z | L1, L2, L3, Seminar 1, H, house.kg seminar project | **Done.** The random variable is kept intuitive and formalised in L5–L6. |
 | W2 | Normal, three sigma, Bernoulli, binomial; LA: linear combinations | L5, L6; L1 and L10 (LA) | Statistics done and extended (PDF/CDF in L6). L10 revisits linear combinations through matrix columns and multiplication. |
-| W3 | Poisson; basis, rank, multicollinearity | L10 prerequisites; L11 dependence and rank | **Partly built.** Exact feature redundancy is illustrated in L11. General basis theory, broader multicollinearity and Poisson remain pending. |
-| W4 | Covariance, correlation, covariance matrix; milestone presentation 1 | — | **Not built.** Students still do not know correlation, which constrains every practice task. |
+| W3 | Poisson; basis, rank, multicollinearity | L10–L11; L13 multicollinearity | **Partly built.** Exact/near dependence and the limits of pairwise correlation are included. General basis theory and Poisson remain pending. |
+| W4 | Covariance, correlation, covariance matrix; milestone presentation 1 | L13 | **Math topics built; classroom use pending.** Includes Pearson/Spearman, covariance/correlation matrices and their geometric connection. The milestone presentation is not designed. |
 | W5 | Matrices as operators | L10; inverse transformations in L12 | Matrix action, composition and undoing a nonsingular transformation introduced visually. Later Phase 2 topics remain pending. |
 | W6 | Determinant and inverse; singularity | L11–L12 | **Introductory scope built.** Rank-based singularity, linear systems, inverse and 2D determinant geometry. Hand determinant calculation stops at 2×2. |
 | — | *(not in the syllabus)* | L4 | Robust, non-parametric tools, needed because the real data are dirty. |
 | — | *(not in the syllabus)* | Bus practicums, L7–L9 | Sampling, SE, CLT, CIs and bootstrap; L9 closes the block with permutation hypotheses, p-values and practical interpretation. Tests were brought forward from W12. |
-| W8 | PCA, SVD overview | `unsupervised/01` | Exists as an ML lesson, without the covariance and eigenvector groundwork the syllabus intends. |
-| W9–W10 | Projections, least squares, linear regression | L12 supplied weight-formula exercise | **First application only.** Students calculate weights on synthetic data; derivation, regression theory and the training/evaluation workflow remain pending. |
+| W7 | Eigenvectors and eigenvalues | — | **Not built in the math sequence.** Planned after the OLS introduction rather than before it. |
+| W8 | PCA, SVD overview | `unsupervised/01`; covariance groundwork in L13 | Exists as an ML lesson; the eigenvector groundwork and its integration remain pending. The new math sequence plans PCA after OLS and eigenvectors. |
+| W9–W10 | Projections, least squares, linear regression | L12 supplied weight-formula exercise | **First application only.** Full OLS/linear-regression teaching is planned after L13, before W7–W8 topics; derivation and the training/evaluation workflow are not built yet. |
 | W13 | Trees, ensembles, metrics, cross-validation | `DT/` | Exists. It predates the math block. Metrics and cross-validation have no dedicated lesson. |
 
 **The overall pattern:** the statistics track is ahead of the plan. L10–L12 resume linear algebra through matrix
-operations, transformations, dependence, rank, linear systems and inverses. A brief determinant introduction and
-the supplied weight formula connect these calculations to later topics. Correlation is planned next; general
-basis theory and the remaining Phase 2 and model-training groundwork are still pending.
+operations, transformations, dependence, rank, linear systems and inverses. L13 connects those tools to covariance,
+correlation and multicollinearity. The next discussed sequence is OLS/linear regression, then eigenvectors/PCA;
+this deliberately moves the W9–W10 introduction ahead of W7–W8. Those later lessons and general basis theory
+remain pending.
 
 ---
 
 ## 6. What students know so far
 
-*Material through L12. L11 is completed in class; L12 is newly built and awaits classroom use.* Practice tasks
+*Material through L13. L11–L12 are completed in class; L13 awaits review and classroom use.* Practice tasks
 must stay inside this list and account for which lessons the group has actually completed. The separate L9
 classroom status below has not been confirmed. Anything outside the inventory has to be taught first.
 
@@ -618,13 +672,21 @@ images with rank 2, 1 or 0; square-matrix singularity defined through rank. Dupl
 redundancy; nonunique given weights can produce identical weighted sums. Numerical rank tolerance is mentioned
 in a short optional note, without SVD.
 
-**Linear systems and inverse (L12, pending classroom use).** Linear equation, system and solution; `Ax = b`
+**Linear systems and inverse (L12, completed in class).** Linear equation, system and solution; `Ax = b`
 with compatible shapes; one, no or infinitely many solutions; connection between square-matrix rank,
 singularity and invertibility. Inverse defined by `A⁻¹A = AA⁻¹ = I`; recovering an input, `x = A⁻¹b`, and
 checking by substitution. The 2×2 determinant formula, determinant magnitude as area scaling and its sign as
 orientation; zero determinant and collapse. Matrix equations preserve multiplication order. A first
 least-squares weight calculation uses the supplied formula `w = (XᵀX)⁻¹Xᵀy` for full-column-rank synthetic
 data, followed by predictions `Xw`; there is no derivation, regression-theory chapter or full training workflow.
+
+**Covariance and correlation (L13, pending review/classroom use).** Centering paired observations, sample
+covariance with `n − 1`, covariance units, sample-standard-deviation normalization and Pearson correlation.
+Pearson as the cosine between centered feature vectors; covariance/correlation matrices and their diagonals.
+Pearson is undefined for a constant feature and does not measure every nonlinear relationship or imply causation.
+Ranks, average ranks for ties, Spearman as Pearson of ranks, monotonic versus general nonlinear relationships.
+Exact and near multicollinearity, full rank despite strong correlation, and dependencies among several columns
+that pairwise coefficients may miss. Feature transformations `x²`, `x³`, `sin(x)` are a preview, without fitting.
 
 **Descriptive statistics.** Population vs. sample, representativeness, bias; histogram, 1D and 2D KDE, mode; mean,
 median, variance, SD, SSE; group statistics (`groupby`); z-standardization; normalization by a meaningful
@@ -660,13 +722,16 @@ or comprehensive test-selection catalogue.
 L10 adds explicit array-shape conventions, transpose, `@`, `np.matmul`, vector/matrix uses of `np.dot`,
 and their distinction from elementwise `*`. L11 adds `np.linalg.matrix_rank` on small synthetic matrices.
 L12 adds `np.linalg.solve`, `np.linalg.inv`, `np.linalg.det` and verification with `np.allclose`.
+L13 adds sample covariance/correlation calculations with NumPy and pandas, rank-based coefficients with
+SciPy, and seaborn scatterplots/heatmaps; row/column conventions and sample normalization are explicit.
 
-**Not taught yet. Do not use without teaching it first:** correlation (Pearson r, `df.corr()`) and covariance; the
-covariance matrix; Poisson; t-tests and the Student distribution; general basis theory and eigenvectors;
-PCA/SVD; least-squares derivation and linear-regression theory; MLE; logistic regression; the full ML model-training
+**Not taught yet. Do not use without teaching it first:** Poisson; t-tests and the Student distribution;
+general basis theory and eigenvectors; mutual information; PCA/SVD; least-squares derivation and
+linear-regression theory; MLE; logistic regression; the full ML model-training
 workflow, neural-network learning/backpropagation, train/test split, metrics. L10's given-weight price formula
 and threshold-network calculation are forward computations; L12 adds only a first supplied-formula weight
-calculation, not a complete model-training lesson. Its new concepts must be taught before use in later tasks.
+calculation, not a complete model-training lesson. L13's new concepts require classroom coverage before use
+as prerequisites in later tasks.
 
 ---
 
@@ -739,7 +804,7 @@ students a familiar dataset here.
 | Telecom churn | CSV from the mlcourse.ai GitHub repo | `bagging_rf` | |
 | sklearn toy sets, 20 Newsgroups | sklearn | `DT/`, `unsupervised/` | |
 | Keyword-spotting audio features | HF `aiacademy-kg/kws-dataset` | `kws-project` (external) | Features already extracted |
-| Synthetic data | generated in the notebook | L6–L12, `bias_variance_demo`, `gradient_boosting` | Known laws in statistics; small matrices and points, courier/car features (L10), totals and duplicate volume units (L11), linear systems and seeded 10×7 features (L12) |
+| Synthetic data | generated in the notebook | L6–L13, `bias_variance_demo`, `gradient_boosting` | Known laws in statistics; small matrices and points, courier/car features (L10), totals and duplicate volume units (L11), linear systems and seeded 10×7 features (L12), apartment features and nonlinear relationships (L13) |
 
 **Where the data come from.** All `aiacademy-kg/*` datasets are published on the school's Hugging Face organization,
 [huggingface.co/aiacademy-kg](https://huggingface.co/aiacademy-kg). The scrapers that build the house.kg and Lalafo
@@ -748,8 +813,9 @@ datasets live in the school's GitHub organization,
 docs describe every field and the known pitfalls, so read them before designing a task on these data.
 
 **Anchor datasets.** The syllabus asks that the group's anchor datasets together cover: a nearly normal feature, a
-count of events (for Poisson), strongly correlated features (rank < number of columns), structure for PCA, and a
-binary target. The list of students' anchor datasets is not recorded in the repo.
+count of events (for Poisson), strongly correlated or exactly redundant features, structure for PCA, and a
+binary target. Strong correlation does not by itself imply rank deficiency; exact linear dependence of columns
+does. The list of students' anchor datasets is not recorded in the repo.
 
 ---
 
@@ -761,7 +827,7 @@ binary target. The list of students' anchor datasets is not recorded in the repo
   widget → «что мы увидели» → a precise definition.
 - **Predict, act, explain.** Before moving a slider, the student predicts the result; afterwards, they explain it in
   words.
-- **A «Где: …» block under every displayed formula**, explaining every symbol (CSS class `.where`; in L6–L12 enforced
+- **A «Где: …» block under every displayed formula**, explaining every symbol (CSS class `.where`; in L6–L13 enforced
   by the `eq()` helper).
 - **Optional depth** goes into `<details>` blocks («для тех, кто хочет глубже»), so the main line stays short.
 - **English terminology is introduced gradually:** an English gloss next to the Russian term (class `.en`).
@@ -771,8 +837,9 @@ binary target. The list of students' anchor datasets is not recorded in the repo
   it requires linking a mathematical fact to *these* data.
 - **No ready answers in student materials.** TODO hints are given in words, never as the finished line of code.
   Teacher answers live in KEY versions («Для преподавателя»).
-- **Only concepts already taught** (§6). The usual temptation is correlation: express "a relationship between X and
-  Y" with group medians, a scatter or 2D KDE, and centroids instead.
+- **Only concepts already taught** (§6). Before students complete L13, express a relationship between features
+  with group medians, a scatter or 2D KDE, and centroids. Correlation becomes available after its definitions
+  and limitations have been taught in L13; do not retrofit it into earlier prerequisite-limited assignments.
 - **Practicum framing.** The layperson vs. the researcher. Real dirty data are left dirty. Mathematics is
   recommended only where it is needed. Students defend their conclusions with plots and a short memo or talk.
 - **Long lessons mark their split points** (L6, L7 and L8 are each designed for two meetings).
@@ -797,7 +864,7 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 - Theory visualisations are **live JS/SVG** (draggable points, sliders), not matplotlib. Matplotlib/seaborn appear in
   the code students write. Angles and circles need the square plane `plane(half)`.
 - MathJax with `$…$` and `$$…$$` delimiters only.
-- Current pattern (L6–L12): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
+- Current pattern (L6–L13): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
   glossary guard; references to authoritative sources (NIST, SciPy, Penn State, OpenStax).
 - L9 uses this same theoretical-lesson format, with short definitions and explanations. Its numerical helpers
   and standard Python plots are also embedded. The Markdown-only bus practicum format does not carry over
@@ -820,16 +887,18 @@ binary target. The list of students' anchor datasets is not recorded in the repo
 The author requested one final statistics meeting, now L9, then moving on within the remaining two months.
 Further statistical detail should be introduced when a later task needs it.
 
-1. **Correlation and covariance after L12:** the author requested the linear-systems/inverse lesson before
-   moving on to correlation. Agree the concrete scope of that next lesson before building it. General basis
-   theory, broader multicollinearity and later operator topics remain backlog; L10–L12 do not complete Phase 2.
+1. **OLS/linear regression after L13, then eigenvectors/PCA:** this is the discussed next direction, moving
+   the W9–W10 introduction ahead of W7–W8. L13 now provides covariance, correlation and multicollinearity,
+   but the next lesson's concrete scope still needs agreement before building. Its derivation and the full
+   training/evaluation workflow are not supplied by L12's formula exercise. General basis theory and the
+   later operator topics remain backlog; L10–L13 do not complete Phase 2.
 2. **Milestone presentation 1** (W4): not designed yet.
 3. **Poisson** remains syllabus backlog; do not add another statistics meeting automatically.
 
 **Decisions needed**
 
-- **L3, S4 Task 8** asks for a correlation coefficient before correlation is taught. Reword it, or treat it as a
-  deliberate spoiler?
+- **L3, S4 Task 8** asks for a correlation coefficient before the newly built L13 in the teaching order.
+  Reword it, defer it until L13, or treat it as a deliberate spoiler?
 - **Language of task statements:** English (L2) or Russian (L3 onwards) from now on?
 - **`04_stat_boxplot.ipynb`:** keep the 17 in-class cells in the canonical version, or move them to the build script
   or to a separate class log? A rebuild currently drops them.
@@ -850,6 +919,15 @@ Further statistical detail should be introduced when a later task needs it.
 ---
 
 ## 11. Changelog
+
+- **2026-10-16:** Recorded that L12 has been completed in class. Added L13 on sample covariance, Pearson and
+  Spearman correlation, covariance/correlation matrices and exact/near multicollinearity. Synthetic apartment
+  data, four JS/SVG widgets and ordinary NumPy/pandas/SciPy/seaborn examples connect centered feature vectors
+  to matrix calculations. Eight tasks add hand calculations and interpretation, with three extensions for
+  class/homework; `lesson13_tasks.py` is build-only. Feature transformations are a brief preview, without model
+  fitting. Corrected the map's implication that strong correlation means rank deficiency. The discussed next
+  order is OLS/linear regression before eigenvectors/PCA; those new lessons are not built. L13 awaits review
+  and classroom use; L9 classroom status is unchanged.
 
 - **2026-10-15:** Recorded that L11 has been completed in class. Added L12 on linear systems, inverse matrices
   and 2D determinant geometry, with three JS/SVG widgets and worked NumPy examples. Adapted six tasks from the

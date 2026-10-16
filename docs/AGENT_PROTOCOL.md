@@ -16,10 +16,12 @@ What exists and in what order is described in [COURSE_MAP.md](COURSE_MAP.md). Ke
    rejected and redone.
 2. **Use only concepts already taught.** Before you use a method in a task, check it against
    [COURSE_MAP §6](COURSE_MAP.md#6-what-students-know-so-far). L9 adds hypotheses, permutation p-values and significance.
-   Correlation, covariance, Poisson, t-tests, regression theory and a full model-training workflow are still
+   Poisson, t-tests, regression theory, eigenvectors/PCA and a full model-training workflow are still
    **not taught**. L10 uses given weights and a small threshold network's forward calculation only.
    L12 adds a first least-squares weight calculation using a supplied formula, without deriving it or teaching
-   the full ML workflow. L11 has been completed in class; check classroom use before assuming newly built L12 is known.
+   the full ML workflow. L11–L12 have been completed in class. L13 introduces covariance, Pearson/Spearman
+   correlation and multicollinearity; it awaits review and classroom use. Check that status before using its
+   new concepts as prerequisites.
 3. **Never regenerate a notebook that is edited by hand** (see §4). In particular, never run `build_lesson1.py`.
 4. **Never download heavy data:** the `images` configs of the Lalafo datasets (5–78 GB), the raw `bishkek-transport`
    feed (GBs), the speaker audio (2.65 GB). Use extracts and column subsets.
@@ -38,8 +40,9 @@ Read in this order:
 
 1. `CLAUDE.md`: the repo map and commands.
 2. [COURSE_MAP.md](COURSE_MAP.md): §3 (sequence), §6 (what students know), §10 (open questions).
-3. **The newest build script** (`math_for_ds/build_lesson12.py`), together with `build_lesson11.py`: the shared
+3. **The newest build script** (`math_for_ds/build_lesson13.py`), together with `build_lesson12.py`: the shared
    dark HTML theory cells and self-contained JS/SVG widgets used by theoretical lessons.
+   L13's task definitions live in the build-only `lesson13_tasks.py` module.
 4. The lesson before the one you are working on: its last sections usually set up the next topic ("bridges").
 5. `syllabus.docx`, as a compass for intent. It is not a contract. To read it without extra packages:
 
@@ -59,7 +62,7 @@ Read in this order:
 2. **Outline, for agreement:** the sections, every widget (what the student moves and what they should see), the
    tasks and the interpretation questions.
 3. **Implement** `math_for_ds/build_lessonN.py`, following the HTML/JS theoretical-lesson pattern in
-   `build_lesson8.py` through `build_lesson12.py` (§5). A practicum’s Markdown-only format does not apply to theory lessons.
+   `build_lesson8.py` through `build_lesson13.py` (§5). A practicum’s Markdown-only format does not apply to theory lessons.
 4. **Build:** `venv/bin/python math_for_ds/build_lessonN.py`. It writes `math_for_ds/NN_<slug>.ipynb`.
 5. **Validate** with the checklist in §7.
 6. **Document** in COURSE_MAP: a row in §3, a note in §4, an update to §5, the new concepts in §6, a line in §11.
@@ -104,7 +107,7 @@ Both versions are maintained by hand. Student interpretation cells ask for concl
 
 1. Find the source of truth in §4. If the material is built by a script, edit the script.
 2. **Rebuild safely:** build into a scratch copy, compare cell sources with the committed notebook, and only then
-   replace it. Scripts 2–12 write next to themselves, so copy the folder and run the copy:
+   replace it. Scripts 2–13 write next to themselves, so copy the folder and run the copy:
 
    ```bash
    cp -R math_for_ds /tmp/mfd && rm /tmp/mfd/*.ipynb && venv/bin/python /tmp/mfd/build_lesson5.py
@@ -149,6 +152,7 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 | L10 `10_matrices.ipynb` | `build_lesson10.py` + `lesson10_widgets.js` + `images/lesson10_threshold_network.png` | Yes. JS widgets, Davis extract and image attachment are embedded; preserve unexecuted output |
 | L11 `11_linear_dependence_rank.ipynb` | `build_lesson11.py` + `lesson11_widgets.js` | Yes. JS widgets and synthetic data are embedded; preserve unexecuted output |
 | L12 `12_linear_systems_inverse.ipynb` | `build_lesson12.py` + `lesson12_widgets.js` | Yes. JS widgets, transcribed exercises and seeded synthetic data are embedded; no dependency on the temporary source notebook |
+| L13 `13_covariance_correlation.ipynb` | `build_lesson13.py` + `lesson13_widgets.js` + `lesson13_tasks.py` + shared `theme.py` | Yes. Task definitions are build-only; widgets, data and task cells are embedded in the standalone unexecuted notebook |
 | `seminar_1.ipynb` | The notebook | No script |
 | `practice/practicum_mossovet_asia_mall.ipynb` | The notebook (student tasks, without answers or outputs) | No script |
 | `practice/practicum_mossovet_asia_mall_KEY.ipynb` | The notebook (KEY, with outputs) | No script |
@@ -163,7 +167,7 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 
 ## 5. Lesson implementation spec
 
-**Theoretical lessons use the shared HTML/JS format below, including L9–L12.** The Markdown/Python-only rule
+**Theoretical lessons use the shared HTML/JS format below, including L9–L13.** The Markdown/Python-only rule
 for practicums applies to those practicums. Keep the author’s process instructions out of student prose: title
 definition boxes with the mathematical concept, and state the definition itself.
 
@@ -210,7 +214,23 @@ LaTeX and NumPy, and embed all required data: neither building nor running L12 m
 Preserve the source notebook and existing course notebooks. The weight task introduces calculation by a given
 formula, its full-column-rank condition and prediction; do not silently extend it into a least-squares derivation
 or a complete ML training/evaluation lesson. Validate the ready cells and a temporary completed task copy.
-Correlation is planned after L12; it is not a prerequisite for this lesson.
+Correlation follows in L13; it is not a prerequisite for L12.
+
+**L13 scope.** Continue the completed L12 with sample covariance, standard deviation and Pearson correlation
+using synthetic apartment area, room count and price. Define centered feature vectors and explain Pearson
+as their cosine; distinguish these vectors across observations from individual observation vectors.
+Introduce covariance/correlation matrices, a brief rank-based Spearman comparison, and exact versus near
+multicollinearity. Pairwise correlation can miss dependence involving several columns; high correlation does
+not by itself imply rank deficiency. Discuss nonlinear and monotonic relationships with scatterplots, then
+show `x²`, `x³` and `sin(x)` as a short feature-transformation preview. No mutual information, eigenvalues/PCA
+or regression fitting. Use four standalone JS/SVG widgets and visible NumPy, pandas, SciPy and seaborn examples.
+Use sample normalization consistently (`n − 1`, `ddof=1`), explain units and constant-feature cases, and do not
+introduce correlation significance tests through SciPy's returned p-values. Eight student tasks include the
+author-requested hand calculations: five core tasks and three extensions for class/homework. The theory is
+one meeting; do not promise that all practice fits two hours. `lesson13_tasks.py` supplies task cells at build
+time only. Embed them so students need only the notebook. Keep task answers blank and validate a temporary
+completed copy. The agreed next direction is OLS/linear regression, then eigenvectors/PCA; those lessons are
+not built by this change. The author has already approved L13's structure and extended practice in conversation.
 
 **Skeleton** (copy it from `build_lesson8.py`):
 
@@ -250,7 +270,7 @@ theory cells, widgets, short numpy experiments and tasks → a check of understa
 appears collapsed in Colab. Use `$…$` and `$$…$$` only. Every displayed formula is followed by a «Где: …» /
 «Обозначения.» glossary. Depth goes into `<details>`.
 
-**Widgets (L6–L12 pattern).** A Python `widget(kind, title, instruction, charts, controls, question, optional=False)`
+**Widgets (L6–L13 pattern).** A Python `widget(kind, title, instruction, charts, controls, question, optional=False)`
 emits a cell with a fixed anatomy: title → instruction → controls (`slider`, `select`) → SVG charts → a live
 `readout` (`aria-live`) → a «Проверь себя» question → a footnote identifying the data or simulation. The JS renderer lives in
 `lessonN_widgets.js` (`window.<Name>.mount(root, kind)`) and is embedded at build time. Students need only the
