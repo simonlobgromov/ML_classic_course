@@ -2,7 +2,7 @@
 
 **What has been built, where it lives, in what order it is taught, and why it looks the way it does.**
 
-> **This document is kept up to date as the course grows.** Last updated: **2026-10-16**, after adding L13 on covariance, correlation and multicollinearity.
+> **This document is kept up to date as the course grows.** Last updated: **2026-11-17**, after recording ML4's classroom completion and adding the model-diagnostics seminar for review.
 > It combines a course programme, a table of contents and methodological notes.
 > The teaching materials are in Russian; this map is in English so the whole team can use it.
 > How to work in the repo (build, validate, edit) is in [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md).
@@ -15,7 +15,7 @@
 4. [Lesson and practicum notes](#4-lesson-and-practicum-notes)
 5. [Syllabus vs. what was built](#5-syllabus-vs-what-was-built)
 6. [What students know so far](#6-what-students-know-so-far)
-7. [Classic-ML modules (Phase 4)](#7-classic-ml-modules-phase-4)
+7. [ML modules](#7-ml-modules)
 8. [Datasets](#8-datasets)
 9. [Methodological conventions](#9-methodological-conventions)
 10. [Open questions and next steps](#10-open-questions-and-next-steps)
@@ -62,11 +62,11 @@ disagree about *intent*, ask the course author.
 
 ## 2. Phases and status
 
-| Phase | Weeks | Theme (syllabus) | Status (2026-10-16) |
+| Phase | Weeks | Theme (syllabus) | Status (2026-11-17) |
 |---|---|---|---|
-| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | **In progress.** L1–L13 built. L11–L12 are completed in class. L13 adds covariance, Pearson/Spearman correlation and multicollinearity; it awaits review/classroom use. General basis theory remains pending. |
+| **1. Data as vectors** | 1–4 | Descriptive statistics, distributions; vector, norm, dot product; rank; covariance | L1–L13 built; the group has progressed through covariance/correlation to the completed calculus and MSE seminars. General basis theory remains pending. |
 | **2. Matrices as operators** | 5–8 | Operators, determinant and inverse, eigenvectors, PCA (+ SVD overview) | Matrix operations and transformations in L10; rank and singularity in L11; linear systems, inverse and 2D determinant geometry in L12. Eigenvectors and later groundwork remain pending. `unsupervised/01` already covers SVD/PCA as an ML lesson. |
-| **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | L12 includes a supplied least-squares formula application. OLS/linear regression is planned after L13, before eigenvectors/PCA; that teaching block is not built yet. Sampling, estimation and permutation tests were brought forward into L7–L9. |
+| **3. Estimation and first models** | 9–12 | Projections and least squares, linear regression, MLE, logistic regression | Calculus/MSE and ML2–ML4 are completed; matrix OLS, preprocessing and Ridge are taught. ML5 adds model diagnostics for review. ML1's classroom status remains unconfirmed. MLE and logistic regression remain pending; estimation and permutation tests were brought forward into L7–L9. |
 | **4. Classic DS and the project** | 13–16 | Trees, ensembles, metrics, cross-validation; research project | Modules `DT/` and `unsupervised/` exist (built June 2026, before the math block). Project not designed. |
 
 ---
@@ -98,6 +98,13 @@ and from references inside the notebooks, and is not necessarily the date of the
 | 17 | L | **L11 — Linear dependence and rank** · [11_linear_dependence_rank.ipynb](../math_for_ds/11_linear_dependence_rank.ipynb) | dependence/independence, redundant columns, rank, square-matrix singularity, nonunique given weights | L1–L2, L10 | W3 dependence/rank; geometric part of W5–W6 | Oct 14 |
 | 18 | L | **L12 — Linear systems and inverse matrices** · [12_linear_systems_inverse.ipynb](../math_for_ds/12_linear_systems_inverse.ipynb) | Ax = b, one/no/infinitely many solutions, inverse, determinant and area, NumPy solve, matrix equations and a supplied least-squares weight formula | L10–L11, basic NumPy | W5–W6; first formula application from W9–W10 | Oct 15 |
 | 19 | L | **L13 — Covariance and correlation** · [13_covariance_correlation.ipynb](../math_for_ds/13_covariance_correlation.ipynb) | sample covariance, Pearson as a centered-vector cosine, covariance/correlation matrices, Spearman, exact/near multicollinearity, feature transformations | L2–L3, L10–L12, NumPy/pandas | W3 multicollinearity and W4 covariance/correlation; prepares W9–W10 | Oct 16 |
+| 20 | S | **Calculus seminar** · [matan_seminar.ipynb](../math_for_ds/matan_seminar.ipynb) | limits, derivatives and tangents, finite differences, partial derivatives, gradients, one- and two-dimensional gradient descent | functions, vectors, NumPy and plots | added optimization groundwork for W9–W10 | completion confirmed Oct 30 |
+| 21 | S | **MSE optimization seminar** · [mse_optimization.ipynb](../math_for_ds/mse_optimization.ipynb) | one-feature linear regression, MSE, analytic gradients, scaling, hand-coded and vectorized gradient descent, prediction and introductory error metrics | calculus seminar, L10–L13 | W9–W10 first model fitting | completion confirmed Oct 30 |
+| 22 | L | **ML1 — Introduction to machine learning** · [01_intro_ml.ipynb](../LinModels/01_intro_ml.ipynb) | model and generalization; feature/target notation; labelled data; train/validation/test; loss/metrics; parameters/hyperparameters; complexity; ML map; modern systems; bilingual glossary | completed calculus and MSE seminars; L1–L2 vectors/embeddings | W9–W10 workflow and terminology; quality assessment brought forward | Nov 2, awaiting review/classroom use |
+| 23 | S | **ML2 — First applied linear regression** · [02_linear_regression.ipynb](../LinModels/02_linear_regression.ipynb) | Ames; baseline and one-/three-feature OLS; matrix derivation via gradient = 0; coefficients; MAE/RMSE/MAPE; unused test | calculus/MSE seminars, L13, ML1 terminology | W9–W10 applied fitting and analytical solution | built Nov 3; completed Nov 4; OLS/MAPE text added Nov 5 |
+| 24 | S | **ML3 — Data preprocessing** · [03_data_preprocessing.ipynb](../LinModels/03_data_preprocessing.ipynb) | missing values, train-only median imputation, scaling, fit/transform, Pipeline, OneHot/ColumnTransformer, unknown categories, OLS comparison | completed ML2; scaling, medians and rank from math block | W9–W10 applied workflow | built Nov 5; completion confirmed Nov 9, exact class date unrecorded |
+| 25 | S | **ML4 — Regularization** · [04_regularization.ipynb](../LinModels/04_regularization.ipynb) | coefficient instability, exact/near multicollinearity, Gram matrix, loss geometry, Ridge, alpha and feature scale, brief Lasso geometry, validation selection on Ames | completed ML2–ML3, L10–L13, calculus/MSE | W9–W10 linear-model extension | built Nov 9; completion confirmed Nov 17, exact class date unrecorded |
+| 26 | S | **ML5 — Model diagnostics** · [05_model_diagnostics.ipynb](../LinModels/05_model_diagnostics.ipynb) | R², residuals/groups, difficult predictions and similar houses, coefficients and prediction contributions, bootstrap stability, permutation feature importance, optional OLS inference | completed ML2–ML4; bootstrap from L8; scaled distances from math block | W9–W10 model interpretation; quality assessment brought forward | Nov 17, awaiting review/classroom use |
 | — | — | **Phase 4 modules** · `DT/`, `unsupervised/` | trees and ensembles; dimensionality reduction and clustering (§7) | Phases 1–3 | W13+ | June 2026 |
 
 Evidence for the less obvious positions:
@@ -111,6 +118,8 @@ Evidence for the less obvious positions:
   произведение/косинус, описательная статистика, боксплоты"), and "корреляции нет нигде — её ещё не проходили".
 - **Bus practicum between L6 and L7:** the notebook has a table "На что опирается работа" mapping its tools to
   lessons 1–6. L7 §8 quotes the "saved output of task 1.2 of the previous practicum".
+- **Calculus → MSE → ML1:** the author confirmed that both hand-maintained seminars were completed after the
+  L13 discussion, then requested `LinModels` as the ML module. The confirmation date is not a claimed class date.
 
 Not in the sequence: `math_for_ds/theory/` (Aug 24) is an early HTML-handbook prototype of L1, replaced by the
 Colab format the next day (see §10).
@@ -571,8 +580,8 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 
 ### L13 — Covariance and correlation
 
-- **Classroom status.** Newly built; awaiting the author's review and classroom use. L12 is the completed
-  prerequisite. The author approved this scope and requested an expanded hand-calculation practice block.
+- **Classroom status.** The sequence has progressed past L13 to the calculus and MSE seminars, whose completion
+  the author confirmed. The author approved L13's scope and expanded hand-calculation practice block.
 - **Files.** [13_covariance_correlation.ipynb](../math_for_ds/13_covariance_correlation.ipynb) ←
   `build_lesson13.py` + `lesson13_widgets.js` + `lesson13_tasks.py` + shared `theme.py`. The tasks module is
   used only when building the notebook. All task cells, widget code and small synthetic data are embedded;
@@ -615,9 +624,321 @@ where a material deliberately prepares a later topic. They are worth keeping whe
   byte-identical from a different working directory. Hashes of all 13 existing notebooks are unchanged. Browser layout/interactions and
   actual Colab UI remain unverified: the browser connector was unavailable and native computer-use access
   was still pending.
-- **Bridges.** Next planned: OLS/linear regression, then eigenvectors and PCA. This places the W9–W10 modelling
-  introduction before W7–W8 in the practical sequence. Those later lessons are discussed plans, not completed
-  additions. Feature transformations here are a preview, with no model fitting or feature-selection procedure.
+- **Bridges.** Calculus and hand-coded MSE regression now follow L13, then the ML introduction in `LinModels/`.
+  This places the W9–W10 modelling introduction before W7–W8 in the practical sequence. Eigenvectors/PCA remain
+  planned. Feature transformations in L13 itself are a preview, with no fitting or feature-selection procedure.
+
+### Calculus seminar — derivatives and gradient descent
+
+- **Files and status.** [matan_seminar.ipynb](../math_for_ds/matan_seminar.ipynb), maintained by hand, with no
+  builder. The author confirmed classroom completion before the MSE seminar. Do not regenerate it.
+- **Content.** Sequence and function limits; derivative and finite-difference approximation; a tangent;
+  one-dimensional descent, learning rate and stopping; surfaces, level curves, partial derivatives and gradients;
+  numerical and analytic derivatives; two-dimensional gradient descent and local minima.
+- **Practice.** Compute and plot derivatives, verify them analytically, visualize descent trajectories and
+  minimize example functions. An optional decorator section implements finite differences; despite the name
+  `autodiff`, it is not a lesson on automatic differentiation. No Hessian, Jacobian, Taylor expansion or SGD block.
+- **Bridge.** A gradient gives the direction used to change model weights when minimizing MSE.
+
+### MSE seminar — first hand-coded linear regression
+
+- **Files and status.** [mse_optimization.ipynb](../math_for_ds/mse_optimization.ipynb), maintained by hand,
+  with no builder. Classroom completion was confirmed by the author. Preserve the author's notebook and edits.
+- **Data and flow.** The code generates 600 synthetic height/weight observations; fit an intercept and slope by
+  minimizing MSE with analytic gradients and a hand-coded scaler. Inspect loss, gradient norms and trajectories,
+  calculate predictions and introductory MAE/MAPE, then express the same model and updates in matrix form.
+- **Practice and limits.** An additional Graduate Admissions task requests multiple features and an 80/20
+  train/test split. The saved notebook has the task and loading/exploration, but does not contain a complete
+  worked holdout solution. Do not infer mastery of a full evaluation workflow from that statement alone.
+  Classical coefficient inference, regularization, cross-validation and a complete sklearn pipeline are absent.
+- **Review debt.** The October audit identified wording and calculation issues, recorded in §10. This
+  documentation update does not silently correct the hand-maintained seminar.
+- **Bridge.** Students have already fitted a model. ML1 names the parts of that process and explains how to
+  measure its generalization, rather than repeating gradient-descent derivations.
+
+### ML1 — Introduction to machine learning (`LinModels/01`)
+
+- **Status.** Newly built for the author's review; classroom use is pending. This starts the `LinModels/`
+  module after the completed calculus and MSE seminars, rather than continuing the math lesson numbering.
+- **Files.** [01_intro_ml.ipynb](../LinModels/01_intro_ml.ipynb) ← `LinModels/build_intro_ml.py` +
+  build-only `LinModels/intro_ml_diagrams.py` + `LinModels/intro_ml_widgets.js` + shared `math_for_ds/theme.py`. Widget code, diagrams and seeded synthetic
+  data are embedded in the notebook; no source-file upload, large download or API access is needed in Colab.
+- **Scope.** One beginner two-hour meeting, with short presentation-like HTML/SVG sections. Start with the
+  model students have already trained, then move from the general idea to dataset notation, training and
+  inference, evaluation and selection. Every introduced professional term has Russian and English names;
+  formulas have symbol glossaries, and the notebook ends with a bilingual term glossary and source links.
+- **Definitions.** Observation and feature vector, feature matrix `X`, target `y`, labelled data, prediction,
+  train/validation/test subsets, model parameters and hyperparameters, per-observation loss and empirical
+  training objective, evaluation metrics, generalization, underfitting and overfitting. Loss and metrics are
+  distinguished by purpose and data, not by disjoint formulas: MSE can serve both roles.
+- **Visuals and examples.** Three standalone widgets show a known synthetic dependence plus noise, polynomial
+  complexity and new observations, and the effect of prediction errors on squared loss/MSE, MAE and RMSE.
+  Short ordinary Python examples make data construction and evaluation visible. The complexity experiment
+  selects settings using validation, then freezes the choice before revealing test results.
+  The three task illustrations now name concrete axes and units: delivery distance/time, message length/link
+  count, and customer purchase count/average receipt. Token probabilities, the speaker timeline and MSE bars
+  also have explicit labeled scales. Early terminology uses «целевая переменная» and its observed values;
+  model parameters are explicitly described as values adjusted during training.
+  Connected SVG diagrams replace the earlier process cards: an ML tree, training/inference sequences,
+  the loss-to-parameter-update feedback loop, and a train/validation/test workflow with a decision branch.
+  Separate wide and narrow diagram layouts keep text readable without hiding the relationships.
+- **ML map and systems.** Supervised regression/classification, unsupervised clustering/dimensionality
+  reduction, and a short reinforcement-learning overview. Self-supervised learning is explained as obtaining
+  targets from the data. Modern diagrams connect next-token prediction to text generation, embedding
+  clustering to a common diarization pipeline, and numerical forecasts to delivery decisions.
+- **Practice (revised after author review).** Task 1 asks students to formulate five problems: used-car price,
+  initial credit scoring, a building's response to an earthquake, a taxi customer's reservation price, and
+  Toktogul reservoir volume by early summer. Task 2 contains three scenarios: a blocked wedding transfer,
+  a police stop and support calls during a car-sharing trip, and a marketplace-chat fraud warning.
+  All eight case texts preserve the author's wording, with only authorized gross typos corrected; no extra
+  questions, explanations, source notes or answers are added. Task 3 retains the MSE/MAE calculation;
+  Task 4 retains the original workflow/leakage question. The recorded-widget-experiment task was removed,
+  while the widget itself remains.
+- **Boundaries.** The true dependence is known only in the synthetic demonstration; unpredictable noise is
+  relative to the available inputs. Complexity alone does not establish overfitting: compare performance on
+  held-out observations. No formal bias–variance decomposition, model-architecture course, cross-validation
+  chapter or new advanced-statistics block. Mini tasks remain unanswered; the distributed notebook is unexecuted.
+- **Validation (Nov 2).** All ready Python cells and a temporary completed calculation task ran locally;
+  all precomputed model errors were independently recalculated. `nbformat` validation and a byte-identical
+  rebuild from another working directory pass. Headless Chrome checks cover all three widgets, test-choice
+  locking/reset, MathJax rendering (no formula errors), and desktop/mobile layouts; Python and SVG figures
+  were visually inspected. The actual Google Colab UI has not been checked. The notebook includes four
+  unanswered exercises and a reference glossary; it is saved without execution outputs.
+- **Bridge.** ML2 applies these ideas to Ames house prices with sklearn, a baseline and validation metrics.
+
+### ML2 — First applied linear regression (`LinModels/02`)
+
+- **File and status.** [02_linear_regression.ipynb](../LinModels/02_linear_regression.ipynb), maintained by hand
+  without a builder. Completed in class on November 4, including a teacher-led matrix OLS derivation; the
+  derivation and MAPE explanation were added to the notebook on November 5. The original root-level
+  `sem_1_linregr.ipynb` and `sem_2_linregr.ipynb` are reference material and remain unchanged.
+- **Format.** Markdown and Python only, explicitly requested by the author, in the style of the original
+  first seminar. Short explanations precede visible sklearn code and ordinary matplotlib/seaborn plots.
+  This does not change the HTML/SVG format of the theoretical ML1 notebook.
+- **Data.** The original Ames/Kaggle House Prices `train.csv`, 1,460 rows and 81 columns, loaded with
+  `pd.read_csv` from the author's Dropbox URL with `dl=1`; no Kaggle login is needed. Snapshot SHA-256
+  `1e18addf81e5e4d347cc17ee6075bbe4a42b7fa26b9e5b063e8f692a5f929d41` is recorded in notebook metadata.
+  The main features are `GrLivArea`, `GarageArea` and `TotalBsmtSF`, with no missing values in this snapshot.
+  Their areas and `LotArea` are converted to square metres using a fixed conversion factor.
+- **Flow.** A short regression-history/sklearn introduction → fixed train/validation/test split
+  (876/292/292 rows; two `train_test_split` calls with `random_state=42`) → explore train only → mean baseline
+  → one-feature OLS → three-feature OLS → coefficient interpretation and manual prediction → MAE/RMSE/MAPE on
+  validation → short student tasks. Test remains unused throughout, reserved for a later final evaluation.
+- **Visuals.** Training-target distribution, correlations for eight interpretable numeric features, and the
+  original three-panel raw scatterplots plus sqrt-feature/log-target scatterplots (16×5, black, alpha 0.2),
+  with explicit axis names. These transformations illustrate relationships; the core models predict the
+  original price target. Explain OLS fitting versus the gradient-descent implementation students already know.
+- **Analytical OLS addition (Nov 5).** Form the design matrix with an intercept column, differentiate MSE
+  with the `2/n` factor, set its gradient to zero and obtain the normal equations. The inverse expression
+  requires full column rank. Compare `np.linalg.solve`, `np.linalg.lstsq` and sklearn using the same small
+  feature set; linear independence of columns is distinct from statistical independence of variables.
+  MAPE is displayed in percent, with the factor 100 and zero/near-zero target limitations stated explicitly;
+  no universal percentage threshold is treated as a quality guarantee. MAE remains the primary comparison
+  metric, with RMSE and MAPE providing additional views of the errors.
+- **Practice and boundaries.** Unanswered tasks ask for a manual prediction, adding `YearBuilt` and fitting/
+  predicting/evaluating, and a comparison in words. Complete baseline and one-/three-feature examples are
+  provided separately. No cross-validation, regularized-model fitting, scaling or categorical encoding is
+  introduced; Ridge/Lasso are only briefly mentioned as future variants.
+- **Validation (Nov 3 version).** NotebookClient executed the provided cells with the live Dropbox download and a separate
+  temporary copy with completed student tasks. Checks covered disjoint splits, row alignment, the baseline
+  fitted on train, numerical results, and repeatable unit conversion from a fresh copy of `raw_data`.
+  Both scatterplot rows and the residual figures were visually inspected. Markdown formulas rendered in
+  a Chrome nbconvert preview without errors; the actual Google Colab UI has not been checked. The distributed
+  notebook retains unanswered tasks and no execution outputs.
+- **Validation (Nov 5 addition).** `nbformat` and code compilation pass; all 27 code cells ran in memory
+  against the local CSV snapshot. The 876×4 design matrix has rank 4, and solve/lstsq coefficients agree
+  with sklearn; validation predictions differ by less than 3e-10 dollars. MAPE values were independently
+  checked against the percentage formula. A temporary completed copy also passed a full NotebookClient run
+  and assertions. All 113 math objects rendered without errors in a Chrome nbconvert preview; the matrix,
+  inverse and MAPE formulas and ordinary figures were visually inspected. Actual Colab UI remains unverified.
+  Test was not scored, and the distributed notebook retains unanswered tasks and no outputs.
+- **Bridge.** ML3 adds missing values, scaling, categorical features and preprocessing pipelines. Regularization
+  and model selection remain later topics.
+
+### ML3 — Data preprocessing (`LinModels/03`)
+
+- **File and status.** [03_data_preprocessing.ipynb](../LinModels/03_data_preprocessing.ipynb), maintained by
+  hand without a builder. Successful classroom completion was confirmed by the author on November 9;
+  the exact class date is not recorded. The main seminar uses
+  Markdown/Python, with one author-approved self-contained HTML/CSS/JS explainer before section 2.
+- **Transformer explainer.** A short Markdown lead-in connects the baseline model to preprocessing and feature
+  engineering, introduces the shared transformer interface and ColumnTransformer's role in joining separately
+  prepared column groups, and links to the official sklearn guide/API. Diagrams distinguish `fit`, `transform`
+  and `fit_transform`, an interactive
+  StandardScaler shows retained fitted values, and a Pipeline-saving example connects preparation to later
+  predictions. A compact reference covers StandardScaler, MinMaxScaler, RobustScaler, OneHotEncoder and
+  SimpleImputer. Diagrams label stored values with their actual fitted attribute names: `mean_`, `scale_`,
+  `data_min_`, `data_max_`, `center_`, `categories_` and `statistics_`. The embedded notebook cell is canonical;
+  `data/transformer_preview/transformer-memory.html` is only a preview, not a runtime dependency or builder.
+- **Explainer validation (Nov 5).** The embedded cell executes independently in NotebookClient. Its five
+  formulas and two SVG diagrams render in Chrome, including nbconvert output; slider endpoints, keyboard
+  control and unchanged fitted values were checked. Layouts at 320, 390, 768 and 1024 pixels and the dark theme
+  pass without clipped diagram labels or horizontal overflow. Numerical examples and student tasks are
+  unchanged; the duplicate transformer definition below was removed. Actual Colab UI remains unverified.
+- **Data and split.** Reuse ML2's Ames CSV snapshot, 60/20/20 split and observation IDs (876/292/292 rows).
+  Test remains unused. Repeat the three-area model as the comparison point, then use five numeric features:
+  `GrLivArea`, `GarageArea`, `TotalBsmtSF`, `YearBuilt`, `LotFrontage`. The last is street-frontage length,
+  converted from feet to metres by 0.3048, not an area; 163 training rows have it missing.
+  `Neighborhood` supplies 24 categories in train; validation contains `Blueste`, unseen in train.
+- **Flow.** Baseline from ML2 → transformer explainer → missing-value inspection → `SimpleImputer(strategy="median")` fitted on train
+  → `fit/transform` and `StandardScaler` → numeric Pipeline → a small OneHot example → ColumnTransformer
+  combining numeric preparation and category encoding → a complete OLS pipeline and validation comparison.
+  Show that scaled and unscaled unregularized OLS predictions are practically identical in this example;
+  scaling changes representation and coefficients, not automatically forecast quality.
+- **Encoding.** The toy example keeps all category indicators for clarity. The real encoder uses
+  `drop="first"`, `handle_unknown="ignore"` and `sparse_output=False`: five numeric columns plus 23 indicators
+  produce 28 features. Dropping one category avoids the exact indicator/intercept dependence; it does not
+  promise full rank for arbitrary additional features. An unknown category gets the reference category's
+  all-zero code, which is a fallback, not evidence that their actual effects are equal.
+- **Comparison and practice.** Compare three areas, five imputed numeric features, and five numeric features
+  plus neighborhood using MAE/RMSE in dollars and MAPE in percent on the same validation observations.
+  Short unanswered tasks cover fitting a toy imputer on train and applying it to new rows, adding `LotArea`
+  to the complete chain, and interpreting the three metrics and unseen categories. No CV, Ridge/Lasso
+  training or target encoding is included. MAPE's limitations at zero and near-zero targets are explicit.
+- **Validation (Nov 5, before the HTML explainer addition).** The provided notebook passed NotebookClient with a live Dropbox download; a
+  temporary completed copy passed both student calculations and additional assertions. Checks confirmed
+  matching ML2 split IDs, train-only imputer/scaler statistics, exclusion of `Blueste` from fitted categories,
+  876×28 prepared features and rank 29 after adding the intercept. Scaled/unscaled OLS validation predictions
+  differ by at most 4.1e-10 dollars; percentage MAPE was checked directly. Validation MAE decreases from
+  $29,307.78 to $26,022.31 to $23,046.50; MAPE from 17.70% to 15.40% to 13.59% across the three models.
+  All 14 math objects rendered without errors in a Chrome nbconvert preview, and ordinary figures were
+  visually inspected. Actual Colab UI remains unverified. Test stays unused; the distributed notebook
+  contains neither saved outputs nor student-task answers.
+- **Bridge.** ML4 continues with coefficient stability, regularization and validation-based alpha selection.
+
+### ML4 — Regularization (`LinModels/04`, third applied seminar)
+
+- **File and status.** [04_regularization.ipynb](../LinModels/04_regularization.ipynb), maintained by hand,
+  without a builder. Successful classroom completion was confirmed by the author on November 17;
+  the exact class date is not recorded. It follows the completed ML2–ML3
+  applied seminars rather than adding another theoretical ML introduction.
+- **Format.** Markdown/Python with ordinary figures and one approved self-contained HTML/JS geometry widget
+  embedded in a code cell. All widget source is inside the notebook; temporary preview/helper files under
+  `data/` are not runtime dependencies or canonical build sources. Tasks remain unanswered.
+- **Synthetic theory.** Revisit exact versus near multicollinearity and show how large, compensating
+  coefficients can produce similar fitted values. Connect the Gram matrix `X.T @ X` to compression geometry,
+  then inspect a three-dimensional SSE surface and its contours. Introduce Ridge with the SSE convention
+  `||y - Xw||² + alpha * ||w||²` and the normal equations `(X.T @ X + alpha * I)w = X.T @ y` in the
+  weight-only/centered setup; the intercept is handled separately and is not penalized.
+- **Geometry and interpretation.** Compare the original loss contours with the Ridge constraint disk;
+  distinguish a coefficient vector (parameters) from alpha (a hyperparameter). Demonstrate the effect of
+  feature scale and excessive regularization. The widget varies feature correlation, alpha and a small
+  perturbation of the target. Lasso appears only as a short diamond-versus-disk geometric comparison, without
+  Lasso fitting. No eigenvalue/spectral derivation, statistical-significance chapter or CV chapter is added.
+- **Ames continuation.** Reuse the same CSV snapshot and 60/20/20 observation IDs (876/292/292 rows), with
+  test unused. The comparison model and preprocessing are ML3's five numeric features plus `Neighborhood`:
+  train-fitted median imputation/scaling and the same OneHot/ColumnTransformer setup. Replace the regressor
+  with Ridge while keeping the comparison data and preprocessing fixed.
+- **Practice.** Unanswered tasks select alpha using validation MAE, also report RMSE and percentage MAPE,
+  plot training/validation curves and interpret underfitting. Existing preprocessing and metric definitions
+  are reused; no new grading threshold or guarantee that Ridge improves every dataset is introduced.
+- **Validation (Nov 9).** The ready notebook ran end to end with the live CSV loader, and a separate temporary
+  completed copy passed the 13-alpha search and final-model tasks. Checks confirmed the reused snapshot,
+  split IDs and preprocessing, train-only fitted statistics, closed test, manual/sklearn Ridge agreement,
+  scale invariance after StandardScaler and correct constraint tangencies. In the worked example alpha 10
+  has validation MAE $23,279.41 versus OLS $23,046.50; this intentionally does not reveal the task optimum.
+  The widget passed 144 numerical states and 724 contour-coordinate checks; browser checks covered
+  320–1024 px and both themes. The final nbconvert preview rendered 88 math objects without errors;
+  ordinary figures and the embedded widget were inspected. Actual Colab UI remains unverified. The
+  distributed notebook contains no execution outputs or student-task solutions.
+- **Reference and bridge.** The official [sklearn Ridge documentation](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html)
+  documents the estimator and objective convention. ML5 continues with model diagnostics and interpretation;
+  cross-validation follows that seminar.
+
+### ML5 — Model diagnostics (`LinModels/05`, fourth applied seminar)
+
+- **File and status.** [05_model_diagnostics.ipynb](../LinModels/05_model_diagnostics.ipynb), maintained by hand
+  without a builder. Prepared for author review after the completed ML4; classroom use is pending.
+- **Format and data.** Seven numbered core sections, mainly Markdown/Python, with ordinary figures and
+  unanswered student tasks; the revised notebook has 72 cells, including 30 code and three `student-core`.
+  The author approved one narrow HTML exception: a native `details/summary` block in Markdown for optional
+  R² depth, not a return to generated HTML/JS theory. The similar-house explorer uses kernel-backed ipywidgets.
+  Reuse the same Ames snapshot, 60/20/20 observation IDs (876/292/292 rows), five numeric features plus
+  `Neighborhood`, and the ML3/ML4 preprocessing chain. Five ML4 cells for loading, unit conversion,
+  splitting, preprocessing and the model factory are reused unchanged. Fit Ames models on train only;
+  test remains unused. Small synthetic examples illustrate R², residual patterns, strongly correlated
+  features and permutation importance. Global warnings suppression is explicitly requested by the author;
+  the explanations of unknown-category encoding and method limitations remain in the text.
+- **Quality and errors.** For nonconstant evaluated targets, introduce R² through squared error relative to
+  their mean, which differs from the deployable baseline fitted to the training mean. Explain negative R², then inspect
+  residuals and group errors alongside MAE/RMSE/MAPE. Concrete interpretations distinguish underprediction
+  of expensive houses, unequal error spread and opposing group biases. Suggested experiments include
+  additional quality features, transformed area/target and segment comparisons; none is asserted to fix the
+  model without validation. Russian prose uses «изменчивость», reserving «дисперсия» for variance rather than
+  an unnormalized sum of squares.
+- **Optional R² depth.** The collapsible explanation relates SST to variance with divisor n, gives the
+  exact training-sample decomposition for OLS with an intercept, and states why it does not generally apply
+  to Ridge or held-out predictions. A separate population argument uses the conditional mean and a
+  finite-variance noise decomposition to explain the best possible R² for fixed available features.
+  It does not infer a noise level from a single measured R² or equate unexplained error with pure noise.
+- **Five difficult predictions.** The five largest validation errors (IDs 1170, 179, 1182, 54 and 1325) are
+  compared with training houses from the same Neighborhood. Euclidean distance uses only the five numeric
+  features after the existing train-fitted imputer/scaler; neither price nor Id enters the distance.
+  An overview and three global scatterplots locate all five cases. A selected-case table reports original
+  feature/price statistics, nonmissing counts and the chosen/available neighbor counts; three local scatterplots
+  distinguish the case's observed price, its prediction, neighbors and same-neighborhood train observations.
+  ID 54 has only four eligible training houses; no hidden fallback broadens the comparison pool.
+- **House explorer and interpretation.** A static first-case example is followed by a dropdown for the five
+  cases, an n slider from 5 to 20 and a manual update button. These ipywidgets controls require a live Python
+  kernel and call `show_house_context`, which can also be called directly as the fallback. Tables retain
+  missing values when computing descriptive statistics even though distance uses imputation. Written notes
+  interpret each case at n = 10 and propose checks of data quality, feature coverage, rare house types or
+  model form. Nearest neighbors provide context, not proof of a bad price or sufficiently close analogues.
+- **Coefficients and contributions.** Translate numeric coefficients back to original feature units and
+  decompose one model prediction into its intercept and feature contributions. These describe the fitted
+  model conditional on its other inputs; coefficient size, prediction contribution, predictive importance
+  and statistical significance answer different questions. A reminder links back to ML3's `drop="first"`,
+  reference category and unknown-category all-zero code. None alone establishes a causal effect.
+- **Synthetic stability first.** Two almost identical features with known coefficients illustrate
+  multicollinearity and compensating weights. OLS and Ridge (fixed alpha 5) use the same 120 bootstrap samples,
+  refitting scaling and the regressor. Coefficient scatterplots, SD summaries and predictions at one fixed
+  point distinguish weight instability from prediction instability; a stable but shifted Ridge prediction
+  demonstrates that more stable weights do not guarantee smaller prediction error.
+- **Ames bootstrap stability.** Resample complete training rows 80 times, keeping each target with its features,
+  and refit the entire preprocessing/model pipeline. Compare OLS and Ridge on the same resamples with
+  `alpha=10` fixed. Inspect the five numeric coefficients in common original units and predictions for one
+  fixed house. The five coefficients occupy one figure; a separate figure shows the same house's price
+  prediction across resamples. Category coefficients are not compared because categories can disappear.
+  Concrete interpretation and an SD table acknowledge that Ridge need not reduce every coefficient's spread.
+  These are stability experiments for specified fitting procedures; their spread is not presented as a formal
+  confidence interval or a coefficient-significance test. Alpha is not retuned within resamples.
+- **Permutation feature importance.** Keep the fitted full pipeline frozen and shuffle raw validation
+  columns, so a categorical feature is inspected as one input rather than separate dummy columns. With
+  `neg_mean_absolute_error`, score deterioration equals an increase in MAE. Repeated permutations describe
+  shuffle variability. Importance depends on the fitted model, metric and evaluated data; correlated features
+  can substitute for one another, and shuffling can create implausible feature combinations.
+  A worked ablation removes `Neighborhood` and refits at the same alpha, illustrating why removal with
+  retraining answers a different question from shuffling one input of a frozen model.
+- **Practice.** Three unanswered code tasks: compare neighborhood MAE and mean residual for groups with at
+  least ten validation houses; calculate OLS permutation importance and compare it with Ridge; predict the
+  change for an extra 10 m² using both the original-unit coefficient and `predict`. A final written report
+  combines quality, an error pattern, a coefficient/stability observation, feature importance and a proposed
+  follow-up. The group-size threshold is a teaching convenience, not a reliability guarantee.
+- **Optional inference and limits.** A separate synthetic sample has 400 independent rows, two independent
+  features and a linear mean with heteroscedastic errors. `statsmodels.OLS` with `cov_type="HC3"` and
+  `use_t=False` illustrates standard errors, approximate normal confidence intervals and p-values.
+  Statistical significance is distinct from practical or predictive importance. The assumptions and results
+  of this synthetic example do not transfer to Ames or Ridge; HC3 does not repair a misspecified mean,
+  dependent rows or hypothesis selection after inspecting results. This is an introduction, not a complete
+  inference course. Cross-validation and final test evaluation are not introduced here.
+- **Dependency.** `statsmodels>=0.14,<0.16` is listed in `requirements.txt`; the optional inference cell
+  installs it only when the package is absent. The main seminar does not import it. `ipywidgets` is already
+  a project dependency and supplies the optional house-explorer controls; the static example does not need them.
+- **Validation (Nov 17, final revision).** All 72 cells (30 code, three student-core) pass `nbformat` and
+  compilation. The notebook ran with the live Dropbox loader, and a separate completed copy passed all three
+  tasks; the five preparation cells and three student-core sources remain unchanged. Neighbor checks cover
+  all five cases at n = 5/10/20: same-neighborhood train candidates, correct distances/statistics, no price/Id
+  dependence or fitting during display. Ten native widget button clicks exercised all cases at n = 5/20.
+  All five case figures were inspected and clipped axis labels corrected. Chrome rendered 109 MathJax objects
+  without formula or JS errors; the collapsible block and displayed controls were checked. Execution outputs
+  contain no UserWarnings. Reports are in gitignored `data/diagnostics_revision/` (`render_report.json` and
+  `native_callback_report.json`). The distributed notebook has no outputs or task answers, test remains unused,
+  and actual Colab UI remains unverified.
+- **Official references and bridge.** [sklearn R²](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.r2_score.html),
+  [permutation feature importance](https://scikit-learn.org/stable/modules/permutation_importance.html) and
+  [statsmodels OLS](https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLS.html)
+  with [robust covariance](https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLSResults.get_robustcov_results.html)
+  document the metrics and inspection/inference tools. Cross-validation is the next planned topic.
 
 ---
 
@@ -628,29 +949,33 @@ where a material deliberately prepares a later topic. They are worth keeping whe
 | W1 | Random variable, mean, variance, SD; vector, norm, dot product; z | L1, L2, L3, Seminar 1, H, house.kg seminar project | **Done.** The random variable is kept intuitive and formalised in L5–L6. |
 | W2 | Normal, three sigma, Bernoulli, binomial; LA: linear combinations | L5, L6; L1 and L10 (LA) | Statistics done and extended (PDF/CDF in L6). L10 revisits linear combinations through matrix columns and multiplication. |
 | W3 | Poisson; basis, rank, multicollinearity | L10–L11; L13 multicollinearity | **Partly built.** Exact/near dependence and the limits of pairwise correlation are included. General basis theory and Poisson remain pending. |
-| W4 | Covariance, correlation, covariance matrix; milestone presentation 1 | L13 | **Math topics built; classroom use pending.** Includes Pearson/Spearman, covariance/correlation matrices and their geometric connection. The milestone presentation is not designed. |
+| W4 | Covariance, correlation, covariance matrix; milestone presentation 1 | L13 | Includes Pearson/Spearman, covariance/correlation matrices and their geometric connection; the sequence has since moved into calculus/MSE. The milestone presentation is not designed. |
 | W5 | Matrices as operators | L10; inverse transformations in L12 | Matrix action, composition and undoing a nonsingular transformation introduced visually. Later Phase 2 topics remain pending. |
 | W6 | Determinant and inverse; singularity | L11–L12 | **Introductory scope built.** Rank-based singularity, linear systems, inverse and 2D determinant geometry. Hand determinant calculation stops at 2×2. |
 | — | *(not in the syllabus)* | L4 | Robust, non-parametric tools, needed because the real data are dirty. |
 | — | *(not in the syllabus)* | Bus practicums, L7–L9 | Sampling, SE, CLT, CIs and bootstrap; L9 closes the block with permutation hypotheses, p-values and practical interpretation. Tests were brought forward from W12. |
+| — | *(not explicit in the syllabus)* | Calculus seminar | Derivatives, gradients and numerical optimization were added before first model training; completed in class. |
 | W7 | Eigenvectors and eigenvalues | — | **Not built in the math sequence.** Planned after the OLS introduction rather than before it. |
 | W8 | PCA, SVD overview | `unsupervised/01`; covariance groundwork in L13 | Exists as an ML lesson; the eigenvector groundwork and its integration remain pending. The new math sequence plans PCA after OLS and eigenvectors. |
-| W9–W10 | Projections, least squares, linear regression | L12 supplied weight-formula exercise | **First application only.** Full OLS/linear-regression teaching is planned after L13, before W7–W8 topics; derivation and the training/evaluation workflow are not built yet. |
-| W13 | Trees, ensembles, metrics, cross-validation | `DT/` | Exists. It predates the math block. Metrics and cross-validation have no dedicated lesson. |
+| W9–W10 | Projections, least squares, linear regression | L12 formula exercise; completed MSE/ML2–ML4; `LinModels/01–05` | Fitting, matrix OLS, preprocessing and Ridge are taught. ML5 adds diagnostics, coefficient interpretation/stability and permutation importance for review; geometric projection treatment and CV remain pending. |
+| W13 | Trees, ensembles, metrics, cross-validation | `DT/`; introductory metrics in MSE seminar and ML1 | The tree module predates the math block. Basic loss/metric roles are now introduced earlier; a dedicated cross-validation lesson remains pending. |
 
 **The overall pattern:** the statistics track is ahead of the plan. L10–L12 resume linear algebra through matrix
 operations, transformations, dependence, rank, linear systems and inverses. L13 connects those tools to covariance,
-correlation and multicollinearity. The next discussed sequence is OLS/linear regression, then eigenvectors/PCA;
-this deliberately moves the W9–W10 introduction ahead of W7–W8. Those later lessons and general basis theory
-remain pending.
+correlation and multicollinearity. Calculus and MSE regression now precede the `LinModels` introduction; this
+deliberately moves the W9–W10 introduction ahead of W7–W8. ML2–ML4 are completed and ML5 adds diagnostics
+and interpretation for review. Cross-validation, eigenvectors/PCA groundwork and general basis theory remain pending.
 
 ---
 
 ## 6. What students know so far
 
-*Material through L13. L11–L12 are completed in class; L13 awaits review and classroom use.* Practice tasks
-must stay inside this list and account for which lessons the group has actually completed. The separate L9
-classroom status below has not been confirmed. Anything outside the inventory has to be taught first.
+*The sequence has progressed through L13, the calculus/MSE seminars, ML2 (completed November 4), ML3
+(completion confirmed November 9) and ML4 (completion confirmed November 17). ML5 awaits review/classroom use;
+ML1's classroom status is unconfirmed.* Practice tasks
+must account for these statuses; new concepts must be introduced before they are required. The separate
+L9 classroom status below has not been confirmed.
+Anything outside the inventory has to be taught first.
 
 **Linear algebra (L1–L2).** Vector as an observation; feature space ℝⁿ; addition, scaling, linear combination
 (introduced); L2 norm, distance; centroid as the mean vector; dot product, projection, angle; cosine similarity and
@@ -680,13 +1005,68 @@ orientation; zero determinant and collapse. Matrix equations preserve multiplica
 least-squares weight calculation uses the supplied formula `w = (XᵀX)⁻¹Xᵀy` for full-column-rank synthetic
 data, followed by predictions `Xw`; there is no derivation, regression-theory chapter or full training workflow.
 
-**Covariance and correlation (L13, pending review/classroom use).** Centering paired observations, sample
+**Covariance and correlation (L13, preceding the completed seminars).** Centering paired observations, sample
 covariance with `n − 1`, covariance units, sample-standard-deviation normalization and Pearson correlation.
 Pearson as the cosine between centered feature vectors; covariance/correlation matrices and their diagonals.
 Pearson is undefined for a constant feature and does not measure every nonlinear relationship or imply causation.
 Ranks, average ranks for ties, Spearman as Pearson of ranks, monotonic versus general nonlinear relationships.
 Exact and near multicollinearity, full rank despite strong correlation, and dependencies among several columns
 that pairwise coefficients may miss. Feature transformations `x²`, `x³`, `sin(x)` are a preview, without fitting.
+
+**Calculus (completed seminar).** Sequence/function limits; derivatives and tangents; analytic checks and
+finite-difference derivatives; one-dimensional descent, learning rate and stopping; level curves, partial
+derivatives, gradient as a vector and two-dimensional gradient descent. Local minima and dependence on
+initialization are explored. The optional `autodiff` decorator is numerical differencing, not automatic
+differentiation; no Hessian/Jacobian, general chain-rule course or SGD is assumed.
+
+**First regression fitting (completed MSE seminar).** An intercept/slope model, MSE, analytic weight gradients,
+hand-coded full-batch gradient descent, loss and parameter trajectories; scaling for optimization; predictions,
+the design matrix and vectorized updates. MAE and MAPE are introduced, chiefly on training observations.
+The multifeature holdout task is present as an assignment, not a complete saved evaluation solution. Do not
+equate coefficient magnitude with feature importance or statistical significance.
+
+**ML introduction (ML1, pending review/classroom use).** Model, training and inference; observation, feature,
+target/label and labelled data; `x_i`, `y_i`, `X`, `y` and dataset notation; train/validation/test roles;
+parameters versus hyperparameters; per-object loss, empirical objective and evaluation metrics (MSE/MAE/RMSE);
+generalization, underfitting/overfitting and the effect of sample size/noise. An introductory map of supervised,
+unsupervised and reinforcement learning, with regression/classification/clustering, dimensionality reduction
+and self-supervised targets. Next-token prediction, speaker-embedding clustering and delivery forecasts are
+application illustrations, not training lessons for large language or audio models.
+
+**Applied linear regression (ML2, completed November 4).** Fixed train/validation/test split;
+training-only exploration; the training mean as a baseline; `LinearRegression.fit/predict`, `coef_` and
+`intercept_`; manual prediction and conditional coefficient interpretation; comparison of one- and three-feature
+models with MAE/RMSE on validation. Matrix OLS was derived in class: intercept column, gradient of MSE,
+normal equations, full-column-rank condition and the inverse expression. The November 5 notebook addition
+records this derivation, compares `solve`/`lstsq`/sklearn and adds explicit percentage MAPE with zero/near-zero
+limitations. Test is reserved, not repeatedly used for comparison. No regularization or CV chapter is included.
+
+**Data preprocessing (ML3, completion confirmed November 9).** Preprocessing and feature engineering terminology;
+missing numeric values and train-fitted median
+imputation; `fit`, `transform`, `fit_transform`; scaling and coefficients versus OLS predictions; Pipeline;
+categorical features, OneHot indicators, reference category and unseen categories; ColumnTransformer and
+a complete mixed-feature OLS chain. Compare MAE/RMSE/MAPE on the same validation observations, with all
+learned preprocessing fitted on train and test kept unused.
+The added transformer explainer names fitted attributes, compares five common transformers and introduces
+saving the fitted Pipeline for later predictions.
+
+**Regularization (ML4, completion confirmed November 17).** Exact/near multicollinearity and compensating weights;
+Gram matrix `X.T @ X`, compression and SSE surface/contour geometry; Ridge penalty and normal equations with
+an unpenalized intercept; weights versus alpha; feature scale; a Ridge constraint disk and a brief Lasso
+diamond comparison. Perturbation experiments examine stability. Choose alpha on validation MAE, also inspect
+RMSE/MAPE and training/validation curves; distinguish excessive regularization and underfitting. No Lasso
+fitting, CV, spectral theory or coefficient inference is assumed.
+
+**Model diagnostics (ML5, pending review/classroom use).** R² and its evaluated-target mean reference;
+optional OLS variance decomposition and population noise bound. Residuals and group errors; closest training
+analogues by scaled numeric distance within a neighborhood, with counts and limitations; coefficients in
+original units, reference category and contributions to one prediction. Strong-correlation synthetic and
+full-pipeline Ames row bootstrap at fixed alpha separate coefficient stability from prediction stability,
+without claiming formal confidence intervals. Permutation
+feature importance evaluates the frozen pipeline on shuffled raw validation columns, with negative-MAE
+scoring and correlated-feature limitations; a worked drop-column comparison refits after removing an input.
+An optional OLS inference introduction uses separate synthetic data and HC3/normal approximation to distinguish
+significance from predictive importance; it does not establish mastery of a complete inference workflow.
 
 **Descriptive statistics.** Population vs. sample, representativeness, bias; histogram, 1D and 2D KDE, mode; mean,
 median, variance, SD, SSE; group statistics (`groupby`); z-standardization; normalization by a meaningful
@@ -726,18 +1106,35 @@ L13 adds sample covariance/correlation calculations with NumPy and pandas, rank-
 SciPy, and seaborn scatterplots/heatmaps; row/column conventions and sample normalization are explicit.
 
 **Not taught yet. Do not use without teaching it first:** Poisson; t-tests and the Student distribution;
-general basis theory and eigenvectors; mutual information; PCA/SVD; least-squares derivation and
-linear-regression theory; MLE; logistic regression; the full ML model-training
-workflow, neural-network learning/backpropagation, train/test split, metrics. L10's given-weight price formula
-and threshold-network calculation are forward computations; L12 adds only a first supplied-formula weight
-calculation, not a complete model-training lesson. L13's new concepts require classroom coverage before use
-as prerequisites in later tasks.
+general basis theory and eigenvectors; mutual information; PCA/SVD; geometric least-squares derivation;
+MLE; logistic regression; regression coefficient inference; model diagnostics and permutation feature importance;
+cross-validation; neural-network learning/backpropagation. ML5's new concepts await classroom use; ML3's
+preprocessing pipelines and ML4's regularization are available prerequisites. The sklearn workflow and matrix
+OLS derivation are available from completed ML2; its train/validation/test
+practice is confirmed independently of ML1's unconfirmed classroom status. L10/L12 retain their narrower
+given-weight/supplied-formula scope.
 
 ---
 
-## 7. Classic-ML modules (Phase 4)
+## 7. ML modules
 
-Both modules were built in **June 2026, before the math block**, as standalone ML lessons. In the syllabus they become
+### `LinModels/` — introduction to ML and linear models (Phase 3)
+
+| Order | Notebook | Content | Status |
+|---|---|---|---|
+| 1 | `01_intro_ml.ipynb` | ML terminology, features/targets and dataset notation, train/validation/test, loss/metrics, parameters/hyperparameters, generalization/complexity, map and modern systems, bilingual glossary | Awaiting author review and classroom use |
+| 2 | `02_linear_regression.ipynb` | Ames regression, matrix OLS derivation, baseline, coefficients and validation metrics; unanswered tasks | Completed Nov 4; OLS/MAPE text added Nov 5 |
+| 3 | `03_data_preprocessing.ipynb` | Missing values, scaling, Pipeline, OneHot/ColumnTransformer, unseen categories, mixed-feature OLS and MAE/RMSE/MAPE | Completed; confirmed Nov 9, exact class date unrecorded |
+| 4 | `04_regularization.ipynb` | Coefficient stability, loss/constraint geometry, Ridge, scale, brief Lasso comparison, validation-based alpha selection on Ames | Completed; confirmed Nov 17, exact class date unrecorded |
+| 5 | `05_model_diagnostics.ipynb` | R², residuals/groups and similar-house explorer, coefficient units and prediction contributions, synthetic/Ames bootstrap stability, permutation feature importance, optional OLS inference | Awaiting author review and classroom use |
+
+The module follows the hand-maintained calculus and MSE seminars. Its generated theoretical notebooks retain
+the shared dark HTML/SVG format; the first builder is `LinModels/build_intro_ml.py`. ML2–ML5 are hand-maintained
+seminars without builders: Markdown/Python, plus one approved embedded transformer explainer in ML3 and one
+geometry widget in ML4. ML5 has a native `details/summary` block in Markdown and a live-kernel ipywidgets
+explorer with static/manual alternatives. Cross-validation follows ML5; broader model-selection lessons remain planned.
+
+The following two modules were built in **June 2026, before the math block**, as standalone ML lessons. In the syllabus they become
 week 13, "classic models with understanding". When Phases 2–3 exist, they should be re-linked to the new math (the
 re-linking points are listed below).
 
@@ -759,9 +1156,10 @@ handbook chapters 4–7 after each notebook.
 self-contained HTML/JS. `dt_demo` has older origins (its first cell credits 2024 lecture notes).
 **Re-linking points:** these notebooks assume logistic regression, loss functions, gradient descent, train/test split,
 classification metrics (accuracy, F1, ROC-AUC) and cross-validation. In the syllabus, logistic regression and MLE
-come in Phase 3, and metrics and cross-validation in W13. Gradient descent is not in the syllabus at all. The
-handbook's chapter 1 partly fills the gap: probability, expectation, logarithm, derivative and gradient, convexity,
-Jensen.
+come in Phase 3, and metrics and cross-validation in W13. The added calculus/MSE seminars now supply derivatives,
+gradients and first fitting; ML1 introduces evaluation terminology. Classification metrics and cross-validation
+still need teaching. The handbook's chapter 1 offers further groundwork: probability, expectation, logarithm,
+derivative and gradient, convexity, Jensen.
 
 **Related project (external).** [`ai-academy-bish/kws-project`](https://github.com/ai-academy-bish/kws-project)
 detects the keyword «Акылай» in audio. It was a project assignment for the topic «Классификация: линейные модели,
@@ -804,7 +1202,8 @@ students a familiar dataset here.
 | Telecom churn | CSV from the mlcourse.ai GitHub repo | `bagging_rf` | |
 | sklearn toy sets, 20 Newsgroups | sklearn | `DT/`, `unsupervised/` | |
 | Keyword-spotting audio features | HF `aiacademy-kg/kws-dataset` | `kws-project` (external) | Features already extracted |
-| Synthetic data | generated in the notebook | L6–L13, `bias_variance_demo`, `gradient_boosting` | Known laws in statistics; small matrices and points, courier/car features (L10), totals and duplicate volume units (L11), linear systems and seeded 10×7 features (L12), apartment features and nonlinear relationships (L13) |
+| Ames / Kaggle House Prices training table | Author's Dropbox copy of `train.csv` (download URL and snapshot SHA-256 in the notebooks) | `LinModels/02–05` | 1,460×81; no Kaggle login; identical 876/292/292 split, train-only exploration/preprocessing, test unused |
+| Synthetic data | generated or embedded in the notebook | L6–L13, calculus/MSE seminars, `LinModels/01`, `04–05`, `bias_variance_demo`, `gradient_boosting` | Known laws in statistics; small matrices and points, courier/car features (L10), totals and duplicate volume units (L11), linear systems and seeded 10×7 features (L12), apartment features and nonlinear relationships (L13); height/weight regression (MSE); delivery dependence, noise and held-out observations (ML1); coefficient stability and regularization geometry (ML4); R², residual patterns, strong-correlation stability, permutation importance and optional OLS inference (ML5) |
 
 **Where the data come from.** All `aiacademy-kg/*` datasets are published on the school's Hugging Face organization,
 [huggingface.co/aiacademy-kg](https://huggingface.co/aiacademy-kg). The scrapers that build the house.kg and Lalafo
@@ -854,7 +1253,7 @@ does. The list of students' anchor datasets is not recorded in the repo.
   printed messages) are in Russian.
 - **Task statements:** L2's practice block is in English; L3 onwards are in Russian (§10).
 
-### 9.3 Lesson format (`math_for_ds/`)
+### 9.3 Generated lesson format (`math_for_ds/` and `LinModels/`)
 
 - Google Colab `.ipynb`, **committed un-executed**, generated by `build_lessonN.py` with nbformat. Change the script,
   not the notebook, except for the hand-maintained files (see AGENT_PROTOCOL §4).
@@ -866,12 +1265,23 @@ does. The list of students' anchor datasets is not recorded in the repo.
 - MathJax with `$…$` and `$$…$$` delimiters only.
 - Current pattern (L6–L13): widgets in `lessonN_widgets.js` embedded at build time; deterministic cell ids; the `eq()`
   glossary guard; references to authoritative sources (NIST, SciPy, Penn State, OpenStax).
+- `LinModels/01` follows the same pattern with `build_intro_ml.py` and `intro_ml_widgets.js`, a presentation-like
+  visual flow and a final bilingual glossary. Its build-time dependency on `math_for_ds/theme.py` is embedded;
+  no repository source files are required at runtime in Colab.
 - L9 uses this same theoretical-lesson format, with short definitions and explanations. Its numerical helpers
   and standard Python plots are also embedded. The Markdown-only bus practicum format does not carry over
   to theoretical lessons.
 
 ### 9.4 Practicum format
 
+- **Applied ML seminars (`LinModels/02–05`):** hand-maintained Markdown and Python, ordinary figures and visible
+  worked sklearn examples, followed by unanswered student tasks. The author requested the original seminar's
+  scatterplot style and a short library/algorithm explanation. ML3 has a local exception: one self-contained
+  HTML/CSS/JS transformer explainer before section 2. ML4 has one approved embedded HTML/JS geometry widget.
+  ML5 has one approved native `details/summary` block inside Markdown, plus an ipywidgets similar-house
+  explorer requiring a live kernel; its static example and direct function call remain available.
+  The remaining sections retain Markdown/Python.
+  ML1 remains an HTML/SVG theoretical lesson.
 - **Lalafo pattern:** study the dataset first (`recon.py` → teacher-facing `RECON.md`), then `build_<topic>.py`,
   Markdown only, feature engineering done in advance, five cases. Before shipping, run the feature-engineering cell on
   the local parquet and confirm that each case has a real signal (in medians).
@@ -887,17 +1297,18 @@ does. The list of students' anchor datasets is not recorded in the repo.
 The author requested one final statistics meeting, now L9, then moving on within the remaining two months.
 Further statistical detail should be introduced when a later task needs it.
 
-1. **OLS/linear regression after L13, then eigenvectors/PCA:** this is the discussed next direction, moving
-   the W9–W10 introduction ahead of W7–W8. L13 now provides covariance, correlation and multicollinearity,
-   but the next lesson's concrete scope still needs agreement before building. Its derivation and the full
-   training/evaluation workflow are not supplied by L12's formula exercise. General basis theory and the
-   later operator topics remain backlog; L10–L13 do not complete Phase 2.
+1. **Review ML5, then teach cross-validation:** ML2–ML4 are completed, including matrix OLS, preprocessing
+   and Ridge. `LinModels/05` adds diagnostics, coefficient interpretation, bootstrap stability and permutation
+   importance. Cross-validation and broader model selection follow; their concrete scopes need agreement.
+   ML1's classroom status
+   is not inferred from ML2's completion. Eigenvectors/PCA and general basis theory remain backlog;
+   the regression introduction deliberately precedes W7–W8 topics.
 2. **Milestone presentation 1** (W4): not designed yet.
 3. **Poisson** remains syllabus backlog; do not add another statistics meeting automatically.
 
 **Decisions needed**
 
-- **L3, S4 Task 8** asks for a correlation coefficient before the newly built L13 in the teaching order.
+- **L3, S4 Task 8** asks for a correlation coefficient before L13 in the teaching order.
   Reword it, defer it until L13, or treat it as a deliberate spoiler?
 - **Language of task statements:** English (L2) or Russian (L3 onwards) from now on?
 - **`04_stat_boxplot.ipynb`:** keep the 17 in-class cells in the canonical version, or move them to the build script
@@ -909,6 +1320,13 @@ Further statistical detail should be introduced when a later task needs it.
 
 **Technical debt**
 
+- The hand-maintained `mse_optimization.ipynb` has audit findings not corrected by the ML1 addition:
+  its introductory text calls generated observations real; one vectorized gradient omits the factor 2 for
+  the stated MSE; residual-versus-observed-target trends are overinterpreted; the final task's scaling order
+  risks leakage; standardized coefficient size is described as importance (the author acknowledged this
+  wording error). Review these in a separate authorized edit. Normal errors are not required simply to fit
+  least squares, and percentage-error thresholds are not universal quality guarantees.
+
 - L7 §7 still announces tests for “the next lesson”. The author-approved sequence now inserts L8 (CI/bootstrap)
   before tests in L9. L8 explains the detour; update that historical bridge when L7 is next revised.
 
@@ -919,6 +1337,75 @@ Further statistical detail should be introduced when a later task needs it.
 ---
 
 ## 11. Changelog
+
+- **2026-11-17 (ML5 author revision):** Added optional collapsible R² depth using native `details/summary`
+  in Markdown; clarified variability, variance, the OLS decomposition and the population noise limit.
+  Interpreted residual/group plots and the five worst validation predictions through same-neighborhood train
+  analogues, statistics and scatterplots, with a live-kernel ipywidgets selector and static/manual alternatives.
+  Revisited reference-category encoding and multicollinearity; added a strong-correlation synthetic bootstrap
+  before separating the Ames coefficient and fixed-house prediction figures. Added concrete next-experiment
+  suggestions and global warnings suppression at the author's explicit request. The notebook remains
+  hand-maintained and awaits review/classroom use. The revised notebook and completed tasks passed execution;
+  neighbor calculations, native controls, figures and Chrome rendering were checked (§4). Colab UI remains unverified.
+
+- **2026-11-17:** Recorded ML4's classroom completion, confirmed today without an exact class date.
+  Added `LinModels/05_model_diagnostics.ipynb` for review as the fourth applied seminar, maintained directly
+  in Markdown/Python without HTML. It reuses the Ames split/preprocessing and unused test, adding R²,
+  residual/group diagnostics, coefficient units and prediction contributions, full-pipeline bootstrap
+  stability at fixed alpha, and permutation importance on raw validation columns. OLS inference is an
+  optional HC3/normal-approximation introduction on separate synthetic data, distinguishing significance
+  from importance; `statsmodels` is added as a dependency. Three unanswered code tasks and a final report
+  close the main line. Cross-validation follows this seminar. ML1's classroom status is unchanged.
+
+- **2026-11-09:** Recorded successful completion of ML3, confirmed today without an exact class date.
+  Added `LinModels/04_regularization.ipynb`, the third applied seminar, for author review: synthetic
+  multicollinearity/coefficient-stability examples, Gram and loss geometry, Ridge, scale and a brief geometric
+  Lasso comparison. One embedded HTML/JS widget accompanies Markdown/Python. The Ames continuation preserves
+  ML3's pipeline, snapshot and split; student tasks choose alpha on validation and keep test unused. No CV,
+  spectral-theory or statistical-significance chapter. The notebook is edited directly, without a builder;
+  ML1's classroom status is unchanged.
+
+- **2026-11-05 (transformer explainer):** Added the author-approved local HTML/CSS/JS block before ML3 section 2
+  on `fit/transform/fit_transform`, fitted attributes, saving a fitted Pipeline and five common transformers.
+  Added a short preprocessing/feature-engineering lead-in and ColumnTransformer overview with official sources.
+  Diagram labels use sklearn attribute names. The notebook remains hand-maintained, its other sections retain
+  Markdown/Python, and classroom use is still pending. The preview HTML is not a runtime dependency.
+
+- **2026-11-05:** Recorded ML2's November 4 classroom completion and added the classroom matrix OLS derivation
+  to its notebook: intercept column, MSE gradient, normal equations, full rank and solve/lstsq comparison.
+  Added explicit percentage MAPE and zero/near-zero limitations. Created `LinModels/03_data_preprocessing.ipynb`
+  for review: same Ames observations/split and unused test, median imputation, scaling, Pipeline, OneHot and
+  ColumnTransformer, numeric/mixed-feature OLS comparisons and unanswered tasks. ML1 classroom status remains
+  unconfirmed; ML3 has not yet been taught. Both applied seminars remain hand-maintained Markdown/Python.
+
+- **2026-11-03:** Added `LinModels/02_linear_regression.ipynb` as a hand-maintained Markdown/Python seminar
+  for review. Preserved the original first seminar's three-panel raw and sqrt/log scatterplot style and a
+  short sklearn/algorithm introduction. Uses Ames, a fixed train/validation/test split with test unused,
+  training-only exploration, mean baseline, one-/three-feature OLS, coefficient interpretation and MAE/RMSE.
+  Student tasks remain unanswered; the original root-level seminars and ML1 format are unchanged.
+  The provided code and a temporary completed copy executed locally; figures and rendered formulas were
+  inspected. Actual Colab UI remains unverified.
+
+- **2026-11-02:** Restored the author-approved Task 1 heading and introductory instructions; all exercise statements remain verbatim.
+
+- **2026-11-02 (practice review):** Replaced ML1's initial task with the author's five applied formulations and
+  three bank/car-sharing/marketplace scenarios, preserving all eight texts verbatim except authorized gross
+  typo corrections. No added questions, explanations or source notes. Kept the calculation and workflow
+  questions as Tasks 3–4; removed only the recorded-experiment task. No task answers.
+
+- **2026-11-02 (author review):** Revised ML1 chart labels, units and legends, including small task illustrations,
+  token probabilities, speaker timing and MSE bars. Standardized introductory target-variable wording and
+  clarified that model parameters change during training. Replaced process cards with connected SVG diagrams,
+  including explicit branches and feedback loops; `intro_ml_diagrams.py` is used only at build time.
+  Recorded the axis-label requirement in the protocol.
+
+- **2026-11-02:** Added `LinModels/01_intro_ml.ipynb` for author review: presentation-like HTML/SVG theory,
+  three synthetic widgets, short Python examples, modern application diagrams, precise Russian–English
+  terminology and a final glossary. Covers features/targets and dataset notation, training/inference,
+  train/validation/test, loss versus evaluation metrics, parameters/hyperparameters and generalization.
+  Recorded the already completed hand-maintained calculus and MSE seminars and corrected stale statements
+  that derivatives or all regression fitting remain untaught. Documented outstanding MSE-seminar audit issues
+  without editing that notebook. ML1 classroom use is pending; L9 status is unchanged.
 
 - **2026-10-16:** Recorded that L12 has been completed in class. Added L13 on sample covariance, Pearson and
   Spearman correlation, covariance/correlation matrices and exact/near multicollinearity. Synthetic apartment

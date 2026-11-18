@@ -2,6 +2,7 @@ numpy
 scipy
 pandas
 scikit-learn
+statsmodels>=0.14,<0.16
 matplotlib
 seaborn
 pydotplus

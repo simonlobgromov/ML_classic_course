@@ -25,9 +25,20 @@ math_for_ds/            Phase 1 — "Математика для DS" (Colab less
   lesson9_helpers.py    numerical functions and Python plots embedded into L9
   lesson13_tasks.py     build-only task definitions used by build_lesson13.py; no runtime dependency
   seminar_1.ipynb       seminar: cosine similarity on speaker embeddings (written by hand)
+  matan_seminar.ipynb   completed calculus/gradient-descent seminar (written by hand)
+  mse_optimization.ipynb completed hand-coded MSE regression seminar (written by hand)
   vektornaya-algebra-hw.md/.pdf            vector-algebra homework
   images/               photos embedded into L5; the instructor's network diagram embedded into L10
   theory/               legacy HTML prototype of L1 (replaced; do not extend)
+LinModels/              Phase 3 — introduction to ML and linear models
+  01_intro_ml.ipynb     visual ML introduction and terminology (awaiting review/classroom use)
+  02_linear_regression.ipynb Ames/sklearn + matrix OLS, Markdown/Python, hand-maintained (completed Nov 4)
+  03_data_preprocessing.ipynb imputation/scaling/categories/Pipeline, hand-maintained (completion confirmed Nov 9)
+  04_regularization.ipynb Ridge/geometry/Ames, hand-maintained with embedded widget (completion confirmed Nov 17)
+  05_model_diagnostics.ipynb R²/residuals/coefficients/bootstrap/PFI, Markdown/Python, hand-maintained (awaiting review/classroom use)
+  build_intro_ml.py     generator; uses math_for_ds/theme.py at build time
+  intro_ml_widgets.js   embedded signal/noise, complexity and loss/metric widgets
+  intro_ml_diagrams.py  build-only SVG diagrams; embedded into the standalone notebook
 practice/               practicums on real data
   practicum_mossovet_asia_mall.ipynb       bus practicum, student tasks (written by hand)
   practicum_mossovet_asia_mall_KEY.ipynb   bus practicum, teacher answers and outputs (written by hand)
@@ -44,6 +55,7 @@ docs/                   COURSE_MAP.md, AGENT_PROTOCOL.md
 ```bash
 python3 -m venv venv && venv/bin/pip install -r requirements.txt       # local environment (Python 3.12)
 venv/bin/python math_for_ds/build_lessonN.py                           # N = 2..13; writes math_for_ds/NN_*.ipynb
+venv/bin/python LinModels/build_intro_ml.py                            # writes LinModels/01_intro_ml.ipynb
 cd practice/phones && ../../venv/bin/python build_phones.py            # practicum scripts write to the current directory
 open DT/theory/index.html                                              # DT theory handbook (offline; MathJax from a CDN)
 ```
@@ -58,14 +70,22 @@ There are no tests. Validation is the checklist in AGENT_PROTOCOL §7.
    L10 returns to matrices, with practice on given weights and a small threshold network's forward calculation.
    L11 adds linear dependence, rank and square-matrix singularity through rank. L12 adds linear systems, inverse,
    determinant and a first weight calculation using a supplied least-squares formula. L13 adds covariance,
-   Pearson/Spearman correlation and exact/near multicollinearity. L12 is completed in class; L13 awaits review
-   and classroom use. Regression theory, the full ML training workflow and t-tests remain untaught.
+   Pearson/Spearman correlation and exact/near multicollinearity. The group has since completed the calculus
+   and hand-coded MSE regression seminars. `LinModels/02` was completed on November 4, including the matrix
+   OLS derivation. Completion of `LinModels/03` preprocessing was confirmed on November 9, and `LinModels/04`
+   regularization on November 17. `LinModels/05` model diagnostics awaits review/classroom use.
+   ML1's classroom status is unconfirmed.
+   T-tests, eigenvectors/PCA and later modelling topics remain untaught.
 3. **Never run `build_lesson1.py`.** L1 is edited by hand. Rebuilding L4 drops its 17 in-class cells, so ask first.
-   `seminar_1`, the bus practicum notebooks in `practice/`, `DT/` and `unsupervised/` have no build scripts;
-   edit those notebooks directly.
+   `seminar_1`, `matan_seminar`, `mse_optimization`, the bus practicum notebooks in `practice/`, `DT/` and `unsupervised/` have no build scripts;
+   edit those notebooks directly. `LinModels/02–05` are also hand-maintained, without builders.
 4. **Lesson format:** Colab `.ipynb`, committed un-executed; dark HTML theory in collapsed `#@title` cells; every
    output self-contained; live JS/SVG widgets; MathJax `$…$` / `$$…$$` only; a «Где:» glossary under every formula.
-   This applies to all theoretical lessons, including L9–L13. The bus practicum uses Markdown and Python (§2.2 of the protocol).
+   This applies to generated theoretical lessons in both `math_for_ds/` and `LinModels/`. The bus practicums and
+   applied `LinModels/02–05` seminars use Markdown and Python. ML3 has one approved self-contained HTML/JS
+   transformer explainer; ML4 has one geometry widget. Edit their embedded cells directly. ML5 has a narrow
+   approved `details/summary` exception in Markdown and a kernel-backed ipywidgets house explorer, with a
+   static/manual alternative. ML1 retains its HTML/SVG theory format.
 5. **Language:** prose and UI strings in Russian (academic, textbook tone, no conversational metaphors); code comments
    and docstrings in English.
 6. **No ready answers** in student notebooks. Hints are given in words; answers go into KEY versions only.

@@ -16,16 +16,23 @@ What exists and in what order is described in [COURSE_MAP.md](COURSE_MAP.md). Ke
    rejected and redone.
 2. **Use only concepts already taught.** Before you use a method in a task, check it against
    [COURSE_MAP §6](COURSE_MAP.md#6-what-students-know-so-far). L9 adds hypotheses, permutation p-values and significance.
-   Poisson, t-tests, regression theory, eigenvectors/PCA and a full model-training workflow are still
+   Poisson, t-tests, eigenvectors/PCA and a complete model-selection/evaluation workflow are still
    **not taught**. L10 uses given weights and a small threshold network's forward calculation only.
    L12 adds a first least-squares weight calculation using a supplied formula, without deriving it or teaching
-   the full ML workflow. L11–L12 have been completed in class. L13 introduces covariance, Pearson/Spearman
-   correlation and multicollinearity; it awaits review and classroom use. Check that status before using its
-   new concepts as prerequisites.
+   the full ML workflow. After L13's covariance, correlation and multicollinearity, the group completed
+   `matan_seminar.ipynb` and `mse_optimization.ipynb`: derivatives, gradients and hand-coded MSE regression
+   are available prerequisites. `LinModels/01_intro_ml.ipynb` introduces the formal ML workflow and terminology;
+   `LinModels/02_linear_regression.ipynb` was completed on November 4, including the matrix OLS derivation.
+   `LinModels/03_data_preprocessing.ipynb` is completed (confirmed November 9; exact class date unrecorded).
+   `LinModels/04_regularization.ipynb` is completed (confirmed November 17; exact class date unrecorded).
+   ML1's classroom status is unconfirmed; `LinModels/05_model_diagnostics.ipynb` awaits review/classroom use.
+   Check those statuses before using new concepts as prerequisites.
 3. **Never regenerate a notebook that is edited by hand** (see §4). In particular, never run `build_lesson1.py`.
 4. **Never download heavy data:** the `images` configs of the Lalafo datasets (5–78 GB), the raw `bishkek-transport`
    feed (GBs), the speaker audio (2.65 GB). Use extracts and column subsets.
 5. **No ready answers in student materials.** Hints are given in words. Answers go into KEY versions only.
+   **Verbatim exercise text:** when requested, preserve the author's wording and make only explicitly
+   authorized typo corrections. Do not append questions, explanations or source notes to the assignment.
 6. **Language:** lesson prose is in Russian; code comments and docstrings are in English; strings students see
    (plot titles, labels, widget text, printed messages) are in Russian.
 7. **Do not commit or push unless asked.** Never commit data, `venv/`, caches or executed lesson notebooks.
@@ -43,6 +50,7 @@ Read in this order:
 3. **The newest build script** (`math_for_ds/build_lesson13.py`), together with `build_lesson12.py`: the shared
    dark HTML theory cells and self-contained JS/SVG widgets used by theoretical lessons.
    L13's task definitions live in the build-only `lesson13_tasks.py` module.
+   For the ML module, also read `LinModels/build_intro_ml.py` and `LinModels/intro_ml_widgets.js`.
 4. The lesson before the one you are working on: its last sections usually set up the next topic ("bridges").
 5. `syllabus.docx`, as a compass for intent. It is not a contract. To read it without extra packages:
 
@@ -54,7 +62,7 @@ Read in this order:
 
 ## 2. Workflows
 
-### 2.1 A new lesson (`math_for_ds/`)
+### 2.1 A new lesson (`math_for_ds/` or `LinModels/`)
 
 1. **Brief, for agreement:** the topic and its number in the sequence; prerequisites, from COURSE_MAP §6; what is
    new; the dataset; one meeting or two; the bridge into the next topic; which syllabus week it serves or why it
@@ -64,6 +72,8 @@ Read in this order:
 3. **Implement** `math_for_ds/build_lessonN.py`, following the HTML/JS theoretical-lesson pattern in
    `build_lesson8.py` through `build_lesson13.py` (§5). A practicum’s Markdown-only format does not apply to theory lessons.
 4. **Build:** `venv/bin/python math_for_ds/build_lessonN.py`. It writes `math_for_ds/NN_<slug>.ipynb`.
+   The ML introduction uses `venv/bin/python LinModels/build_intro_ml.py`, which writes next to its builder
+   and embeds the shared theme, synthetic data and widget source; students need only the notebook.
 5. **Validate** with the checklist in §7.
 6. **Document** in COURSE_MAP: a row in §3, a note in §4, an update to §5, the new concepts in §6, a line in §11.
 
@@ -102,6 +112,72 @@ Grouping and plotting are provided code. The follow-up uses **Markdown and Pytho
 no custom HTML, CSS, JavaScript or widgets. Keep it short, introduce each method through a concrete action,
 and put actual numerical conclusions in the teacher notes rather than lengthy methodological instructions.
 Both versions are maintained by hand. Student interpretation cells ask for conclusions without supplying answers.
+
+**First applied ML seminar (`LinModels/02`).** Maintain `02_linear_regression.ipynb` directly, without a
+builder. The author explicitly requested Markdown and Python only, following `sem_1_linregr.ipynb`; preserve
+the original raw and sqrt/log scatterplot layout (three panels, black points, alpha 0.2) with clear axes.
+Keep the short sklearn/algorithm explanation. Explore only train, compare the mean baseline and one-/three-
+feature OLS models on validation, and leave the fixed test set unused. Worked examples are distinct from
+unanswered tasks. This format applies to this seminar; `LinModels/01` retains its HTML/SVG theory format.
+The November 5 addition records the classroom OLS derivation: include the intercept column, the `2/n`
+gradient factor, normal equations and the full-column-rank condition; distinguish linear dependence from
+statistical dependence. Compare `solve`/`lstsq` with sklearn on the same small feature set.
+
+**Second applied ML seminar (`LinModels/03`).** Maintain `03_data_preprocessing.ipynb` directly, primarily in
+Markdown and Python. The author approved one local exception before section 2: a self-contained HTML/CSS/JS
+code-cell output on `fit`, `transform` and `fit_transform`, with diagrams, an interactive StandardScaler,
+saving a fitted Pipeline and a reference for five transformers. In the diagrams, use fitted attribute names
+(`mean_`, `scale_`, `data_min_`, `data_max_`, `center_`, `categories_`, `statistics_`) rather than generic Russian
+labels for the stored values. The rest of the seminar remains Markdown/Python. Edit the embedded notebook
+cell directly; `data/transformer_preview/transformer-memory.html` is a preview, not a builder or runtime dependency.
+Reuse the same Ames snapshot and train/validation/test IDs, with test unused. Introduce
+train-fitted median imputation, scaling, Pipeline, toy OneHot encoding and a real ColumnTransformer before
+using them in tasks. Show that scaling does not inherently improve unregularized OLS predictions. Explain
+the reference category and all-zero encoding of an unseen category; this does not establish that the unseen
+category has the reference category's true effect. No CV, regularization or target encoding chapter.
+Both applied seminars report MAPE as a percentage (`100 *` sklearn's fractional result), with zero/near-zero
+target limitations and no universal quality cutoffs. Keep worked examples separate from unanswered tasks.
+
+**Third applied ML seminar (`LinModels/04`).** Edit `04_regularization.ipynb` directly, without a builder.
+Use Markdown/Python and one author-approved self-contained HTML/JS geometry widget embedded in a code cell;
+temporary preview/helper files are not runtime dependencies or the source of truth. Begin on synthetic data:
+exact/near multicollinearity, compensating coefficients, the Gram matrix `X.T @ X`, compression geometry,
+SSE surfaces/contours and Ridge. Use the sklearn convention `SSE + alpha * ||w||²`, with a separate unpenalized
+intercept, and state the scope of the normal equations. Distinguish weights from the alpha hyperparameter
+and show how feature scale affects the penalty. Compare the Ridge constraint disk with the original loss
+contours; introduce the Lasso diamond only briefly, without fitting Lasso. The widget changes correlation,
+alpha and target perturbation. Reuse ML3's Ames snapshot, five numeric features plus Neighborhood,
+preprocessing and 876/292/292 split. Fit on train only; test stays unused. Student tasks select alpha using
+validation MAE, also report RMSE/MAPE, plot train/validation curves and interpret underfitting. Do not add CV,
+eigenvalue/spectral theory or coefficient-significance lessons. Link the official sklearn Ridge documentation.
+
+**Fourth applied ML seminar (`LinModels/05`).** Edit `05_model_diagnostics.ipynb` directly, without a builder.
+Use Markdown/Python with one narrow author-approved exception: native HTML `details/summary` in a Markdown
+cell for the optional R² explanation. This does not authorize custom HTML/JS theory blocks throughout ML5.
+Preserve ML4's five loading/unit-conversion/split/preparation/model-factory cells unchanged.
+Reuse the same Ames snapshot, split IDs and ML3/ML4 preprocessing; Ames fitting uses train and test
+stays unused. Introduce R² with the mean of the evaluated targets in its denominator, distinct from the
+train-mean prediction baseline. Use «изменчивость» for variability and «дисперсия» only for variance; a sum of
+squares is not itself a variance. The optional explanation distinguishes the training OLS decomposition from
+Ridge/held-out scores and a population noise bound with fixed available features.
+Interpret residual/group plots and all five worst validation cases concretely. Find training analogues from
+the same Neighborhood using the five numeric features and train-fitted imputation/scaling, excluding price
+and Id from distance. Show counts when fewer than n candidates exist; do not silently broaden the pool.
+The ipywidgets dropdown, n slider and manual button need a live kernel and call the same function as the
+static example/manual fallback. Pair the context statistics and plots with possible next experiments.
+Revisit ML3's reference-category encoding before interpreting coefficients and prediction contributions.
+Keep coefficient magnitude, predictive importance and significance distinct. Use a strong-correlation
+synthetic stability experiment (120 shared resamples, fixed alpha 5), then full-pipeline Ames bootstrap
+(80 shared resamples, fixed alpha 10). Separate the five Ames coefficient panels from the fixed-house
+prediction plot. These are stability experiments, not formal confidence intervals. Permutation
+feature importance uses the frozen full pipeline and raw validation columns with `neg_mean_absolute_error`;
+explain the score sign, repeated-shuffle spread and correlated-feature limitations. Contrast this with a worked
+drop-column experiment that refits without Neighborhood. The optional OLS inference block uses separate synthetic
+data, `HC3` covariance and `use_t=False`; intervals and p-values are approximate and do not transfer to the
+Ames/Ridge model. Its conditional `statsmodels>=0.14,<0.16` install is confined to that optional cell; the same
+dependency is in `requirements.txt`. Keep student tasks unanswered, use official sources and leave
+cross-validation for the next seminar. The author explicitly requested global `warnings.filterwarnings("ignore")`
+in this notebook; retain the explanations of unknown-category encoding and method limitations in the text.
 
 ### 2.3 Editing existing material
 
@@ -154,6 +230,13 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 | L12 `12_linear_systems_inverse.ipynb` | `build_lesson12.py` + `lesson12_widgets.js` | Yes. JS widgets, transcribed exercises and seeded synthetic data are embedded; no dependency on the temporary source notebook |
 | L13 `13_covariance_correlation.ipynb` | `build_lesson13.py` + `lesson13_widgets.js` + `lesson13_tasks.py` + shared `theme.py` | Yes. Task definitions are build-only; widgets, data and task cells are embedded in the standalone unexecuted notebook |
 | `seminar_1.ipynb` | The notebook | No script |
+| `math_for_ds/matan_seminar.ipynb` | The notebook | No script; completed classroom seminar |
+| `math_for_ds/mse_optimization.ipynb` | The notebook | No script; completed classroom seminar; preserve author edits |
+| `LinModels/01_intro_ml.ipynb` | `LinModels/build_intro_ml.py` + `LinModels/intro_ml_diagrams.py` + `LinModels/intro_ml_widgets.js` + shared `math_for_ds/theme.py` | Yes. Diagrams are build-only; embed all runtime code and synthetic data; keep the notebook unexecuted |
+| `LinModels/02_linear_regression.ipynb` | The notebook | No script. Markdown/Python applied seminar; preserve unanswered tasks and the fixed train/validation/test roles |
+| `LinModels/03_data_preprocessing.ipynb` | The notebook, including its embedded transformer explainer cell | No script. Markdown/Python with one approved self-contained HTML/CSS/JS block before section 2; preserve the ML2 split and train-only preprocessing |
+| `LinModels/04_regularization.ipynb` | The notebook, including its embedded geometry widget | No script. Markdown/Python with one self-contained HTML/JS block; preserve ML3's Ames pipeline/split and unanswered tasks |
+| `LinModels/05_model_diagnostics.ipynb` | The notebook | No script. Markdown/Python with one native `details/summary` block and kernel-backed ipywidgets; preserve the Ames split/preprocessing, unused test and unanswered tasks |
 | `practice/practicum_mossovet_asia_mall.ipynb` | The notebook (student tasks, without answers or outputs) | No script |
 | `practice/practicum_mossovet_asia_mall_KEY.ipynb` | The notebook (KEY, with outputs) | No script |
 | `practice/practicum_mossovet_asia_mall_bootstrap.ipynb` | The notebook (student tasks; preserve copied Part 0, clear outputs) | No script |
@@ -167,7 +250,7 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 
 ## 5. Lesson implementation spec
 
-**Theoretical lessons use the shared HTML/JS format below, including L9–L13.** The Markdown/Python-only rule
+**Generated theoretical lessons use the shared HTML/JS format below, including `LinModels/01`.** The Markdown/Python-only rule
 for practicums applies to those practicums. Keep the author’s process instructions out of student prose: title
 definition boxes with the mathematical concept, and state the definition itself.
 
@@ -231,6 +314,24 @@ one meeting; do not promise that all practice fits two hours. `lesson13_tasks.py
 time only. Embed them so students need only the notebook. Keep task answers blank and validate a temporary
 completed copy. The agreed next direction is OLS/linear regression, then eigenvectors/PCA; those lessons are
 not built by this change. The author has already approved L13's structure and extended practice in conversation.
+
+**ML introduction scope (`LinModels/01`).** One beginner two-hour meeting after the completed calculus and MSE
+seminars. Use presentation-like HTML/SVG sections, three self-contained JS widgets, short visible Python examples
+and a final Russian–English glossary. Introduce a model, training and inference, features and targets, labelled
+data, mathematical dataset notation, train/validation/test roles, per-observation loss and empirical objective,
+quality metrics, parameters and hyperparameters, generalization and model complexity. The same quantity, such
+as MSE, can be an optimization objective or an evaluation metric: distinguish its role and evaluation data,
+not two disjoint formula catalogues. In the complexity experiment, select using validation and reveal test
+only after fixing the choice. Use seeded synthetic observations and acknowledge that irreducible noise is
+relative to the available inputs. Keep the taxonomy introductory; self-supervised learning describes where
+targets come from, while regression/classification describe prediction tasks. Explain next-token generation,
+speaker-embedding clustering inside diarization, and delivery-time prediction with diagrams. New terms need
+both Russian and English names and definitions before use. End with unanswered short tasks and a glossary;
+no formal bias–variance decomposition, cross-validation chapter, large models or downloads. Rebuild
+deterministically and validate provided code, a temporary completed task copy, formulas and widget controls.
+Use explicit connected diagrams for processes, branches and feedback loops; cards alone do not replace a
+flowchart. In introductory wording, use «целевая переменная» and «значения целевой переменной»; explain model
+parameters as values that change or are adjusted during training.
 
 **Skeleton** (copy it from `build_lesson8.py`):
 
@@ -310,6 +411,9 @@ Never put the finished line of code in a student cell.
       plot outputs. Distinguish local/browser checks from actual Colab UI validation.
 - [ ] MathJax uses `$` / `$$` only. Each formula has its glossary. No raw `<`, `>` or `&` break the HTML.
 - [ ] Angles and circles are drawn on a square plane.
+- [ ] Every chart has visible axis names explaining the quantities, units where applicable, and a readable
+      scale. Explain colors, lines and category codes in a legend or nearby text. Small schematic charts are
+      not exempt. Process diagrams use labeled nodes and arrows instead of numerical axes.
 
 **Content**
 - [ ] Only taught concepts are used (COURSE_MAP §6), or the new ones are introduced in this very lesson.
