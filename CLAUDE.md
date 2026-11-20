@@ -35,7 +35,8 @@ LinModels/              Phase 3 — introduction to ML and linear models
   02_linear_regression.ipynb Ames/sklearn + matrix OLS, Markdown/Python, hand-maintained (completed Nov 4)
   03_data_preprocessing.ipynb imputation/scaling/categories/Pipeline, hand-maintained (completion confirmed Nov 9)
   04_regularization.ipynb Ridge/geometry/Ames, hand-maintained with embedded widget (completion confirmed Nov 17)
-  05_model_diagnostics.ipynb R²/residuals/coefficients/bootstrap/PFI, Markdown/Python, hand-maintained (awaiting review/classroom use)
+  05_model_diagnostics.ipynb R²/residuals/coefficients/bootstrap/PFI, hand-maintained (completion confirmed Nov 19)
+  06_final_house_project.ipynb complete Ames case/CV/final test/model delivery, hand-maintained (awaiting review/classroom use)
   build_intro_ml.py     generator; uses math_for_ds/theme.py at build time
   intro_ml_widgets.js   embedded signal/noise, complexity and loss/metric widgets
   intro_ml_diagrams.py  build-only SVG diagrams; embedded into the standalone notebook
@@ -73,19 +74,20 @@ There are no tests. Validation is the checklist in AGENT_PROTOCOL §7.
    Pearson/Spearman correlation and exact/near multicollinearity. The group has since completed the calculus
    and hand-coded MSE regression seminars. `LinModels/02` was completed on November 4, including the matrix
    OLS derivation. Completion of `LinModels/03` preprocessing was confirmed on November 9, and `LinModels/04`
-   regularization on November 17. `LinModels/05` model diagnostics awaits review/classroom use.
+   regularization on November 17. Completion of `LinModels/05` diagnostics was confirmed on November 19.
+   `LinModels/06` introduces CV, the final Ames test and model delivery; it awaits review/classroom use.
    ML1's classroom status is unconfirmed.
    T-tests, eigenvectors/PCA and later modelling topics remain untaught.
 3. **Never run `build_lesson1.py`.** L1 is edited by hand. Rebuilding L4 drops its 17 in-class cells, so ask first.
    `seminar_1`, `matan_seminar`, `mse_optimization`, the bus practicum notebooks in `practice/`, `DT/` and `unsupervised/` have no build scripts;
-   edit those notebooks directly. `LinModels/02–05` are also hand-maintained, without builders.
+   edit those notebooks directly. `LinModels/02–06` are also hand-maintained, without builders.
 4. **Lesson format:** Colab `.ipynb`, committed un-executed; dark HTML theory in collapsed `#@title` cells; every
    output self-contained; live JS/SVG widgets; MathJax `$…$` / `$$…$$` only; a «Где:» glossary under every formula.
    This applies to generated theoretical lessons in both `math_for_ds/` and `LinModels/`. The bus practicums and
-   applied `LinModels/02–05` seminars use Markdown and Python. ML3 has one approved self-contained HTML/JS
+   applied `LinModels/02–06` seminars use Markdown and Python. ML3 has one approved self-contained HTML/JS
    transformer explainer; ML4 has one geometry widget. Edit their embedded cells directly. ML5 has a narrow
    approved `details/summary` exception in Markdown and a kernel-backed ipywidgets house explorer, with a
-   static/manual alternative. ML1 retains its HTML/SVG theory format.
+   static/manual alternative. ML6 is Markdown/Python. ML1 retains its HTML/SVG theory format.
 5. **Language:** prose and UI strings in Russian (academic, textbook tone, no conversational metaphors); code comments
    and docstrings in English.
 6. **No ready answers** in student notebooks. Hints are given in words; answers go into KEY versions only.

@@ -25,7 +25,9 @@ What exists and in what order is described in [COURSE_MAP.md](COURSE_MAP.md). Ke
    `LinModels/02_linear_regression.ipynb` was completed on November 4, including the matrix OLS derivation.
    `LinModels/03_data_preprocessing.ipynb` is completed (confirmed November 9; exact class date unrecorded).
    `LinModels/04_regularization.ipynb` is completed (confirmed November 17; exact class date unrecorded).
-   ML1's classroom status is unconfirmed; `LinModels/05_model_diagnostics.ipynb` awaits review/classroom use.
+   `LinModels/05_model_diagnostics.ipynb` is completed (confirmed November 19; exact class date unrecorded).
+   ML1's classroom status is unconfirmed; `LinModels/06_final_house_project.ipynb` awaits review/classroom use
+   and introduces CV, final test evaluation and model delivery.
    Check those statuses before using new concepts as prerequisites.
 3. **Never regenerate a notebook that is edited by hand** (see §4). In particular, never run `build_lesson1.py`.
 4. **Never download heavy data:** the `images` configs of the Lalafo datasets (5–78 GB), the raw `bishkek-transport`
@@ -179,6 +181,26 @@ dependency is in `requirements.txt`. Keep student tasks unanswered, use official
 cross-validation for the next seminar. The author explicitly requested global `warnings.filterwarnings("ignore")`
 in this notebook; retain the explanations of unknown-category encoding and method limitations in the text.
 
+**Fifth applied ML seminar (`LinModels/06`).** Maintain `06_final_house_project.ipynb` directly in
+Markdown/Python. It is a worked final Ames case, with three unanswered written reflections; any one-off
+scratch writer is not a maintained builder or runtime dependency. Reuse the historical 876/292/292 split,
+but read literal `None` separately from missing `NA` and convert all 17 area columns plus LotFrontage inside
+the full Pipeline. Audit all 79 candidate features on train; distinguish absence, unknown values and
+categorical codes. Make the assumed availability of sale dates explicit; exclude SaleType/SaleCondition
+from the selected pre-sale model. Compare nine specified variants, then a global model with separate
+models for area segments, using the same five CV folds of the original train and refitting preparation
+inside each fold. CV selects
+alpha; validation supports configuration choice and diagnosis. Freeze the selected log-target/log-area
+Ridge with rare-category handling and the comparison baseline before refitting both on 1168 development
+rows and opening the 292-row test. Keep review-flag rules fixed before test; flags are not accuracy guarantees.
+Do not retune after inspecting test errors. The test-row bootstrap estimates approximate intervals for
+average MAPE/MAE of the fixed model, not prediction intervals or full training/selection uncertainty.
+Explain permutation importance in MAPE percentage points,
+revisit ML5's five cases and contextualize new test errors using training analogues. Save the whole Pipeline
+with cloudpickle, its schema/versions, a customer note, figures, comparison tables and a 79-feature gallery
+in a delivery archive. Validate reloading in a fresh Python process. Generated artifacts belong in local
+output directories, not in notebook sources or commits; keep student reflections and saved outputs empty.
+
 ### 2.3 Editing existing material
 
 1. Find the source of truth in §4. If the material is built by a script, edit the script.
@@ -237,6 +259,7 @@ you find an inconsistency, record it in COURSE_MAP §10. Do not fix it silently 
 | `LinModels/03_data_preprocessing.ipynb` | The notebook, including its embedded transformer explainer cell | No script. Markdown/Python with one approved self-contained HTML/CSS/JS block before section 2; preserve the ML2 split and train-only preprocessing |
 | `LinModels/04_regularization.ipynb` | The notebook, including its embedded geometry widget | No script. Markdown/Python with one self-contained HTML/JS block; preserve ML3's Ames pipeline/split and unanswered tasks |
 | `LinModels/05_model_diagnostics.ipynb` | The notebook | No script. Markdown/Python with one native `details/summary` block and kernel-backed ipywidgets; preserve the Ames split/preprocessing, unused test and unanswered tasks |
+| `LinModels/06_final_house_project.ipynb` | The notebook | No maintained builder. Markdown/Python worked case; preserve the CV/validation/final-test sequence and unanswered reflections; scratch writers are not sources of truth |
 | `practice/practicum_mossovet_asia_mall.ipynb` | The notebook (student tasks, without answers or outputs) | No script |
 | `practice/practicum_mossovet_asia_mall_KEY.ipynb` | The notebook (KEY, with outputs) | No script |
 | `practice/practicum_mossovet_asia_mall_bootstrap.ipynb` | The notebook (student tasks; preserve copied Part 0, clear outputs) | No script |

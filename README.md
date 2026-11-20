@@ -42,7 +42,7 @@ adapted from MIT 18.065. Each student works with one "anchor" dataset throughout
 |---|---|---|---|
 | 1. Data as vectors | 1–4 | Descriptive statistics, distributions, vectors, dot product, covariance | 13 math lessons; covariance, correlation and multicollinearity followed by calculus and MSE seminars; general basis theory remains pending |
 | 2. Matrices as operators | 5–8 | Operators, determinant, eigenvectors, PCA/SVD | L10–L12 introduce operations, transformations, rank, linear systems, inverse and the 2D determinant; eigenvectors and later groundwork remain planned |
-| 3. Estimation and first models | 9–12 | Least squares, linear regression, MLE, logistic regression | Calculus, MSE regression and `LinModels/02–04` completed; OLS, preprocessing and Ridge taught; `LinModels/05` adds model diagnostics for review |
+| 3. Estimation and first models | 9–12 | Least squares, linear regression, MLE, logistic regression | Calculus, MSE regression and `LinModels/02–05` completed; `LinModels/06` adds the final Ames case with cross-validation, final test and model delivery for review |
 | 4. Classic DS and the project | 13–16 | Trees, ensembles, metrics; research project | Modules `DT/` and `unsupervised/` ready |
 
 The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP.md](docs/COURSE_MAP.md)**.
@@ -52,7 +52,7 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
 | Path | What it is | Status |
 |---|---|---|
 | [`math_for_ds/`](math_for_ds/) | **Mathematics for DS:** Colab lessons L1–L13; speaker, calculus and MSE seminars; homework | actively developed |
-| [`LinModels/`](LinModels/) | **Introduction to ML and linear models:** visual introduction and four applied seminars | ML2–ML4 completed; ML5 awaiting review/classroom use; ML1 classroom status unconfirmed |
+| [`LinModels/`](LinModels/) | **Introduction to ML and linear models:** visual introduction and five applied seminars, ending with a complete Ames case | ML2–ML5 completed; ML6 awaiting review/classroom use; ML1 classroom status unconfirmed |
 | [`practice/`](practice/) | Lalafo phones and cars; bus travel/waiting and bus comparison with bootstrap and permutations (both with student and KEY versions) | Lalafo: L1–L4; buses: L1–L6, then L7–L8 |
 | [`DT/`](DT/) | **Decision trees and ensembles:** 4 notebooks and an interactive HTML theory handbook | ready, to be re-linked to the math block |
 | [`unsupervised/`](unsupervised/) | **Unsupervised learning:** SVD/PCA/t-SNE, K-Means, GMM/EM, DBSCAN/HDBSCAN, hierarchical clustering | ready, to be re-linked to the math block |
@@ -117,8 +117,14 @@ The full teaching sequence, with notes on every lesson, is in **[docs/COURSE_MAP
     five difficult predictions compared with similar training houses, coefficients and prediction contributions,
     synthetic/Ames bootstrap stability and permutation feature importance. An optional synthetic OLS example
     separates significance from predictive importance. Reuses the Ames split and preprocessing; test stays unused.
-    Mainly Markdown/Python, maintained by hand, for review.
-15. Cross-validation and further model selection, eigenvectors and PCA remain planned. Phase 4 materials are in
+    Mainly Markdown/Python, maintained by hand. Completion was confirmed on November 19; the exact class date
+    is not recorded.
+15. **[Final Ames case](LinModels/06_final_house_project.ipynb)** — audit all 79 candidate features, compare
+    feature representations and Ridge settings with five-fold CV, examine errors, then freeze the choice and
+    refit on train plus validation before the first final test evaluation. Save the full Pipeline, input schema,
+    figures, feature gallery and customer note. A worked Markdown/Python case with three unanswered reflection
+    questions; awaiting review/classroom use.
+16. Classification, further model selection, eigenvectors and PCA remain planned. Phase 4 materials are in
    `DT/` (trees → bias–variance → bagging/RF → gradient boosting) and `unsupervised/` (01 → 05).
 
 ## Data and related repositories
@@ -148,7 +154,10 @@ adds one embedded geometry widget to its Markdown/Python seminar. `05_model_diag
 with one collapsible R² explanation using native HTML `details/summary`. Its similar-house explorer uses
 `ipywidgets` and needs a running Python kernel; a static example and an ordinary function call are also provided.
 Their small Ames CSV downloads from the author's source without a Kaggle login; run cells in order.
-All four applied seminars retain the same split, with test unused.
+ML2–ML5 retain the same split with test unused. `06_final_house_project.ipynb` continues in Markdown/Python:
+CV and development use the same train/validation records; after fixing the choice, the full model is refitted
+on their union and evaluated on the reserved test. Running it writes `ames_final_artifacts/` and
+`ames_final_delivery.zip`, containing the model, report, tables and figures.
 
 **Locally.**
 
@@ -177,10 +186,10 @@ setup, decision trees, bias–variance, bagging and random forests, gradient boo
   list is in AGENT_PROTOCOL §4.
 - The ML introduction is generated with `venv/bin/python LinModels/build_intro_ml.py`. Edit that builder and
   `LinModels/intro_ml_widgets.js`; its notebook embeds the data and widgets and runs without those source files.
-- Edit `LinModels/02_linear_regression.ipynb`, `03_data_preprocessing.ipynb`, `04_regularization.ipynb` and
-  `05_model_diagnostics.ipynb` directly: they have no build scripts. Preserve the embedded widgets,
-  Markdown/Python cells and unanswered tasks;
-  the HTML/SVG format of `LinModels/01` is unchanged.
+- Edit `LinModels/02_linear_regression.ipynb`, `03_data_preprocessing.ipynb`, `04_regularization.ipynb`,
+  `05_model_diagnostics.ipynb` and `06_final_house_project.ipynb` directly: they have no build scripts.
+  Preserve the embedded widgets, Markdown/Python cells and unanswered tasks; the HTML/SVG format of
+  `LinModels/01` is unchanged.
 - Conventions in brief: lesson prose in academic Russian; code comments in English; a «Где:» glossary under every
   formula; no ready answers in student notebooks; tasks use only concepts already taught.
 
